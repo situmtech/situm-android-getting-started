@@ -24,14 +24,14 @@ Perfect! Now you are ready to develop your first indoor positioning application.
 
 First of all, you must configure Situm SDK in your Android project. This has been already done for you in the sample application, but nonetheless we will walk you to the process.
 
-1. Add *SitumSDK.jar* file to *app/libs* folder. Note that the sample app, already includes the lastest version of this jar file. However, you can also download it from the [apps section](http://dashboard.situm.es/accounts/users/apps) of the Dashboard, as explained in the previous section.
-2. Inside Gradle Scripts, in the *build.gradle* (Module:app), import the following library into the section "dependencies":
+* Add *SitumSDK.jar* file to *app/libs* folder. Note that the sample app already includes the lastest version of this jar file. However, you can also download it from the [apps section](http://dashboard.situm.es/accounts/users/apps) of the Dashboard, as explained in the previous section.
+* Inside Gradle Scripts, in the *build.gradle* (Module:app), import the following library into the section "dependencies":
 
 ```
 compile files('libs/SitumSDK.jar')
 ```
 
-3. Add Situm SDK dependencies into the same section of the *build.gradle* file. 
+* Add Situm SDK dependencies into the same section of the *build.gradle* file. 
 
 ```
 compile 'org.altbeacon:android-beacon-library:2.1.4'
@@ -41,13 +41,13 @@ compile 'com.loopj.android:android-async-http:1.4.9'
 
 We recommend you to re-synchronize the project at this point.
 
-4. Import the SitumSDK service by adding the following line within the section *<application></application>* of the AndroidManifest file (*main/AndroidManifest.xml*):
+*  Import the SitumSDK service by adding the following line within the section *<application></application>* of the AndroidManifest file (*main/AndroidManifest.xml*):
 
 ```
 <service android:name="es.situm.sdk.v1.SitumService" android:exported="false"/>
 ```
 
-5. Grant the app access permissions to sensors and other services to guarantee the correct behaviour of Situm SDK. This also requires adding the following access permissions to *AndroidManifest*:
+* Grant the app access permissions to sensors and other services to guarantee the correct behaviour of Situm SDK. This also requires adding the following access permissions to *AndroidManifest*:
 
 ```
 <uses-permission android:name="android.permission.INTERNET"/>
@@ -65,7 +65,7 @@ Now that you have correctly configured your Android project, you can start writt
 
 First of all, you must configure your SitumDataManager class, which will give you access to your building's data (list of buildings, floorplans, points of interest, etc.). There are two ways of doing this:
 
-#### Option 1: Using your email address and APIKEY.
+##### Option 1: Using your email address and APIKEY.
 
 This is the recommended option and the one that we have implemented in this project. To do so, include the following code in your application (e.g. in your main activity):
 
@@ -79,7 +79,7 @@ import es.situm.sdk.v1.SitumDataManager;
 import es.situm.sdk.v1.SitumLogin;
 ```
 
-#### Option 2: Using your email address and password. 
+##### Option 2: Using your email address and password. 
 
 To do so, we should pass the email and password to the *SitumLogin* object, and implement a *SitumLoginResponseHandler* callback to receive a valid instance of *SitumDataManager*. 
 
@@ -178,12 +178,12 @@ As we can see, all the petitions are very similar, and remain being so for the o
 
 The last step is to initiate the indoor positioning on a certain building. This will allow the app to retrieve the location of the smartphone within this building. As in the previous case,  this code has to be included into the function *onListReceived()* of the call to the *fetchBuildings* method.
 
-1. We create an instance of SitumIPSManager:
+First of all, create an instance of SitumIPSManager:
 ```
 SitumIPSManager ipsManager = new SitumIPSManager(getApplicationContext());
 ```
 
-2. We pass a callback that will inform us of possible errors that may happen.
+Then, pass a callback that will inform us of possible errors that may happen.
 ```
 ipsManager.setSensorErrorListener(new SitumSensorErrorListener() {
     	    @Override
@@ -197,7 +197,7 @@ ipsManager.setSensorErrorListener(new SitumSensorErrorListener() {
 
 ```
 
-3.  We initiate the positioning on a specific building:
+Initiate the positioning on a specific building:
 ```
 ipsManager.start(selectedBuilding, true, true, true);
 ipsManager.setPoseReceiver(new SitumPoseReceiver() {
