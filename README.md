@@ -20,7 +20,7 @@ In this tutorial, we will guide you step by step to set up your first Android ap
 
 Perfect! Now you are ready to develop your first indoor positioning application.
 
-### Step 1: Configure Situm SDK in the project
+### Step 1: Configure our SDK in your Android project
 
 First of all, you must configure Situm SDK in your Android project. This has been already done for you in the sample application, but nonetheless we will walk you to the process.
 
@@ -102,7 +102,7 @@ SitumLogin.login("user_email","password", new SitumLoginResponseHandler() {
 
 This mechanism has not been implemented in the sample app. For more information, please refer to the javadocs in the [apps section](http://dashboard.situm.es/accounts/users/apps).
 
-### Step 3: Download building data
+### Step 3: Download your building's
 
 At this point, we should be able to retrieve the list of buildings associated with our user's account. To do so, include the following code snippet, that will also receive an error callback in case the retrieve operation fails.
 
@@ -137,7 +137,7 @@ import es.situm.sdk.v1.SitumBuilding;
 
 
 
-### Step 4: Request building's data
+### Step 4: Download venue data
 
 Once we have the buildings, it is straightforward to get their information. For instance, in order to obtain all the floors of a building, we just have to select the required building:
 
@@ -175,7 +175,7 @@ import es.situm.sdk.v1.SitumLevel;
 
 As we can see, all the petitions are very similar, and remain being so for the other resources (events, points of interest, floorplans, etc.). In  [SitumMainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java) we also show how to dowload the image floorplan of a floor. 
 
-### Step 5: Activating the positioning
+### Step 5: Activate the positioning
 
 The last step is to initiate the indoor positioning on a certain building. This will allow the app to retrieve the location of the smartphone within this building. As in the previous case,  this code has to be included into the function *onListReceived()* of the call to the *fetchBuildings* method.
 
