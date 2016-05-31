@@ -1,4 +1,4 @@
-situm-android-getting-started
+Situm SDK Sample app 
 =======================
 
 
@@ -61,9 +61,13 @@ We recommend you to re-synchronize the project after adding this.
 
 ###Step 2: Get an instance of SitumDataManager
 
-Now that you have correctly configured your Android project, you can start writting your application's code. To do so, the first step is to configure your SitumDataManager class, which will give you access to your building's data. There are two ways of doing this:
+Now that you have correctly configured your Android project, you can start writting your application's code. In this sample project, all this code has been included in the file [SitumMainActivity.java] (https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java)
+
+First of all, you must configure your SitumDataManager class, which will give you access to your building's data (list of buildings, floorplans, points of interest, etc.). There are two ways of doing this:
 
 #### Option 1: Using your email address and APIKEY.
+
+This is the recommended option and the one that we have implemented in this project. To do so, include the following code in your application (e.g. in your main activity).
 
 ```        
 SitumDataManager dataManager = SitumLogin.login("test@situm.es","api_key");
@@ -75,13 +79,15 @@ import es.situm.sdk.v1.SitumDataManager;
 import es.situm.sdk.v1.SitumLogin;
 ```
 
-#### Option 1: Using your email address and password. 
+#### Option 2: Using your email address and password. 
 
-In this case we will receive a valid instance of SitumDataManager into the callback SitumLoginResponseHandler. You can consult the attached javadocs for more information.
+To do so, we should call pass the email and password to the SitumLogin object, and implement a  SitumLoginResponseHandler callback to receive a valid instance of SitumDataManager. Please, consult the javadocs for more information.
+
+```
 SitumLogin.login("user_email","password", new SitumLoginResponseHandler() {
-           	@Override
-           	public void onLogin(SitumDataManager situmDataManager) {
-             }
+	@Override
+        public void onLogin(SitumDataManager situmDataManager) {
+}
 @Override
 public void onWrongLogin() {
 }
@@ -89,10 +95,13 @@ public void onWrongLogin() {
 public void onConnectionError() {
 }
 });
-Once we have the SitumDataManager we can ask the server for data: buildings, images, etc.
+```
 
-Step 3: Download building data
-In this step is shown a sample of how to request the list of available buildings to a user account.
+### Step 3: Download building data
+
+At this point, we should be able to retrieve the list of buildings associated with our user's account. To do so, include the following code snippet, that will also receive an error callback in case the retrieve operation failed.
+
+```
 dataManager.fetchBuildings(new SitumResponseHandler() {
     @Override
     public void onListReceived(List list) {
@@ -107,19 +116,32 @@ for (SitumBuilding building : buildings) {
       // manage errors
       Log.e(TAG, "Error receiving buildings");   
       }
-}); 		
-We have to add the following lines to the head for the correct functioning of this instructions:
+}); 	
+
+```
+
+Again, remember to add the corresponding dependencies: 
+
+```
 import android.preference.PreferenceActivity;
 import java.util.List;
 import org.apache.http.Header;
-
 import es.situm.sdk.v1.SitumBuilding;
-Through this call we will have a list of the buildings that the server is giving back, or an error, if that were the case. 
+```
 
-Step 4: Request buildings data
-Once we have the buildings is very simple to get other information of the building. This example shows how to obtain all the floors. We just have to select the required building and make a call like the following one:
+
+
+### Step 4: Request building's data
+
+Once we have the buildings, it is straightforward to get their information. For instance, in order to obtain all the floors of a building, we just have to select the required building:
+
+```
 selectedBuilding = buildings.get(7);
+```
 
+and call SitumDataManager to fetch all the levels of the building:
+
+```
 dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() {
   	   @Override
           public void onListReceived(List list) {
@@ -136,16 +158,30 @@ dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() 
               // manage errors
           }
 });
-ATTENTION: This code has to be included into the function onListReceived() of the call to the fetchBuildings method. 
-In addition, we have to add the appropriate class of import to the head:
-import es.situm.sdk.v1.SitumLevel;
-As we can see, petitions are very similar, and remain being so for the other resources offered, like events, level images, etc... In the attached app GettingStartedSitum we can see a sample downloading the image of a selected floor.
+```
 
-Step 5: Activating the positioning
-Initiate the positioning on a building. As in the previous case this code has to be included into the function onListReceived() of the call to the fetchBuildings method.
-1. We create an instance of SitumIPSManager,:
-	SitumIPSManager ipsManager = new SitumIPSManager(getApplicationContext());
+NOTE: This code has to be included into the function onListReceived() of the call to the fetchBuildings method (see Step 3). 
+
+
+In addition, we have to add the following import:
+
+```
+import es.situm.sdk.v1.SitumLevel;
+```
+
+As we can see, all the petitions are very similar, and remain being so for the other resources (events, points of interest, floorplans, etc.). In  [SitumMainActivity.java] (https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java) we also show how to dowload the image floorplan of a floor. 
+
+### Step 5: Activating the positioning
+
+The last step is to initiate the indoor positioning on a certain building. This will allow the app to retrieve the location of the smartphone within this building. As in the previous case,  this code has to be included into the function onListReceived() of the call to the fetchBuildings method.
+
+1. We create an instance of SitumIPSManager:
+```
+SitumIPSManager ipsManager = new SitumIPSManager(getApplicationContext());
+```
+
 2. We pass a callback that will inform us of possible errors that may happen.
+```
 ipsManager.setSensorErrorListener(new SitumSensorErrorListener() {
     	    @Override
     	    public void onError(SitumError situmError) {
@@ -155,7 +191,11 @@ ipsManager.setSensorErrorListener(new SitumSensorErrorListener() {
     
      }
 });
-3.  We initiate positioning on a specific building:
+
+```
+
+3.  We initiate the positioning on a specific building:
+```
 ipsManager.start(selectedBuilding, true, true, true);
 ipsManager.setPoseReceiver(new SitumPoseReceiver() {
     @Override
@@ -165,17 +205,33 @@ ipsManager.setPoseReceiver(new SitumPoseReceiver() {
             
 }
 });
-We have to add the import of the class used into the head for the correct functioning of this instructions:
+
+```
+Again, remember to add the required imports:
+
+```
 import es.situm.sdk.v1.SitumError;
 import es.situm.sdk.v1.SitumIPSManager;
 import es.situm.sdk.v1.SitumSensorErrorListener;
+```
 
-Android 6.0 compilation
-Due to changes made to Android 6.0, the library support to Apache HTTP client has been deleted. To continue using the Apache HTTP API, we have to declare the following dependences into the file build.gradle (Module: App):	
+## Android 6.0 compilation
+
+Due to changes made to Android 6.0, the library support to Apache HTTP client has been deleted. To continue using the Apache HTTP API, we have to declare the following dependences into the file *build.gradle* (Module: App):	
+
+```
 	useLibrary	'org.apache.http.legacy'
+```
+	
+	
 In addition, we have to add the dependencies to a target of android 23:
+```
 compile	'com.android.support:appcompat-v7:23.1.1'
+```
+
 We also recommend you to ask the user for permision in order to have access to its location, because Android 6.0 does not allow WiFi scanning without this permission:
+
+```
 int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
 if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
            startLocation();
@@ -185,11 +241,19 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                        Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_RESULT);
            }
        }
+```
+
 
 Then, you can check the result of this action by overwriting the method:
+```
 @Override
 public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+```
 
-More information
-The attached javadoc shows in detail all the available functionalities in Situm SDK.
-For any other question, contact us by mail or send us your comments and suggestions to our website www.situmtechnologies.com
+
+## More information
+
+Go to the developers section of the dashboard and download the full documentation of the SDK, including the javadoc with all the available functionalities. 
+
+
+For any other question, contact us by mail at situm@situm.es or send us your comments and suggestions to our website www.en.situm.es
