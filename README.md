@@ -87,13 +87,15 @@ To do so, we should pass the email and password to the *SitumLogin* object, and 
 SitumLogin.login("user_email","password", new SitumLoginResponseHandler() {
 	@Override
         public void onLogin(SitumDataManager situmDataManager) {
-}
-@Override
-public void onWrongLogin() {
-}
-@Override
-public void onConnectionError() {
-}
+        }
+        
+	@Override
+	public void onWrongLogin() {
+	}
+	
+	@Override
+	public void onConnectionError() {
+	}
 });
 ```
 
@@ -109,16 +111,17 @@ dataManager.fetchBuildings(new SitumResponseHandler() {
     @Override
     public void onListReceived(List list) {
         // received buildings
-final List<SitumBuilding> buildings = new ArrayList<>(list);
-for (SitumBuilding building : buildings) {
-    			Log.i(TAG, "Received building" + building.getName());
-}
-}
+	final List<SitumBuilding> buildings = new ArrayList<>(list);
+	for (SitumBuilding building : buildings) {
+		Log.i(TAG, "Received building" + building.getName());
+	}
+    }
+    
     @Override
-      public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
-      // manage errors
-      Log.e(TAG, "Error receiving buildings");   
-      }
+    public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
+    // manage errors
+    	Log.e(TAG, "Error receiving buildings");   
+    }
 }); 	
 
 ```
@@ -146,20 +149,18 @@ and call *SitumDataManager* to fetch its levels:
 
 ```
 dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() {
-  	   @Override
-          public void onListReceived(List list) {
-       	       // received levels for  selectedBuilding
-            List<SitumLevel> levels = new ArrayList<>(list);
-            Log.i(TAG, String.format("Received %s levels for %s", levels.size(),
-            selectedBuilding.getName()));
-    
-                   }
+  	@Override
+        public void onListReceived(List list) {
+	       	// received levels for  selectedBuilding
+	        List<SitumLevel> levels = new ArrayList<>(list);
+	        Log.i(TAG, String.format("Received %s levels for %s", levels.size(),
+	        selectedBuilding.getName()));
+        }
     
  	@Override
-    	   Public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
-         
+    	public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
               // manage errors
-          }
+        }
 });
 ```
 
@@ -186,13 +187,12 @@ SitumIPSManager ipsManager = new SitumIPSManager(getApplicationContext());
 Then, pass a callback that will inform us of possible errors that may happen.
 ```
 ipsManager.setSensorErrorListener(new SitumSensorErrorListener() {
-    	    @Override
-    	    public void onError(SitumError situmError) {
-//Manage error
-	Log.e(TAG, situmError.name);
-	txtLocation.setText(situmError.name);   
-    
-     }
+    	@Override
+    	public void onError(SitumError situmError) {
+		//Manage error
+		Log.e(TAG, situmError.name);
+		txtLocation.setText(situmError.name);   
+     	}
 });
 
 ```
@@ -201,12 +201,11 @@ Initiate the positioning on a specific building:
 ```
 ipsManager.start(selectedBuilding, true, true, true);
 ipsManager.setPoseReceiver(new SitumPoseReceiver() {
-    @Override
-    	    public void onPoseReceived(SitumLocation situmLocation) {
-	      Log.i(TAG, String.format("x %s y %s", situmLocation.x, situmLocation.y));
-	      txtLocation.setText(String.format("x %s y %s", situmLocation.x,  situmLocation.y));
-            
-}
+	@Override
+   	public void onPoseReceived(SitumLocation situmLocation) {
+		Log.i(TAG, String.format("x %s y %s", situmLocation.x, situmLocation.y));
+	      	txtLocation.setText(String.format("x %s y %s", situmLocation.x,  situmLocation.y));
+	}
 });
 
 ```
@@ -223,7 +222,7 @@ import es.situm.sdk.v1.SitumSensorErrorListener;
 Due to changes in Android 6.0, the library support to the Apache HTTP client, used by Situm SDK, has been deleted. To allow our SDK to use Apache HTTP API and maintain the compatibility with Android 6.0, we have to declare the following dependences into the file *build.gradle* (Module: App):	
 
 ```
-	useLibrary	'org.apache.http.legacy'
+useLibrary	'org.apache.http.legacy'
 ```
 	
 In addition, we have to add the dependencies to a target of *Android 23*:
@@ -235,14 +234,15 @@ We also recommend you to ask the user for permision in order to have access to i
 
 ```
 int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
+
 if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-           startLocation();
-       } else {
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-     requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                       Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_RESULT);
-           }
-       }
+        startLocation();
+} else {
+	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+     	        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_RESULT);
+	}
+}
 ```
 
 
