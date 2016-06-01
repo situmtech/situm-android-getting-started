@@ -1,7 +1,23 @@
 Situm SDK Sample app 
 =======================
 
-[Intro](#introduction)
+## Table of contents
+
+[Introduction](#introduction)
+
+[Step 1: Configure our SDK in your Android project](#configureproject)
+
+[Step 2: Get an instance of SitumDataManager](#situmdatamanager)
+
+[Step 3: Download your buildings](#download_buildings)
+
+[Step 4: Download venue data](#download_data)
+
+[Step 5: Activate the positioning](#positioning)
+
+[Android 6.0 compilation](#android6)
+
+[More information](#moreinfo)
 
 
 ### Introduction
@@ -22,7 +38,7 @@ In this tutorial, we will guide you step by step to set up your first Android ap
 
 Perfect! Now you are ready to develop your first indoor positioning application.
 
-### Step 1: Configure our SDK in your Android project
+### <a name="configureproject"></a> Step 1: Configure our SDK in your Android project
 
 First of all, you must configure Situm SDK in your Android project. This has been already done for you in the sample application, but nonetheless we will walk you to the process.
 
@@ -61,7 +77,7 @@ We recommend you to re-synchronize the project at this point.
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
-### Step 2: Get an instance of SitumDataManager
+### <a name="situmdatamanager"></a> Step 2: Get an instance of SitumDataManager
 
 Now that you have correctly configured your Android project, you can start writting your application's code. In this sample project, all this code has been included in the file [SitumMainActivity.java] (https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java)
 
@@ -104,7 +120,7 @@ SitumLogin.login("user_email","password", new SitumLoginResponseHandler() {
 
 This mechanism has not been implemented in the sample app. For more information, please refer to the javadocs in the [apps section](http://dashboard.situm.es/accounts/users/apps).
 
-### Step 3: Download your building's
+###<a name="download_buildings"></a> Step 3: Download your buildings
 
 At this point, we should be able to retrieve the list of buildings associated with our user's account. To do so, include the following code snippet, that will also receive an error callback in case the retrieve operation fails.
 
@@ -139,7 +155,7 @@ import es.situm.sdk.v1.SitumBuilding;
 
 
 
-### Step 4: Download venue data
+### <a name="download_data"> Step 4: Download venue data
 
 Once we have the buildings, it is straightforward to get their information. For instance, in order to obtain all the floors of a building, we just have to select the required building:
 
@@ -177,7 +193,7 @@ import es.situm.sdk.v1.SitumLevel;
 
 As we can see, all the petitions are very similar, and remain being so for the other resources (events, points of interest, floorplans, etc.). In  [SitumMainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java) we also show how to dowload the image floorplan of a floor. 
 
-### Step 5: Activate the positioning
+### <a name="positioning"></a>Step 5: Activate the positioning
 
 The last step is to initiate the indoor positioning on a certain building. This will allow the app to retrieve the location of the smartphone within this building. As in the previous case,  this code has to be included into the function *onListReceived()* of the call to the *fetchBuildings* method.
 
@@ -219,7 +235,7 @@ import es.situm.sdk.v1.SitumIPSManager;
 import es.situm.sdk.v1.SitumSensorErrorListener;
 ```
 
-## Android 6.0 compilation
+## <a name="android6"></a>Android 6.0 compilation
 
 Due to changes in Android 6.0, the library support to the Apache HTTP client, used by Situm SDK, has been deleted. To allow our SDK to use Apache HTTP API and maintain the compatibility with Android 6.0, we have to declare the following dependences into the file *build.gradle* (Module: App):	
 
@@ -255,7 +271,7 @@ public void onRequestPermissionsResult(int requestCode, String[] permissions, in
 ```
 
 
-## More information
+## <a name="moreinfo"></a> More information
 
 Go to the developers section of the dashboard and download the full documentation of the SDK, including the javadoc with all the available functionalities. 
 
