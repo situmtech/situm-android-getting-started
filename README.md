@@ -11,7 +11,7 @@ Situm SDK Sample app
 
 [Step 3: Download your buildings](#download_buildings)
 
-[Step 4: Download venue data](#download_data)
+[Step 4: Download building data](#download_data)
 
 [Step 5: Activate the positioning](#positioning)
 
@@ -155,7 +155,7 @@ import es.situm.sdk.v1.SitumBuilding;
 
 
 
-### <a name="download_data"> Step 4: Download venue data
+### <a name="download_data"> Step 4: Download building data
 
 Once we have the buildings, it is straightforward to get their information. For instance, in order to obtain all the floors of a building, we just have to select the required building:
 
