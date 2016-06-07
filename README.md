@@ -1,4 +1,4 @@
-Situm SDK Sample app 
+Situm Android SDK Sample app 
 =======================
 
 ## Table of contents
