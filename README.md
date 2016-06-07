@@ -276,4 +276,4 @@ public void onRequestPermissionsResult(int requestCode, String[] permissions, in
 Go to the developers section of the dashboard and download the full documentation of the SDK, including the javadoc with all the available functionalities. 
 
 
-For any other question, contact us by mail at situm@situm.es or send us your comments and suggestions to our website www.en.situm.es
+For any other question, contact us by mail at mobile@situm.es or send us your comments and suggestions to our website https://en.situm.es
