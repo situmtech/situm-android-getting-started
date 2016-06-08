@@ -45,13 +45,13 @@ First of all, you must configure Situm SDK in your Android project. This has bee
 * Add *SitumSDK.jar* file to *app/libs* folder. Note that the sample app already includes the lastest version of this jar file. However, you can also download it from the [apps section](http://dashboard.situm.es/accounts/users/apps) of the Dashboard, as explained in the previous section.
 * Inside Gradle Scripts, in the *build.gradle* (Module:app), import the following library into the section "dependencies":
 
-```
+```groovy
 compile files('libs/SitumSDK.jar')
 ```
 
 * Add Situm SDK dependencies into the same section of the *build.gradle* file. 
 
-```
+```groovy
 compile 'org.altbeacon:android-beacon-library:2.1.4'
 compile 'es.usc.citius.hipster:hipster-core:1.0.0-rc2'
 compile 'com.loopj.android:android-async-http:1.4.9'
@@ -61,13 +61,13 @@ We recommend you to re-synchronize the project at this point.
 
 *  Import the SitumSDK service by adding the following line within the section *<application></application>* of the AndroidManifest file (*main/AndroidManifest.xml*):
 
-```
+```xml
 <service android:name="es.situm.sdk.v1.SitumService" android:exported="false"/>
 ```
 
 * Grant the app access permissions to sensors and other services to guarantee the correct behaviour of Situm SDK. This also requires adding the following access permissions to *AndroidManifest*:
 
-```
+```xml
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
@@ -87,12 +87,12 @@ First of all, you must configure your SitumDataManager class, which will give yo
 
 This is the recommended option and the one that we have implemented in this project. To do so, include the following code in your application (e.g. in your main activity):
 
-```        
+```java
 SitumDataManager dataManager = SitumLogin.login("test@situm.es","api_key");
 ```
 Remember to add the following dependencies in the same file:
 
-```
+```java
 import es.situm.sdk.v1.SitumDataManager;
 import es.situm.sdk.v1.SitumLogin;
 ```
@@ -101,11 +101,11 @@ import es.situm.sdk.v1.SitumLogin;
 
 To do so, we should pass the email and password to the *SitumLogin* object, and implement a *SitumLoginResponseHandler* callback to receive a valid instance of *SitumDataManager*. 
 
-```
+```java
 SitumLogin.login("user_email","password", new SitumLoginResponseHandler() {
 	@Override
-        public void onLogin(SitumDataManager situmDataManager) {
-        }
+    public void onLogin(SitumDataManager situmDataManager) {
+    }
         
 	@Override
 	public void onWrongLogin() {
@@ -124,20 +124,20 @@ This mechanism has not been implemented in the sample app. For more information,
 
 At this point, we should be able to retrieve the list of buildings associated with our user's account. To do so, include the following code snippet, that will also receive an error callback in case the retrieve operation fails.
 
-```
+```java
 dataManager.fetchBuildings(new SitumResponseHandler() {
     @Override
     public void onListReceived(List list) {
         // received buildings
-	final List<SitumBuilding> buildings = new ArrayList<>(list);
-	for (SitumBuilding building : buildings) {
-		Log.i(TAG, "Received building" + building.getName());
-	}
+        final List<SitumBuilding> buildings = new ArrayList<>(list);
+        for (SitumBuilding building : buildings) {
+            Log.i(TAG, "Received building" + building.getName());
+        }
     }
     
     @Override
     public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
-    // manage errors
+        // manage errors
     	Log.e(TAG, "Error receiving buildings");   
     }
 }); 	
@@ -146,7 +146,7 @@ dataManager.fetchBuildings(new SitumResponseHandler() {
 
 Again, remember to add the corresponding dependencies: 
 
-```
+```java
 import android.preference.PreferenceActivity;
 import java.util.List;
 import org.apache.http.Header;
@@ -154,31 +154,30 @@ import es.situm.sdk.v1.SitumBuilding;
 ```
 
 
-
 ### <a name="download_data"> Step 4: Download building data
 
 Once we have the buildings, it is straightforward to get their information. For instance, in order to obtain all the floors of a building, we just have to select the required building:
 
-```
+```java
 selectedBuilding = buildings.get(7);
 ```
 
 and call *SitumDataManager* to fetch its levels:
 
-```
+```java
 dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() {
-  	@Override
-        public void onListReceived(List list) {
-	       	// received levels for  selectedBuilding
-	        List<SitumLevel> levels = new ArrayList<>(list);
-	        Log.i(TAG, String.format("Received %s levels for %s", levels.size(),
-	        selectedBuilding.getName()));
-        }
+    @Override
+    public void onListReceived(List list) {
+        // received levels for  selectedBuilding
+        List<SitumLevel> levels = new ArrayList<>(list);
+        Log.i(TAG, String.format("Received %s levels for %s", levels.size(),
+        selectedBuilding.getName()));
+    }
     
  	@Override
-    	public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
-              // manage errors
-        }
+    public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
+          // manage errors
+    }
 });
 ```
 
@@ -187,7 +186,7 @@ NOTE: This code has to be included into the function *onListReceived()* of the c
 
 In addition, we have to add the following import:
 
-```
+```java
 import es.situm.sdk.v1.SitumLevel;
 ```
 
@@ -198,25 +197,28 @@ As we can see, all the petitions are very similar, and remain being so for the o
 The last step is to initiate the indoor positioning on a certain building. This will allow the app to retrieve the location of the smartphone within this building. As in the previous case,  this code has to be included into the function *onListReceived()* of the call to the *fetchBuildings* method.
 
 First of all, create an instance of SitumIPSManager:
-```
+
+```java
 SitumIPSManager ipsManager = new SitumIPSManager(getApplicationContext());
 ```
 
 Then, pass a callback that will inform us of possible errors that may happen.
-```
+
+```java
 ipsManager.setSensorErrorListener(new SitumSensorErrorListener() {
-    	@Override
-    	public void onError(SitumError situmError) {
-		//Manage error
-		Log.e(TAG, situmError.name);
-		txtLocation.setText(situmError.name);   
-     	}
+    @Override
+    public void onError(SitumError situmError) {
+    //Manage error
+    Log.e(TAG, situmError.name);
+    txtLocation.setText(situmError.name);
+    }
 });
 
 ```
 
 Initiate the positioning on a specific building:
-```
+
+```java
 ipsManager.start(selectedBuilding, true, true, true);
 ipsManager.setPoseReceiver(new SitumPoseReceiver() {
 	@Override
@@ -227,9 +229,10 @@ ipsManager.setPoseReceiver(new SitumPoseReceiver() {
 });
 
 ```
+
 Again, remember to add the required imports:
 
-```
+```java
 import es.situm.sdk.v1.SitumError;
 import es.situm.sdk.v1.SitumIPSManager;
 import es.situm.sdk.v1.SitumSensorErrorListener;
@@ -239,35 +242,37 @@ import es.situm.sdk.v1.SitumSensorErrorListener;
 
 Due to changes in Android 6.0, the library support to the Apache HTTP client, used by Situm SDK, has been deleted. To allow our SDK to use Apache HTTP API and maintain the compatibility with Android 6.0, we have to declare the following dependences into the file *build.gradle* (Module: App):	
 
-```
+```groovy
 useLibrary	'org.apache.http.legacy'
 ```
 	
 In addition, we have to add the dependencies to a target of *Android 23*:
-```
+
+```groovy
 compile	'com.android.support:appcompat-v7:23.1.1'
 ```
 
 We also recommend you to ask the user for permision in order to have access to its location, because Android 6.0 does not allow WiFi scanning without this permission:
 
-```
+```java
 int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
 
 if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
         startLocation();
 } else {
 	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-     	        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_RESULT);
+        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_RESULT);
 	}
 }
 ```
 
 
 Then, you can check the result of this action by overwriting the method:
-```
+
+```java
 @Override
-public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
 ```
 
 
