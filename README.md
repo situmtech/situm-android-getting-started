@@ -1,4 +1,4 @@
-Situm Android SDK Sample app 
+Situm Android SDK Sample app
 =======================
 
 ## Table of contents
@@ -31,7 +31,7 @@ This is a sample Android applicacion built with Situm SDK. Situm SDK is a set of
 
 In this tutorial, we will guide you step by step to set up your first Android application using Situm SDK. Before starting to write code, we recommend you to set up an account in our Dashboard (https://dashboard.situm.es), retrieve your APIKEY and configure your first building.
 
-1. Go to the [sign in form](http://dashboard.situm.es/accounts/register) and enter your username and password to sign in. 
+1. Go to the [sign in form](http://dashboard.situm.es/accounts/register) and enter your username and password to sign in.
 2. Go to the [apps section](http://dashboard.situm.es/accounts/users/apps) and click on "Are you a developer?" to generate your APIKEY and download the full SDKs and its documentation, including its javadoc.
 3. Go to the [buildings section](http://dashboard.situm.es/buildings) and create your first building.
 4. Download [SitumMaps](https://play.google.com/store/apps/details?id=es.situm.maps). With this application, you will be able to configure and test Situm's indoor positioning system in your buildings.
@@ -49,7 +49,7 @@ First of all, you must configure Situm SDK in your Android project. This has bee
 compile files('libs/SitumSDK.jar')
 ```
 
-* Add Situm SDK dependencies into the same section of the *build.gradle* file. 
+* Add Situm SDK dependencies into the same section of the *build.gradle* file.
 
 ```groovy
 compile 'org.altbeacon:android-beacon-library:2.1.4'
@@ -97,20 +97,20 @@ import es.situm.sdk.v1.SitumDataManager;
 import es.situm.sdk.v1.SitumLogin;
 ```
 
-##### Option 2: Using your email address and password. 
+##### Option 2: Using your email address and password.
 
-To do so, we should pass the email and password to the *SitumLogin* object, and implement a *SitumLoginResponseHandler* callback to receive a valid instance of *SitumDataManager*. 
+To do so, we should pass the email and password to the *SitumLogin* object, and implement a *SitumLoginResponseHandler* callback to receive a valid instance of *SitumDataManager*.
 
 ```java
 SitumLogin.login("user_email","password", new SitumLoginResponseHandler() {
 	@Override
     public void onLogin(SitumDataManager situmDataManager) {
     }
-        
+
 	@Override
 	public void onWrongLogin() {
 	}
-	
+
 	@Override
 	public void onConnectionError() {
 	}
@@ -134,7 +134,7 @@ dataManager.fetchBuildings(new SitumResponseHandler() {
             Log.i(TAG, "Received building" + building.getName());
         }
     }
-    
+
     @Override
     public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
         // manage errors
@@ -144,7 +144,7 @@ dataManager.fetchBuildings(new SitumResponseHandler() {
 
 ```
 
-Again, remember to add the corresponding dependencies: 
+Again, remember to add the corresponding dependencies:
 
 ```java
 import android.preference.PreferenceActivity;
@@ -173,7 +173,7 @@ dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() 
         Log.i(TAG, String.format("Received %s levels for %s", levels.size(),
         selectedBuilding.getName()));
     }
-    
+
  	@Override
     public void onErrorReceived(int i, Header[] h, byte[] bytes, Throwable t) {
           // manage errors
@@ -181,7 +181,7 @@ dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() 
 });
 ```
 
-NOTE: This code has to be included into the function *onListReceived()* of the call to the fetchBuildings method (see Step 3). 
+NOTE: This code has to be included into the function *onListReceived()* of the call to the fetchBuildings method (see Step 3).
 
 
 In addition, we have to add the following import:
@@ -190,7 +190,7 @@ In addition, we have to add the following import:
 import es.situm.sdk.v1.SitumLevel;
 ```
 
-As we can see, all the petitions are very similar, and remain being so for the other resources (events, points of interest, floorplans, etc.). In  [SitumMainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java) we also show how to dowload the image floorplan of a floor. 
+As we can see, all the petitions are very similar, and remain being so for the other resources (events, points of interest, floorplans, etc.). In  [SitumMainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java) we also show how to dowload the image floorplan of a floor.
 
 ### <a name="positioning"></a>Step 5: Activate the positioning
 
@@ -240,12 +240,12 @@ import es.situm.sdk.v1.SitumSensorErrorListener;
 
 ## <a name="android6"></a>Android 6.0 compilation
 
-Due to changes in Android 6.0, the library support to the Apache HTTP client, used by Situm SDK, has been deleted. To allow our SDK to use Apache HTTP API and maintain the compatibility with Android 6.0, we have to declare the following dependences into the file *build.gradle* (Module: App):	
+Due to changes in Android 6.0, the library support to the Apache HTTP client, used by Situm SDK, has been deleted. To allow our SDK to use Apache HTTP API and maintain the compatibility with Android 6.0, we have to declare the following dependences into the file *build.gradle* (Module: App):
 
 ```groovy
 useLibrary	'org.apache.http.legacy'
 ```
-	
+
 In addition, we have to add the dependencies to a target of *Android 23*:
 
 ```groovy
@@ -278,7 +278,7 @@ public void onRequestPermissionsResult(int requestCode, String[] permissions, in
 
 ## <a name="moreinfo"></a> More information
 
-Go to the developers section of the dashboard and download the full documentation of the SDK, including the javadoc with all the available functionalities. 
+Go to the developers section of the dashboard and download the full documentation of the SDK, including the javadoc with all the available functionalities.
 
 
-For any other question, contact us by mail at mobile@situm.es or send us your comments and suggestions to our website https://en.situm.es
+For any other question, contact us by mail at mobile@situm.es or send us your comments and suggestions to our website https://situm.es
