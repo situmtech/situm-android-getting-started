@@ -42,11 +42,19 @@ Perfect! Now you are ready to develop your first indoor positioning application.
 
 First of all, you must configure Situm SDK in your Android project. This has been already done for you in the sample application, but nonetheless we will walk you to the process.
 
-* Add *SitumSDK.jar* file to *app/libs* folder. Note that the sample app already includes the lastest version of this jar file. However, you can also download it from the [apps section](http://dashboard.situm.es/accounts/users/apps) of the Dashboard, as explained in the previous section.
-* Inside Gradle Scripts, in the *build.gradle* (Module:app), import the following library into the section "dependencies":
+* Add *situm-sdk-1.65c.aar* file to *app/libs* folder. Note that the sample app already includes the lastest version of this jar file. However, you can also download it from the [apps section](http://dashboard.situm.es/accounts/users/apps) of the Dashboard, as explained in the previous section.
+* Inside Gradle Scripts, in the *build.gradle* (Module:app), add the next lines before "dependencies" section:
+```
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+```
+* Then import the following library into the section "dependencies":
 
 ```groovy
-compile files('libs/SitumSDK.jar')
+compile(name:"situm-sdk-1.65c", ext:"aar")
 ```
 
 * Add Situm SDK dependencies into the same section of the *build.gradle* file.
