@@ -43,7 +43,7 @@ public class SitumMainActivity extends AppCompatActivity {
         txtLocation = (TextView) findViewById(R.id.location);
 
         //PLEASE INSERT HERE YOUR EMAIL AND YOUR API KEY
-        final SitumDataManager situmDataManager = SitumLogin.login("test@situm.es", "YOUR_API_KEY_HERE");
+        final SitumDataManager situmDataManager = SitumLogin.login(this, "test@situm.es", "YOUR_API_KEY_HERE");
         ipsManager = new SitumIPSManager(getApplicationContext());
 
         // get all buildings
