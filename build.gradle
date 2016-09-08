@@ -15,6 +15,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url "https://repo.situm.es/artifactory/libs-release-local" }
     }
 }
 

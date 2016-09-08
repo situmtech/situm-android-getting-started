@@ -31,7 +31,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
 
-    compile(name:"situm-sdk-1.65c", ext:"aar")
+    compile 'es.situm:situm-sdk:1.66c@aar'
 
     compile 'org.altbeacon:android-beacon-library:2.1.4'
     compile 'es.usc.citius.hipster:hipster-core:1.0.0-rc2'
