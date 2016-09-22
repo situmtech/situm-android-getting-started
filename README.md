@@ -280,6 +280,13 @@ Then, you can check the result of this action by overwriting the method:
 public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
 ```
 
+## <a name="proguard"></a>ProGuard
+
+If you use ProGuard, you need to add the following rule:
+
+```
+-keep class es.situm.sdk.v1.** { *;}
+```
 
 ## <a name="moreinfo"></a> More information
 
