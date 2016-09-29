@@ -47,9 +47,9 @@ public class SitumMainActivity extends AppCompatActivity {
         ipsManager = new SitumIPSManager(getApplicationContext());
 
         // get all buildings
-        situmDataManager.fetchBuildings(new SitumResponseHandler() {
+        situmDataManager.fetchBuildings(new SitumResponseHandler<SitumBuilding>() {
             @Override
-            public void onListReceived(List list) {
+            public void onListReceived(List<SitumBuilding> list) {
                 final List<SitumBuilding> buildings = new ArrayList<>(list);
                 for (SitumBuilding building : buildings) {
                     Log.i(TAG, "Received building " + building.getName());
@@ -60,9 +60,9 @@ public class SitumMainActivity extends AppCompatActivity {
                 startPositioning(selectedBuilding);
 
                 // get all levels for the firs building in the list
-                situmDataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() {
+                situmDataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler<SitumLevel>() {
                     @Override
-                    public void onListReceived(List list) {
+                    public void onListReceived(List<SitumLevel> list) {
                         List<SitumLevel> levels = new ArrayList<>(list);
                         Log.i(TAG, String.format("Received %s levels for %s", levels.size(), selectedBuilding.getName()));
 
@@ -114,8 +114,8 @@ public class SitumMainActivity extends AppCompatActivity {
     private void startPositioning(SitumBuilding building) {
         Log.i(TAG, "Initializing positioning in " + building.getName());
 
-        // you can change the sensors for positioning and enable all
-        ipsManager.start(building, false, true, true);
+        // you can change the sensors for positioning using the SitumPositioningOptions class
+        ipsManager.start(building);
 
         ipsManager.setPoseReceiver(new SitumPoseReceiver() {
             @Override
