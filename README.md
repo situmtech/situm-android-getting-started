@@ -130,9 +130,9 @@ This mechanism has not been implemented in the sample app. For more information,
 At this point, we should be able to retrieve the list of buildings associated with our user's account. To do so, include the following code snippet, that will also receive an error callback in case the retrieve operation fails.
 
 ```java
-dataManager.fetchBuildings(new SitumResponseHandler() {
+dataManager.fetchBuildings(new SitumResponseHandler<SitumBuilding>() {
     @Override
-    public void onListReceived(List list) {
+    public void onListReceived(List<SitumBuilding> list) {
         // received buildings
         final List<SitumBuilding> buildings = new ArrayList<>(list);
         for (SitumBuilding building : buildings) {
@@ -170,9 +170,9 @@ selectedBuilding = buildings.get(7);
 and call *SitumDataManager* to fetch its levels:
 
 ```java
-dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler() {
+dataManager.fetchLevelsForBuilding(selectedBuilding, new SitumResponseHandler<SitumLevel>() {
     @Override
-    public void onListReceived(List list) {
+    public void onListReceived(List<SitumLevel> list) {
         // received levels for  selectedBuilding
         List<SitumLevel> levels = new ArrayList<>(list);
         Log.i(TAG, String.format("Received %s levels for %s", levels.size(),
@@ -224,7 +224,7 @@ ipsManager.setSensorErrorListener(new SitumSensorErrorListener() {
 Initiate the positioning on a specific building:
 
 ```java
-ipsManager.start(selectedBuilding, true, true, true);
+ipsManager.start(selectedBuilding);
 ipsManager.setPoseReceiver(new SitumPoseReceiver() {
 	@Override
    	public void onPoseReceived(SitumLocation situmLocation) {
