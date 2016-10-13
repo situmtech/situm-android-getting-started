@@ -32,7 +32,7 @@ This is a sample Android applicacion built with Situm SDK. Situm SDK is a set of
 In this tutorial, we will guide you step by step to set up your first Android application using Situm SDK. Before starting to write code, we recommend you to set up an account in our Dashboard (https://dashboard.situm.es), retrieve your APIKEY and configure your first building.
 
 1. Go to the [sign in form](http://dashboard.situm.es/accounts/register) and enter your username and password to sign in.
-2. Go to the [apps section](http://dashboard.situm.es/accounts/users/apps) and click on "Are you a developer?" to generate your APIKEY and download the full SDKs and its documentation, including its javadoc.
+2. Go to the [apps section](http://dashboard.situm.es/accounts/users/apps) and click on "Are you a developer?" to generate your APIKEY.
 3. Go to the [buildings section](http://dashboard.situm.es/buildings) and create your first building.
 4. Download [SitumMaps](https://play.google.com/store/apps/details?id=es.situm.maps). With this application, you will be able to configure and test Situm's indoor positioning system in your buildings.
 
@@ -123,7 +123,7 @@ SitumLogin.login("user_email","password", new SitumLoginResponseHandler() {
 ```
 
 
-This mechanism has not been implemented in the sample app. For more information, please refer to the javadocs in the [apps section](http://dashboard.situm.es/accounts/users/apps).
+This mechanism has not been implemented in the sample app. For more information, please refer to the javadoc.
 
 ###<a name="download_buildings"></a> Step 3: Download your buildings
 
@@ -289,8 +289,5 @@ If you use ProGuard, you need to add the following rule:
 ```
 
 ## <a name="moreinfo"></a> More information
-
-Go to the developers section of the dashboard and download the full documentation of the SDK, including the javadoc with all the available functionalities.
-
 
 For any other question, contact us in https://situm.es/contact.
