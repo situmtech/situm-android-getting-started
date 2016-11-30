@@ -57,8 +57,8 @@ compile 'es.situm:situm-sdk:1.66e@aar'
 * Add Situm SDK dependencies into the same section of the *build.gradle* file.
 
 ```groovy
-compile 'org.altbeacon:android-beacon-library:2.1.4'
-compile 'es.usc.citius.hipster:hipster-core:1.0.0-rc2'
+compile 'org.altbeacon:android-beacon-library:2.9.1'
+compile 'es.usc.citius.hipster:hipster-core:1.0.1'
 compile 'com.loopj.android:android-async-http:1.4.9'
 ```
 
