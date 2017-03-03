@@ -51,7 +51,7 @@ maven { url "https://repo.situm.es/artifactory/libs-release-local" }
 * Then import the Situm SDK library into the section *dependencies* of the app *build.gradle*:
 
 ```groovy
-compile 'es.situm:situm-sdk:1.66e@aar'
+compile 'es.situm:situm-sdk:1.66g@aar'
 ```
 
 * Add Situm SDK dependencies into the same section of the *build.gradle* file.
