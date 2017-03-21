@@ -112,7 +112,7 @@ SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 ### <a name="communicationmanager"></a> Step 4: Get buildings information
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
-In this sample project, all this code has been included in the file [MainActivity.java] (https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/SitumMainActivity.java)
+In this sample project, all this code has been included in the file [MainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/MainActivity.java)
 
 First of all, you can get and instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
 With this object you can fetch your building's data (list of buildings, floorplans, points of interest, etc.):
