@@ -194,5 +194,5 @@ SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListe
 
 ## <a name="moreinfo"></a> More information
 
-More info is available at https://des.situm.es/developers/pages/android/.
+More info is available at our [Developers Page](https://des.situm.es/developers/pages/android/).
 For any other question, contact us in https://situm.es/contact.
