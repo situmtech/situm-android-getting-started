@@ -20,8 +20,8 @@ import java.util.Collection;
 
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
-import es.situm.sdk.location.LocationErrorConstant;
 import es.situm.sdk.location.LocationListener;
+import es.situm.sdk.location.LocationManager;
 import es.situm.sdk.location.LocationRequest;
 import es.situm.sdk.location.LocationStatus;
 import es.situm.sdk.model.cartography.Building;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onStatusChanged(@LocationStatus int status) {
+        public void onStatusChanged(@NonNull LocationStatus status) {
             Log.i(TAG, "onStatusChanged() called with: status = [" + status + "]");
             tvLocationStatus.setText(String.valueOf(status));
         }
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
             toggleButtonStart.setChecked(false);
 
             switch (error.getCode()) {
-                case LocationErrorConstant.Code.MISSING_LOCATION_PERMISSION:
+                case LocationManager.Code.MISSING_LOCATION_PERMISSION:
                     requestLocationPermission();
                     break;
-                case LocationErrorConstant.Code.LOCATION_DISABLED:
+                case LocationManager.Code.LOCATION_DISABLED:
                     showLocationSettings();
                     break;
             }
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (buildings.isEmpty()) {
-                    Log.d(TAG, "onSuccess: you have no buildings. Create one in the Dashboard");
+                    Log.e(TAG, "onSuccess: you have no buildings. Create one in the Dashboard");
                     return;
                 }
 
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     private void startPositioning() {
         if (selectedBuilding == null) {
             toggleButtonStart.setChecked(false);
-            Log.d(TAG, "onSuccess: building with id=" + BUILDING_ID + " not found");
+            Log.e(TAG, "onSuccess: building with id=" + BUILDING_ID + " not found");
             return;
         }
 

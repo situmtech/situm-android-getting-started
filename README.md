@@ -65,7 +65,7 @@ maven { url "https://repo.situm.es/artifactory/libs-release-local" }
 It's important to add the `transitive = true` property to download the Situm SDK dependencies.
 
 ```groovy
-    compile ('es.situm:situm-sdk:2.0.0-alpha@aar') {
+    compile ('es.situm:situm-sdk:2.0.0@aar') {
         transitive = true
     }
 ```
@@ -160,7 +160,7 @@ private LocationListener locationListener = new LocationListener() {
         }
 
         @Override
-        public void onStatusChanged(@LocationStatus int status) {
+        public void onStatusChanged(@NonNull LocationStatus status) {
             Log.i(TAG, "onStatusChanged() called with: status = [" + status + "]");
         }
 
