@@ -24,7 +24,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.1.0'
 
-    compile ('es.situm:situm-sdk:2.3.0@aar') {
+    compile ('es.situm:situm-sdk:2.4.0@aar') {
         transitive = true
     }
 
