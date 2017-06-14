@@ -110,6 +110,9 @@ or you can set the user and password with:
 SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 ```
 ### Step 4: Setup Google maps <a name="mapsapikey"><a/>
+This step is only necessary if you want to run the sample that draws the buildings floor over the 
+Google map, otherwise you can skip it and continue with the [Samples](#samples).
+
 First of all, you need to add Google services dependency to the project, if you need more info: 
 [Setup Google Play Services](https://developers.google.com/android/guides/setup). To do this paste the dependency in 
 your module build.gradle as usual:
@@ -134,7 +137,7 @@ obtained key from Google.
 resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 ```
 
-## Samples
+## Samples <a name="samples"></a>
 ### <a name="communicationmanager"></a> Get buildings information
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
