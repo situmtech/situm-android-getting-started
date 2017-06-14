@@ -138,7 +138,8 @@ resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 ### <a name="communicationmanager"></a> Get buildings information
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
-In this sample project, all this code has been included in the file [MainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/MainActivity.java)
+In this sample project, all this code has been included in the file 
+[PositioningActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/develop/app/src/main/java/es/situm/gettingstarted/positioning/PositioningActivity.java)
 
 First of all, you can get and instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
 With this object you can fetch your building's data (list of buildings, floorplans, points of interest, etc.):
@@ -164,9 +165,10 @@ In the next example we fetch all the buildings associated with our user's accoun
 
 ### <a name="positioning"></a> Start the positioning
 
-The last step is to initiate the indoor positioning on a certain building. 
-This will allow the app to retrieve the location of the smartphone within this building.
+To start the positioning we need a building so, first you will need to obtain a building,
+You can check the code to obtain a building in [Get buildings information](#communicationmanager).
 
+This will allow the app to retrieve the location of the smartphone within this building.
 To do this you need to create a location request indicating the building where you want to start
  the positioning:
 
