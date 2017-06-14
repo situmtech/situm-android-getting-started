@@ -2,26 +2,27 @@ Situm Android SDK Sample app
 =======================
 
 This is a sample Android application built with the Situm SDK. With the sample app you will be able 
-to list all the buildings of your account and start the positioning for the selected building showing 
+ablle to: 
+  1. list all the buildings of your account and start the positioning for the selected building showing 
  the first floor image of the building and the locations received.
+  2. Draw the building floor over the Google map view.
 
-## Table of contents
+# Table of contents
+#### [Introduction](#introduction)
+#### [Setup](#configureproject)
+1. [Step 1: Configure our SDK in your Android project](#configureproject)
+2. [Step 2: Initialize the SDK](#init)
+3. [Step 3: Set your credentials](#config)
+4. [Step 4: Set Google maps api key](#mapsapikey)
 
-[Introduction](#introduction)
+#### [Samples](#samples)
+1. [Get buildings information](#communicationmanager)
+2. [Start the positioning](#positioning)
+3. [Draw building floor over Google maps](#drawbuilding)
 
-[Step 1: Configure our SDK in your Android project](#configureproject)
+#### [More information](#moreinfo)
 
-[Step 2: Initialize the SDK](#init)
-
-[Step 3: Set your credentials](#config)
-
-[Step 4: Get buildings information](#communicationmanager)
-
-[Step 5: Start the positioning](#positioning)
-
-[More information](#moreinfo)
-
-### Introduction
+### Introduction <a name="introduction"></a>
 
 Situm SDK is a set of utilities that allow any developer to build location based apps using Situm's indoor positioning system. 
 Among many other capabilities, apps developed with Situm SDK will be able to:
@@ -108,8 +109,10 @@ or you can set the user and password with:
 ```java
 SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 ```
+### Step 4: Set Google maps api key <a name="mapsapikey"><a/>
 
-### <a name="communicationmanager"></a> Step 4: Get buildings information
+## Samples
+### <a name="communicationmanager"></a> Get buildings information
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
 In this sample project, all this code has been included in the file [MainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/MainActivity.java)
@@ -136,7 +139,7 @@ In the next example we fetch all the buildings associated with our user's accoun
         });
 ```
 
-### <a name="positioning"></a>Step 5: Start the positioning
+### <a name="positioning"></a> Start the positioning
 
 The last step is to initiate the indoor positioning on a certain building. 
 This will allow the app to retrieve the location of the smartphone within this building.
@@ -191,6 +194,8 @@ Finally, you start the positioning with:
 ```java
 SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
+## Draw building floor over Google maps <a name="drawbuilding"><a/>
+TODO:
 
 ## <a name="moreinfo"></a> More information
 
