@@ -18,7 +18,7 @@ ablle to:
 #### [Samples](#samples)
 1. [Get buildings information](#communicationmanager)
 2. [Start the positioning](#positioning)
-3. [Draw building floor over Google maps](#drawbuilding)
+3. [Draw the buildings floor over the Google maps](#drawbuilding)
 
 #### [More information](#moreinfo)
 
@@ -219,8 +219,49 @@ Finally, you start the positioning with:
 ```java
 SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
-## Draw building floor over Google maps <a name="drawbuilding"><a/>
-TODO:
+## Draw the buildings floor over the Google maps <a name="drawbuilding"><a/>
+Drawing the floor of a building will allow us to see the floor plan.
+
+Before this you will need to complete the [Setup Google maps](mapsapikey). Once this is done we must
+need to obtain the floors of the target building, there is a sample in 
+[Obtaining building floors](https://github.com/situmtech/situm-android-getting-started/blob/develop/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java).
+When we have fetch the floors we need to choose a floor and get the bitmap of this floor through the
+Situm CommunicationMananger. Sample:
+```
+SitumSdk
+    .communicationManager()
+    .fetchMapFromFloor(floor, new Handler<Bitmap>() {
+                                    @Override
+                                    public void onSuccess(Bitmap bitmap) {
+                                        drawBuilding(building, bitmap);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Error error) {
+                                        //handle error
+                                    }
+                                });
+```
+
+Once we have the Bitmap of the building we need to draw it in Google map. Sample:
+```
+void drawBuilding(Building building, Bitmap bitmap){
+        Bounds drawBounds = building.getBounds();
+        Coordinate coordinateNE = drawBounds.getNorthEast();
+        Coordinate coordinateSW = drawBounds.getSouthWest();
+        LatLngBounds latLngBounds = new LatLngBounds(
+                new LatLng(coordinateSW.getLatitude(), coordinateSW.getLongitude()),
+                new LatLng(coordinateNE.getLatitude(), coordinateNE.getLongitude()));
+
+        map.addGroundOverlay(new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                .bearing((float) building.getRotation().degrees())
+                .positionFromBounds(latLngBounds));
+
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+    }
+```
+You can check the complete sample in [drawbuilding package](https://github.com/situmtech/situm-android-getting-started/tree/develop/app/src/main/java/es/situm/gettingstarted/drawbuilding)
 
 ## <a name="moreinfo"></a> More information
 

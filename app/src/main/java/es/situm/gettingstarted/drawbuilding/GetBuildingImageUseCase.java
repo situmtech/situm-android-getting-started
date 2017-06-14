@@ -15,7 +15,7 @@ import es.situm.sdk.utils.Handler;
  * Created by alberto.penas on 13/06/17.
  */
 
-class GetBuildingImageUseCase {
+class  GetBuildingImageUseCase {
 
 
     interface Callback{
