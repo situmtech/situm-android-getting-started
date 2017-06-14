@@ -13,7 +13,7 @@ ablle to:
 1. [Step 1: Configure our SDK in your Android project](#configureproject)
 2. [Step 2: Initialize the SDK](#init)
 3. [Step 3: Set your credentials](#config)
-4. [Step 4: Set Google maps api key](#mapsapikey)
+4. [Step 4: Setup Google maps](#mapsapikey)
 
 #### [Samples](#samples)
 1. [Get buildings information](#communicationmanager)
@@ -109,7 +109,30 @@ or you can set the user and password with:
 ```java
 SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 ```
-### Step 4: Set Google maps api key <a name="mapsapikey"><a/>
+### Step 4: Setup Google maps <a name="mapsapikey"><a/>
+First of all, we need to add Google services dependency to the project, if you need more info: 
+[Setup Google Play Services](https://developers.google.com/android/guides/setup). To do this paste the dependency in 
+your module build.gradle as usual:
+```
+compile 'com.google.android.gms:play-services-maps:10.0.1'
+```
+Add in the app manifest the version of the Google Play Services that we have imported. To do this paste
+the next snippet inside application tag:
+```
+<meta-data
+    android:name="com.google.android.gms.version"
+    android:value="@integer/google_play_services_version" />
+```
+
+An api key is needed to add Google maps services and use it in an application, if you need more info 
+you can visit the official documentation in [Google maps info](https://developers.google.com/maps/documentation/android-api/intro). 
+To obtain a Google api key please refer to 
+[Google maps obtain api key](https://developers.google.com/maps/documentation/android-api/signup), 
+then go back to your app module file build.gradle and replace 'gmaps_api_key' var with the value of the 
+obtained key from Google.
+```
+resValue 'string', 'google_maps_key', "YOUR_API_KEY"
+```
 
 ## Samples
 ### <a name="communicationmanager"></a> Get buildings information
