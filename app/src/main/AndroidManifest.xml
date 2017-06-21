@@ -9,7 +9,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".SamplesActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,13 +18,31 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".positioning.PositioningActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".drawbuilding.DrawBuildingActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <!-- Google play services version-->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <!-- Situm SDK credentials -->
         <meta-data
             android:name="es.situm.sdk.API_USER"
-            android:value="API_USER_EMAIL" />
+            android:value="@string/api_user" />
         <meta-data
             android:name="es.situm.sdk.API_KEY"
-            android:value="API_KEY" />
+            android:value="@string/api_key" />
+
+        <!-- GMaps api key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
     </application>
 

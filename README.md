@@ -2,26 +2,27 @@ Situm Android SDK Sample app
 =======================
 
 This is a sample Android application built with the Situm SDK. With the sample app you will be able 
-to list all the buildings of your account and start the positioning for the selected building showing 
+ablle to: 
+  1. List all the buildings of your account and start the positioning for the selected building showing 
  the first floor image of the building and the locations received.
+  2. Draw the buildings floor over the Google map view.
 
-## Table of contents
+# Table of contents
+#### [Introduction](#introduction)
+#### [Setup](#configureproject)
+1. [Step 1: Configure our SDK in your Android project](#configureproject)
+2. [Step 2: Initialize the SDK](#init)
+3. [Step 3: Set your credentials](#config)
+4. [Step 4: Setup Google maps](#mapsapikey)
 
-[Introduction](#introduction)
+#### [Samples](#samples)
+1. [Get buildings information](#communicationmanager)
+2. [Start the positioning](#positioning)
+3. [Draw the buildings floor over the Google maps](#drawbuilding)
 
-[Step 1: Configure our SDK in your Android project](#configureproject)
+#### [More information](#moreinfo)
 
-[Step 2: Initialize the SDK](#init)
-
-[Step 3: Set your credentials](#config)
-
-[Step 4: Get buildings information](#communicationmanager)
-
-[Step 5: Start the positioning](#positioning)
-
-[More information](#moreinfo)
-
-### Introduction
+### Introduction <a name="introduction"></a>
 
 Situm SDK is a set of utilities that allow any developer to build location based apps using Situm's indoor positioning system. 
 Among many other capabilities, apps developed with Situm SDK will be able to:
@@ -108,11 +109,40 @@ or you can set the user and password with:
 ```java
 SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 ```
+### Step 4: Setup Google maps <a name="mapsapikey"><a/>
+This step is only necessary if you want to run the sample that draws the buildings floor over the 
+Google map, otherwise you can skip it and continue with the [Samples](#samples).
 
-### <a name="communicationmanager"></a> Step 4: Get buildings information
+First of all, you need to add Google services dependency to the project, if you need more info: 
+[Setup Google Play Services](https://developers.google.com/android/guides/setup). To do this paste the dependency in 
+your module build.gradle as usual:
+```
+compile 'com.google.android.gms:play-services-maps:10.0.1'
+```
+Add in the app manifest the version of the Google Play Services that we have imported. To do this paste
+the next snippet inside application tag:
+```
+<meta-data
+    android:name="com.google.android.gms.version"
+    android:value="@integer/google_play_services_version" />
+```
+
+An api key is needed to add Google maps services and use it in an application, if you need more info 
+you can visit the official documentation in [Google maps info](https://developers.google.com/maps/documentation/android-api/intro). 
+To obtain a Google api key please refer to 
+[Google maps obtain api key](https://developers.google.com/maps/documentation/android-api/signup), 
+then go back to your app module file build.gradle and replace 'gmaps_api_key' with the value of the 
+obtained key from Google.
+```
+resValue 'string', 'google_maps_key', "YOUR_API_KEY"
+```
+
+## Samples <a name="samples"></a>
+### <a name="communicationmanager"></a> Get buildings information
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
-In this sample project, all this code has been included in the file [MainActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/MainActivity.java)
+In this sample project, all this code has been included in the file 
+[PositioningActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/develop/app/src/main/java/es/situm/gettingstarted/positioning/PositioningActivity.java)
 
 First of all, you can get and instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
 With this object you can fetch your building's data (list of buildings, floorplans, points of interest, etc.):
@@ -136,11 +166,12 @@ In the next example we fetch all the buildings associated with our user's accoun
         });
 ```
 
-### <a name="positioning"></a>Step 5: Start the positioning
+### <a name="positioning"></a> Start the positioning
 
-The last step is to initiate the indoor positioning on a certain building. 
-This will allow the app to retrieve the location of the smartphone within this building.
+To start the positioning we need a building so, first you will need to obtain a building,
+You can check the code to obtain a building in [Get buildings information](#communicationmanager).
 
+Start positioning will allow the app to retrieve the location of the smartphone within this building.
 To do this you need to create a location request indicating the building where you want to start
  the positioning:
 
@@ -191,6 +222,49 @@ Finally, you start the positioning with:
 ```java
 SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
+## Draw the buildings floor over the Google maps <a name="drawbuilding"><a/>
+Drawing the floor of a building will allow us to see the floor plan.
+
+Before this you will need to complete the [Setup Google maps](mapsapikey). Once this is done we must
+need to obtain the floors of the target building, there is a sample in 
+[Obtaining building floors](https://github.com/situmtech/situm-android-getting-started/blob/develop/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java).
+When we have fetch the floors we need to choose a floor and get the bitmap of this floor through the
+Situm CommunicationMananger.
+```
+SitumSdk
+    .communicationManager()
+    .fetchMapFromFloor(floor, new Handler<Bitmap>() {
+                                    @Override
+                                    public void onSuccess(Bitmap bitmap) {
+                                        drawBuilding(building, bitmap);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Error error) {
+                                        //handle error
+                                    }
+                                });
+```
+
+Once we have the Bitmap of the building floor we will draw it in Google map.
+```
+void drawBuilding(Building building, Bitmap bitmap){
+        Bounds drawBounds = building.getBounds();
+        Coordinate coordinateNE = drawBounds.getNorthEast();
+        Coordinate coordinateSW = drawBounds.getSouthWest();
+        LatLngBounds latLngBounds = new LatLngBounds(
+                new LatLng(coordinateSW.getLatitude(), coordinateSW.getLongitude()),
+                new LatLng(coordinateNE.getLatitude(), coordinateNE.getLongitude()));
+
+        map.addGroundOverlay(new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                .bearing((float) building.getRotation().degrees())
+                .positionFromBounds(latLngBounds));
+
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+    }
+```
+You can check the complete sample in [drawbuilding package](https://github.com/situmtech/situm-android-getting-started/tree/develop/app/src/main/java/es/situm/gettingstarted/drawbuilding)
 
 ## <a name="moreinfo"></a> More information
 

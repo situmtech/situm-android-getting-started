@@ -1,4 +1,4 @@
-package es.situm.gettingstarted;
+package es.situm.gettingstarted.positioning;
 
 import android.Manifest;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import es.situm.gettingstarted.R;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.location.LocationListener;
@@ -30,8 +31,8 @@ import es.situm.sdk.model.location.CartesianCoordinate;
 import es.situm.sdk.model.location.Location;
 import es.situm.sdk.utils.Handler;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class PositioningActivity extends AppCompatActivity {
+    private static final String TAG = PositioningActivity.class.getSimpleName();
 
     // The building identifier where positioning will start.
     // You can see your buildings IDs and names running this example in the Logcat
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_positioning);
 
         toggleButtonStart = (ToggleButton) findViewById(R.id.toggleButtonStart);
         tvLocation = (TextView) findViewById(R.id.location);
@@ -204,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
      * Open the dialog to request location permission (for API >= 23)
      */
     private void requestLocationPermission() {
-        ActivityCompat.requestPermissions(MainActivity.this,
+        ActivityCompat.requestPermissions(PositioningActivity.this,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                 0);
     }
