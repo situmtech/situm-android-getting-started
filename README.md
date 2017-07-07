@@ -143,7 +143,7 @@ resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
 In this sample project, all this code has been included in the file 
-[PositioningActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/develop/app/src/main/java/es/situm/gettingstarted/positioning/PositioningActivity.java)
+[PositioningActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/positioning/PositioningActivity.java)
 
 First of all, you can get and instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
 With this object you can fetch your building's data (list of buildings, floorplans, points of interest, etc.):
@@ -228,7 +228,7 @@ Drawing the floor of a building will allow us to see the floor plan.
 
 Before this you will need to complete the [Setup Google maps](mapsapikey). Once this is done we must
 need to obtain the floors of the target building, there is a sample in 
-[Obtaining building floors](https://github.com/situmtech/situm-android-getting-started/blob/develop/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java).
+[Obtaining building floors](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java).
 When we have fetch the floors we need to choose a floor and get the bitmap of this floor through the
 Situm CommunicationMananger.
 ```
@@ -265,10 +265,10 @@ void drawBuilding(Building building, Bitmap bitmap){
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 ```
-You can check the complete sample in [drawbuilding package](https://github.com/situmtech/situm-android-getting-started/tree/develop/app/src/main/java/es/situm/gettingstarted/drawbuilding)
+You can check the complete sample in [drawbuilding package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawbuilding)
 
 
-## Indoor-Outdoor positioning <a name="indoor-outdoor-positioning []() "><a/>
+## Indoor-Outdoor positioning <a name="indoor-outdoor-positioning"><a/>
 To enable the positioning mode to operate both indoor and outdoor its mandatory to use the LocationManager
 without indicating a specific building.
 
@@ -306,7 +306,7 @@ And dont forget to stop the service in the onDestroy or any method you consider.
 SitumSdk.locationManager().removeUpdates(locationListener);
 ```
 
-You can check the complete sample in [indooroutdoor package](https://github.com/situmtech/situm-android-getting-started/tree/develop/app/src/main/java/es/situm/gettingstarted/indooroutdoor)
+You can check the complete sample in [indooroutdoor package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/indooroutdoor)
 
 
 ## <a name="moreinfo"></a> More information
