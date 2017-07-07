@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.situm.gettingstarted.drawbuilding.DrawBuildingActivity;
+import es.situm.gettingstarted.drawposition.DrawPositionActivity;
 import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
 
@@ -40,8 +41,9 @@ public class SamplesActivity
     private void setup() {
         List<Sample> items = new ArrayList<>();
         items.add(new Sample("Indoor positioning", PositioningActivity.class));
-        items.add(new Sample("Draw building over the map", DrawBuildingActivity.class));
         items.add(new Sample("Indoor-Outdoor positioning", IndoorOutdoorActivity.class));
+        items.add(new Sample("Draw building over the map", DrawBuildingActivity.class));
+        items.add(new Sample("Draw position over the map", DrawPositionActivity.class));
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));
         recyclerView.setAdapter(new SamplesAdapter(items, this));

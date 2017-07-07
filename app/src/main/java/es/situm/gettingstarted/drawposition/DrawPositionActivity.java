@@ -1,7 +1,8 @@
-package es.situm.gettingstarted.indooroutdoor;
+package es.situm.gettingstarted.drawposition;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,10 +12,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-import android.widget.ToggleButton;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 import es.situm.gettingstarted.R;
 import es.situm.sdk.SitumSdk;
@@ -29,32 +36,28 @@ import es.situm.sdk.model.location.Location;
  * Created by alberto.penas on 7/07/17.
  */
 
-public class IndoorOutdoorActivity
-        extends AppCompatActivity {
+public class DrawPositionActivity
+        extends AppCompatActivity
+        implements OnMapReadyCallback {
+
 
     private final String TAG = getClass().getSimpleName();
     private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
-    private TextView statusTV;
-    private TextView resultTV;
-    private ToggleButton toggleButton;
+    private GoogleMap googleMap;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private Circle circle;
+    private ProgressBar progressBar;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_indoor_outdoor);
+        setContentView(R.layout.activity_draw_positioning);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
         setup();
-    }
-
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume: ");
-        super.onResume();
-        checkPermissions();
     }
 
 
@@ -66,66 +69,63 @@ public class IndoorOutdoorActivity
     }
 
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        checkPermissions();
+    }
+
+
     private void setup() {
         locationManager = SitumSdk.locationManager();
-        resultTV = (TextView) findViewById(R.id.textView);
-        statusTV = (TextView) findViewById(R.id.status_tv);
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    startLocation();
-                }else{
-                    stopLocation();
-                }
-            }
-        });
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
 
     private void checkPermissions() {
-        toggleButton.setEnabled(false);
-        if (ContextCompat.checkSelfPermission(IndoorOutdoorActivity.this,
+        if (ContextCompat.checkSelfPermission(DrawPositionActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(IndoorOutdoorActivity.this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(DrawPositionActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Needed location permission to enable service",
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Open", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        requestPermission();
-                    }
-                }).show();
+                showPermissionsNeeded();
             } else {
-
                 // No explanation needed, we can request the permission.
-
                 requestPermission();
-
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
         }else{
-            toggleButton.setEnabled(true);
+            startLocation();
         }
     }
 
 
     private void requestPermission(){
-        ActivityCompat.requestPermissions(IndoorOutdoorActivity.this,
+        ActivityCompat.requestPermissions(DrawPositionActivity.this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 ACCESS_FINE_LOCATION_REQUEST_CODE);
+    }
+
+
+    private void showPermissionsNeeded(){
+        Snackbar.make(findViewById(android.R.id.content),
+                "Needed location permission to enable service",
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction("Open", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        requestPermission();
+                    }
+                }).show();
     }
 
 
@@ -138,18 +138,15 @@ public class IndoorOutdoorActivity
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    toggleButton.setEnabled(true);
+                    startLocation();
                 } else {
-                    statusTV.setText("Info: permissions must be accepted to use location manager");
+                    showPermissionsNeeded();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -164,17 +161,29 @@ public class IndoorOutdoorActivity
 
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                resultTV.setText(location.toString());
+                progressBar.setVisibility(View.GONE);
+                LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                        location.getCoordinate().getLongitude());
+                if (circle == null) {
+                    circle = googleMap.addCircle(new CircleOptions()
+                            .center(latLng)
+                            .radius(1d)
+                            .strokeWidth(0f)
+                            .fillColor(Color.BLUE));
+                }else{
+                    circle.setCenter(latLng);
+                }
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
             }
 
             @Override
             public void onStatusChanged(@NonNull LocationStatus locationStatus) {
-                statusTV.setText("Status: " + locationStatus.name());
+
             }
 
             @Override
             public void onError(@NonNull Error error) {
-                Toast.makeText(IndoorOutdoorActivity.this, error.getMessage() , Toast.LENGTH_LONG).show();
+                Toast.makeText(DrawPositionActivity.this, error.getMessage() , Toast.LENGTH_LONG).show();
             }
         };
         LocationRequest locationRequest = new LocationRequest.Builder()
@@ -191,8 +200,5 @@ public class IndoorOutdoorActivity
             return;
         }
         locationManager.removeUpdates(locationListener);
-        statusTV.setText("Status:");
-        resultTV.setText("");
-
     }
 }
