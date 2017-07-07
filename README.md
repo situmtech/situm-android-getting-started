@@ -363,7 +363,7 @@ LocationListener locationListener = new LocationListener(){
     public void onLocationChanged(@NonNull Location location) {
         LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
                 location.getCoordinate().getLongitude());
-        circle = googleMap.addCircle(new CircleOptions()
+        googleMap.addCircle(new CircleOptions()
                 .center(latLng)
                 .radius(1d)
                 .strokeWidth(0f)
