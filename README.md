@@ -14,12 +14,15 @@ ablle to:
 2. [Step 2: Initialize the SDK](#init)
 3. [Step 3: Set your credentials](#config)
 4. [Step 4: Setup Google maps](#mapsapikey)
+5. [Optional step 5: location and runtime permissions](#locationpermissions)
 
 #### [Samples](#samples)
+
 1. [Get buildings information](#communicationmanager)
 2. [Start the positioning](#positioning)
-3. [Draw the buildings floor over the Google maps](#drawbuilding)
-4. [Indoor-Outdoor positioning](#indoor-outdoor-positioning)
+3. [Indoor-Outdoor positioning](#indoor-outdoor-positioning)
+4. [Draw the buildings floor over the Google maps](#drawbuilding)
+5. [Draw current position over Google maps](#drawposition)
 
 #### [More information](#moreinfo)
 
@@ -110,6 +113,10 @@ or you can set the user and password with:
 ```java
 SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 ```
+
+
+
+
 ### Step 4: Setup Google maps <a name="mapsapikey"><a/>
 This step is only necessary if you want to run the sample that draws the buildings floor over the 
 Google map, otherwise you can skip it and continue with the [Samples](#samples).
@@ -137,6 +144,20 @@ obtained key from Google.
 ```
 resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 ```
+
+
+
+
+### Optional step 5: location and runtime permissions <a name="locationpermissions"><a/>
+When we work on features that envolves location we need to add fine location permission to the manifest:
+```xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+```
+And ensure to check the Android Runtime permissions. [More info](https://developer.android.com/training/permissions/requesting.html) 
+
+
+
+
 
 ## Samples <a name="samples"></a>
 ### <a name="communicationmanager"></a> Get buildings information
@@ -223,6 +244,57 @@ Finally, you start the positioning with:
 ```java
 SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
+
+
+
+
+## Indoor-Outdoor positioning <a name="indoor-outdoor-positioning"><a/>
+To enable the positioning mode to operate both indoor and outdoor its mandatory to use the LocationManager
+without indicating a specific building.
+
+*Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
+
+
+1. First of all, build a LocationRequest without indicating the building id. This can be configured
+with much more options, but is outside of the scope of this example. Check the 
+[Javadoc](http://developers.situm.es/pages/android/api_documentation.html) for more information.
+2. To receive location updates build a LocationListener.
+3. After the creation of the needed objects, request location updates to the LocationManager.
+
+```java
+LocationRequest locationRequest = new LocationRequest.Builder().build();
+LocationListener locationListener = new LocationListener(){
+
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                //location result
+            }
+
+            @Override
+            public void onStatusChanged(@NonNull LocationStatus locationStatus) {
+                //location manager status, check the codes
+            }
+
+            @Override
+            public void onError(@NonNull Error error) {
+                //an error using location manager, check the code and message to debug operations
+            }
+        };
+SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
+```
+
+
+And dont forget to stop the service in the onDestroy or any method you consider.
+```java
+SitumSdk.locationManager().removeUpdates(locationListener);
+```
+
+You can check the complete sample in [indooroutdoor package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/indooroutdoor)
+
+
+
+
+
 ## Draw the buildings floor over the Google maps <a name="drawbuilding"><a/>
 Drawing the floor of a building will allow us to see the floor plan.
 
@@ -268,45 +340,62 @@ void drawBuilding(Building building, Bitmap bitmap){
 You can check the complete sample in [drawbuilding package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawbuilding)
 
 
-## Indoor-Outdoor positioning <a name="indoor-outdoor-positioning"><a/>
-To enable the positioning mode to operate both indoor and outdoor its mandatory to use the LocationManager
-without indicating a specific building.
 
-1. First of all build a LocationRequest without indicating the building id. This can be configured
-with much more options, but is outside of the scope of this example. Check the 
-[Javadoc](http://developers.situm.es/pages/android/api_documentation.html) for more information.
+
+
+## Draw current position over Google maps<a name="drawposition"><a/>
+This functionality allow us to see the device current position over a Google map.
+
+*Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
+
+
+1. First, we need to build a LocationRequest.
 2. To receive location updates build a LocationListener.
 3. After the creation of the needed objects, request location updates to the LocationManager.
+4. In the listener callback method onLocationChanged, draw the circle that represents the device
+position.
 
 ```java
-LocationRequest locationRequest = new LocationRequest.Builder().build();
+
 LocationListener locationListener = new LocationListener(){
 
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                //location result
-            }
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                location.getCoordinate().getLongitude());
+        circle = googleMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(1d)
+                .strokeWidth(0f)
+                .fillColor(Color.BLUE));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
+    }
 
-            @Override
-            public void onStatusChanged(@NonNull LocationStatus locationStatus) {
-                //location manager status, check the codes
-            }
+    @Override
+    public void onStatusChanged(@NonNull LocationStatus locationStatus) {
 
-            @Override
-            public void onError(@NonNull Error error) {
-                //an error using location manager, check the code and message to debug operations
-            }
-        };
-SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
+    }
+
+    @Override
+    public void onError(@NonNull Error error) {
+        Toast.makeText(DrawPositionActivity.this, error.getMessage() , Toast.LENGTH_LONG).show();
+    }
+};
+LocationRequest locationRequest = new LocationRequest.Builder()
+        .build();
+SitumSdk().locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
-
 
 And dont forget to stop the service in the onDestroy or any method you consider.
 ```java
 SitumSdk.locationManager().removeUpdates(locationListener);
 ```
 
-You can check the complete sample in [indooroutdoor package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/indooroutdoor)
+You can check the complete sample in [drawposition package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawposition)
+
+
+
+
 
 
 ## <a name="moreinfo"></a> More information
