@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="es.situm.gettingstarted">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
         android:name=".GettingStartedApplication"
         android:allowBackup="true"
@@ -10,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SamplesActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,11 +23,20 @@
         </activity>
 
         <activity android:name=".positioning.PositioningActivity"
-            android:screenOrientation="portrait">
+            android:label="Indoor positioning"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
         </activity>
 
         <activity android:name=".drawbuilding.DrawBuildingActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
+        </activity>
+
+        <activity android:name=".indooroutdoor.IndoorOutdoorActivity"
+            android:label="Indoor-outdoor positioning"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
         </activity>
 
         <!-- Google play services version-->
