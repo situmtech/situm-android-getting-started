@@ -2,7 +2,9 @@ package es.situm.gettingstarted.drawbuilding;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,18 +23,20 @@ import es.situm.sdk.model.location.Bounds;
 import es.situm.sdk.model.location.Coordinate;
 
 public class DrawBuildingActivity
-        extends FragmentActivity
+        extends AppCompatActivity
         implements OnMapReadyCallback {
 
 
     private GoogleMap map;
+    private ProgressBar progressBar;
     private GetBuildingImageUseCase getBuildingImageUseCase = new GetBuildingImageUseCase();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drawbuilding);
+        setContentView(R.layout.activity_draw_building);
+        setup();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -52,6 +56,7 @@ public class DrawBuildingActivity
         getBuildingImageUseCase.get(new GetBuildingImageUseCase.Callback() {
             @Override
             public void onSuccess(Building building, Bitmap bitmap) {
+                progressBar.setVisibility(View.GONE);
                 drawBuilding(building, bitmap);
             }
 
@@ -60,6 +65,11 @@ public class DrawBuildingActivity
                 Toast.makeText(DrawBuildingActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+
+    private void setup() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
 

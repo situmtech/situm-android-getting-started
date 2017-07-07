@@ -29,12 +29,19 @@
         </activity>
 
         <activity android:name=".drawbuilding.DrawBuildingActivity"
+            android:label="Draw building"
             android:screenOrientation="portrait"
             android:parentActivityName=".SamplesActivity">
         </activity>
 
         <activity android:name=".indooroutdoor.IndoorOutdoorActivity"
             android:label="Indoor-outdoor positioning"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
+        </activity>
+
+        <activity android:name=".drawposition.DrawPositionActivity"
+            android:label="Draw position"
             android:screenOrientation="portrait"
             android:parentActivityName=".SamplesActivity">
         </activity>
