@@ -23,6 +23,7 @@ ablle to:
 3. [Indoor-Outdoor positioning](#indoor-outdoor-positioning)
 4. [Draw the buildings floor over the Google maps](#drawbuilding)
 5. [Draw current position over Google maps](#drawposition)
+6. [Draw pois over Google maps](#drawpois)
 
 #### [More information](#moreinfo)
 
@@ -394,6 +395,86 @@ SitumSdk.locationManager().removeUpdates(locationListener);
 You can check the complete sample in [drawposition package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawposition)
 
 
+
+
+## Draw pois over Google maps <a name="drawpois"><a/>
+This funcionality allows to draw a list of points of interest that belongs to a building over a 
+google map.
+
+First of all we need the target building, then we must query to the communications manager to fetch 
+the pois.
+In this example we use the first building that arrives from the communications manager.
+```java
+SitumSdk.communicationManager().fetchBuildings(new Handler<Collection<Building>>() {
+    @Override
+    public void onSuccess(Collection<Building> buildings) {
+        if (!buildings.isEmpty()) {
+            final Building building = buildings.iterator().next();
+            SitumSdk.communicationManager().fetchIndoorPOIsFromBuilding(building, new Handler<Collection<Poi>>() {
+                @Override
+                public void onSuccess(Collection<Poi> pois) {
+                    if (hasCallback()) {
+                        callback.onSuccess(building, pois);
+                    }
+                    clearCallback();
+                }
+
+                @Override
+                public void onFailure(Error error) {
+                    if (hasCallback()) {
+                        callback.onError(error.getMessage());
+                    }
+                    clearCallback();
+                }
+            });
+        }else{
+            if (hasCallback()) {
+                callback.onError("There isnt any building in your account. Go to the situm dashboard and create a new one with some pois before execute again this example");
+            }
+            clearCallback();
+        }
+    }
+
+    @Override
+    public void onFailure(Error error) {
+        if (hasCallback()) {
+            callback.onError(error.getMessage());
+        }
+        clearCallback();
+    }
+});
+```
+
+Finally draw the pois over the map.
+```java
+getPoisUseCase.get(new GetPoisUseCase.Callback() {
+    @Override
+    public void onSuccess(Building building, Collection<Poi> pois) {
+        if (pois.isEmpty()){
+            Toast.makeText(DrawPoisActivity.this, "There isnt any poi in the building: " + building.getName() + ". Go to the situm dashboard and create at least one poi before execute again this example", Toast.LENGTH_LONG).show();
+        }else {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Poi poi : pois) {
+                LatLng latLng = new LatLng(poi.getCoordinate().getLatitude(),
+                        poi.getCoordinate().getLongitude());
+                googleMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(poi.getName()));
+                builder.include(latLng);
+            }
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+        }
+    }
+
+    @Override
+    public void onError(String error) {
+        Toast.makeText(DrawPoisActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+});
+
+```
+
+You can check the complete sample in [drawpois package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawpois)
 
 
 
