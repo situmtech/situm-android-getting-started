@@ -545,8 +545,29 @@ getPoisUseCase.get(new GetPoisUseCase.Callback() {
 
 Extra: also we can add navigation between the points.
 ```java
-TODO:
+NavigationRequest navigationRequest = new NavigationRequest.Builder()
+            .route(route)
+            .distanceToGoalThreshold(3d)
+            .outsideRouteThreshold(50d)
+            .build();
+    SitumSdk.navigationManager().requestNavigationUpdates(navigationRequest, new NavigationListener() {
+        @Override
+        public void onDestinationReached() {
+            Log.d(TAG, "onDestinationReached: ");
+        }
+
+        @Override
+        public void onProgress(NavigationProgress navigationProgress) {
+            Log.d(TAG, "onProgress: ");
+        }
+
+        @Override
+        public void onUserOutsideRoute() {
+            Log.d(TAG, "onUserOutsideRoute: ");
+        }
+    });
 ```
+Dont forget to stop navigation when destroy activity/fragment or whenever you consider.
 
 You can check the complete sample in [drawroute package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute)
 
