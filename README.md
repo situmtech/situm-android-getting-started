@@ -24,6 +24,7 @@ ablle to:
 4. [Draw the buildings floor over the Google maps](#drawbuilding)
 5. [Draw current position over Google maps](#drawposition)
 6. [Draw pois over Google maps](#drawpois)
+7. [Draw route over Google maps](#drawroute)
 
 #### [More information](#moreinfo)
 
@@ -475,6 +476,101 @@ getPoisUseCase.get(new GetPoisUseCase.Callback() {
 ```
 
 You can check the complete sample in [drawpois package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawpois)
+
+
+
+
+## Draw route over Google maps <a name="drawroute"><a/>
+This funcionality allow us to draw a route between two points inside a building. 
+
+First of all we need to get a building and its POIs(To run this example at least is needed a 
+building with two POIs configured to make a route).
+In this example we are going to use the first building and the two first POIs returned by the 
+communication manager. To get this information you can use the 
+[Draw pois over Google maps](#drawpois) example.
+
+After obtaining the basic information, we are going to make a request to the directions manager.
+To create a request its mandatory two indoor points that we got from the previous call to communication
+manager. The directions manager will respond us through the callback. 
+When we have the data processed we will draw a Google maps polyline to represent the route.
+```java
+GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
+getPoisUseCase.get(new GetPoisUseCase.Callback() {
+        @Override
+        public void onSuccess(Building building, Collection<Poi> pois) {
+            if (pois.size() < 2){
+                Toast.makeText(DrawRouteActivity.this,
+                        "Its mandatory to have at least two pois in a building: " + building.getName() + " to start directions manager",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }else {
+                Iterator<Poi>iterator = pois.iterator();
+                final Point from = iterator.next().getPosition();
+                final Point to = iterator.next().getPosition();
+                DirectionsRequest directionsRequest = new DirectionsRequest.Builder()
+                        .from(from, null)
+                        .to(to)
+                        .build();
+                SitumSdk.directionsManager().requestDirections(directionsRequest, new Handler<Route>() {
+                    @Override
+                    public void onSuccess(Route route) {
+                        PolylineOptions polyLineOptions = new PolylineOptions().color(Color.GREEN).width(4f);
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                        List<Point> routePoints = route.getPoints();
+                        for (Point point:routePoints){
+                            LatLng latLng = new LatLng(point.getCoordinate().getLatitude(), point.getCoordinate().getLongitude());
+                            builder.include(latLng);
+                            polyLineOptions.add(latLng);
+                        }
+                        builder.include(new LatLng(from.getCoordinate().getLatitude(), from.getCoordinate().getLongitude()));
+                        builder.include(new LatLng(to.getCoordinate().getLatitude(), to.getCoordinate().getLongitude()));
+                        googleMap.addPolyline(polyLineOptions);
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+                    }
+    
+                    @Override
+                    public void onFailure(Error error) {
+                        Toast.makeText(DrawRouteActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    
+        @Override
+        public void onError(String error) {
+            Toast.makeText(DrawRouteActivity.this, error, Toast.LENGTH_LONG).show();
+        }
+    });
+```
+
+Extra: also we can add navigation between the points.
+```java
+NavigationRequest navigationRequest = new NavigationRequest.Builder()
+            .route(route)
+            .distanceToGoalThreshold(3d)
+            .outsideRouteThreshold(50d)
+            .build();
+    SitumSdk.navigationManager().requestNavigationUpdates(navigationRequest, new NavigationListener() {
+        @Override
+        public void onDestinationReached() {
+            Log.d(TAG, "onDestinationReached: ");
+        }
+
+        @Override
+        public void onProgress(NavigationProgress navigationProgress) {
+            Log.d(TAG, "onProgress: ");
+        }
+
+        @Override
+        public void onUserOutsideRoute() {
+            Log.d(TAG, "onUserOutsideRoute: ");
+        }
+    });
+```
+Dont forget to stop navigation when destroy activity/fragment or whenever you consider.
+
+You can check the complete sample in [drawroute package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute)
+
 
 
 

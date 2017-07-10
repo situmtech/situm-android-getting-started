@@ -3,6 +3,8 @@ package es.situm.gettingstarted.drawpois;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,11 +30,13 @@ public class DrawPoisActivity
     implements OnMapReadyCallback {
 
     private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_pois);
+        setup();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -55,6 +59,7 @@ public class DrawPoisActivity
         getPoisUseCase.get(new GetPoisUseCase.Callback() {
             @Override
             public void onSuccess(Building building, Collection<Poi> pois) {
+                hideProgress();
                 if (pois.isEmpty()){
                     Toast.makeText(DrawPoisActivity.this, "There isnt any poi in the building: " + building.getName() + ". Go to the situm dashboard and create at least one poi before execute again this example", Toast.LENGTH_LONG).show();
                 }else {
@@ -73,8 +78,17 @@ public class DrawPoisActivity
 
             @Override
             public void onError(String error) {
+                hideProgress();
                 Toast.makeText(DrawPoisActivity.this, error, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void setup() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+    private void hideProgress(){
+        progressBar.setVisibility(View.GONE);
     }
 }
