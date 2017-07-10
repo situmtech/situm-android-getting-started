@@ -17,6 +17,7 @@ import java.util.List;
 import es.situm.gettingstarted.drawbuilding.DrawBuildingActivity;
 import es.situm.gettingstarted.drawpois.DrawPoisActivity;
 import es.situm.gettingstarted.drawposition.DrawPositionActivity;
+import es.situm.gettingstarted.drawroute.DrawRouteActivity;
 import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
 
@@ -46,6 +47,7 @@ public class SamplesActivity
         items.add(new Sample("Draw building over the map", DrawBuildingActivity.class));
         items.add(new Sample("Draw position over the map", DrawPositionActivity.class));
         items.add(new Sample("Draw POIs over the map", DrawPoisActivity.class));
+        items.add(new Sample("Draw Route between two points over the map", DrawRouteActivity.class));
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));
         recyclerView.setAdapter(new SamplesAdapter(items, this));
