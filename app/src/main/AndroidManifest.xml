@@ -45,6 +45,12 @@
             android:parentActivityName=".SamplesActivity">
         </activity>
 
+        <activity android:name=".drawpois.DrawPoisActivity"
+            android:label="Draw POIs"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
+        </activity>
+
         <!-- Google play services version-->
         <meta-data
             android:name="com.google.android.gms.version"
