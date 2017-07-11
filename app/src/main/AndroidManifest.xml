@@ -57,6 +57,12 @@
             android:parentActivityName=".SamplesActivity">
         </activity>
 
+        <activity android:name=".realtime.RealTimeActivity"
+            android:label="Draw realtime"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
+        </activity>
+
         <!-- Google play services version-->
         <meta-data
             android:name="com.google.android.gms.version"

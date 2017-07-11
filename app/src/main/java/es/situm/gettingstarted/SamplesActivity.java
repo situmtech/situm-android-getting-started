@@ -20,6 +20,7 @@ import es.situm.gettingstarted.drawposition.DrawPositionActivity;
 import es.situm.gettingstarted.drawroute.DrawRouteActivity;
 import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
+import es.situm.gettingstarted.realtime.RealTimeActivity;
 
 /**
  * Created by alberto.penas on 13/06/17.
@@ -48,6 +49,7 @@ public class SamplesActivity
         items.add(new Sample("Draw position over the map", DrawPositionActivity.class));
         items.add(new Sample("Draw POIs over the map", DrawPoisActivity.class));
         items.add(new Sample("Draw Route between two points over the map", DrawRouteActivity.class));
+        items.add(new Sample("Draw realtime devices over the map", RealTimeActivity.class));
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));
         recyclerView.setAdapter(new SamplesAdapter(items, this));
