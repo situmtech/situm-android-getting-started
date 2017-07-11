@@ -25,6 +25,7 @@ ablle to:
 5. [Draw current position over Google maps](#drawposition)
 6. [Draw pois over Google maps](#drawpois)
 7. [Draw route over Google maps](#drawroute)
+8. [Draw realtime devices over Google maps](#rt)
 
 #### [More information](#moreinfo)
 
@@ -571,6 +572,89 @@ Dont forget to stop navigation when destroy activity/fragment or whenever you co
 
 You can check the complete sample in [drawroute package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute)
 
+
+
+
+## Draw realtime devices over Google maps <a name="rt"><a/>
+This functionally allow us to get the current devices that are positioning inside a building in 
+real time.
+
+In order to run this example its mandatory to get a building first. Then we will can query realtime 
+manager to obtain devices inside this building.
+
+Obtain  list of buildings and pick one. In this example we get the first returned building. Then we 
+willinvoke realtime method.
+```java
+GetBuildingsUseCase getBuildingsUseCase = new GetBuildingsUseCase();
+getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
+            @Override
+            public void onSuccess(List<Building> buildings) {
+                Building building = buildings.get(0);
+                realtime(building);
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(RealTimeActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        });
+```
+
+
+The next step is obtain the realtime manager and invoke realtime updates. This method needs 
+as params a request that contains the target building and the time between querys and a listener 
+that will respond with the current devices inside the building that are positioning.
+In the response we are going to place/remove markers and animate the camera between to the bounds of them.
+```java
+void realtime(Building building) {
+    RealTimeRequest realTimeRequest = new RealTimeRequest.Builder()
+            .pollTimeMs(3000)
+            .building(building)
+            .build();
+    SitumSdk.realtimeManager().requestRealTimeUpdates(realTimeRequest, new RealTimeListener() {
+        @Override
+        public void onUserLocations(RealTimeData realTimeData) {
+            if(realTimeData.getLocations().isEmpty()){
+                noDevicesTV.setVisibility(View.VISIBLE);
+                for (Marker marker : markers) {
+                    marker.remove();
+                }
+                markers.clear();
+            }else {
+                noDevicesTV.setVisibility(View.GONE);
+                for (Marker marker : markers) {
+                    marker.remove();
+                }
+                markers.clear();
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Location location : realTimeData.getLocations()) {
+                    LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                            location.getCoordinate().getLongitude());
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(latLng)
+                            .title(location.getDeviceId());
+                    Marker marker = googleMap.addMarker(markerOptions);
+                    markers.add(marker);
+                    builder.include(latLng);
+                }
+                try {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+                } catch (IllegalStateException e) {
+                }
+            }
+        }
+
+        @Override
+        public void onError(Error error) {
+            Toast.makeText(RealTimeActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    });
+}
+```
+
+Dont forget to remove real time updates when destroy activity/fragment or whenever you consider.
+
+You can check the complete sample in [realtime package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime)
 
 
 
