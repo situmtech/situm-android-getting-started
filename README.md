@@ -583,7 +583,7 @@ In order to run this example its mandatory to get a building first. Then we will
 manager to obtain devices inside this building.
 
 Obtain  list of buildings and pick one. In this example we get the first returned building. Then we 
-willinvoke realtime method.
+will invoke realtime method.
 ```java
 GetBuildingsUseCase getBuildingsUseCase = new GetBuildingsUseCase();
 getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
@@ -601,9 +601,9 @@ getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
 ```
 
 
-The next step is obtain the realtime manager and invoke realtime updates. This method needs 
-as params a request that contains the target building and the time between querys and a listener 
-that will respond with the current devices inside the building that are positioning.
+The next step is obtain the realtime manager and invoke real time updates. This method needs 
+as parameter a request that contains the target building and the time between querys and a listener 
+that will respond with the current devices inside the building.
 In the response we are going to place/remove markers and animate the camera between to the bounds of them.
 ```java
 void realtime(Building building) {
