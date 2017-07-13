@@ -251,7 +251,7 @@ SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListe
 
 
 
-## Indoor-Outdoor positioning <a name="indoor-outdoor-positioning"><a/>
+## <a name="indoor-outdoor-positioning"><a/> Indoor-Outdoor positioning 
 To enable the positioning mode to operate both indoor and outdoor its mandatory to use the LocationManager
 without indicating a specific building.
 
@@ -298,7 +298,7 @@ You can check the complete sample in [indooroutdoor package](https://github.com/
 
 
 
-## Draw the buildings floor over the Google maps <a name="drawbuilding"><a/>
+## <a name="drawbuilding"><a/> Draw the buildings floor over the Google maps 
 Drawing the floor of a building will allow us to see the floor plan.
 
 Before this you will need to complete the [Setup Google maps](mapsapikey). Once this is done we must
@@ -346,7 +346,7 @@ You can check the complete sample in [drawbuilding package](https://github.com/s
 
 
 
-## Draw current position over Google maps<a name="drawposition"><a/>
+## <a name="drawposition"><a/> Draw current position over Google maps
 This functionality allow us to see the device current position over a Google map.
 
 *Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
@@ -399,7 +399,7 @@ You can check the complete sample in [drawposition package](https://github.com/s
 
 
 
-## Draw pois over Google maps <a name="drawpois"><a/>
+## <a name="drawpois"><a/> Draw pois over Google maps 
 This funcionality allows to draw a list of points of interest that belongs to a building over a 
 google map.
 
@@ -481,7 +481,7 @@ You can check the complete sample in [drawpois package](https://github.com/situm
 
 
 
-## Draw route over Google maps <a name="drawroute"><a/>
+## <a name="drawroute"><a/> Draw route over Google maps 
 This funcionality allow us to draw a route between two points inside a building. 
 
 First of all we need to get a building and its POIs(To run this example at least is needed a 
@@ -575,7 +575,7 @@ You can check the complete sample in [drawroute package](https://github.com/situ
 
 
 
-## Draw realtime devices over Google maps <a name="rt"><a/>
+## <a name="rt"><a/> Draw realtime devices over Google maps 
 This functionally allow us to get the current devices that are positioning inside a building in 
 real time.
 
