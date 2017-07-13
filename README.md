@@ -20,12 +20,12 @@ ablle to:
 
 1. [Get buildings information](#communicationmanager)
 2. [Start the positioning](#positioning)
-3. [Indoor-Outdoor positioning](#indoor-outdoor-positioning)
-4. [Draw the buildings floor over the Google maps](#drawbuilding)
-5. [Draw current position over Google maps](#drawposition)
-6. [Draw pois over Google maps](#drawpois)
-7. [Draw route over Google maps](#drawroute)
-8. [Draw realtime devices over Google maps](#rt)
+3. [Positioning in indoor-outdoor](#indoor-outdoor-positioning)
+4. [Show a building in Google Maps](#drawbuilding)
+5. [Show current position in Google Maps](#drawposition)
+6. [Show POIs(points of interes) in Google Maps](#drawpois)
+7. [Show route between POIs in Google Maps](#drawroute)
+8. [Show realtime devices](#rt)
 
 #### [More information](#moreinfo)
 
@@ -251,7 +251,7 @@ SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListe
 
 
 
-## <a name="indoor-outdoor-positioning"><a/> Indoor-Outdoor positioning 
+## <a name="indoor-outdoor-positioning"><a/> Positioning in indoor-outdoor
 To enable the positioning mode to operate both indoor and outdoor its mandatory to use the LocationManager
 without indicating a specific building.
 
@@ -298,7 +298,7 @@ You can check the complete sample in [indooroutdoor package](https://github.com/
 
 
 
-## <a name="drawbuilding"><a/> Draw the buildings floor over the Google maps 
+## <a name="drawbuilding"><a/> Show a building in Google Maps
 Drawing the floor of a building will allow us to see the floor plan.
 
 Before this you will need to complete the [Setup Google maps](mapsapikey). Once this is done we must
@@ -346,7 +346,7 @@ You can check the complete sample in [drawbuilding package](https://github.com/s
 
 
 
-## <a name="drawposition"><a/> Draw current position over Google maps
+## <a name="drawposition"><a/> Show current position in Google Maps
 This functionality allow us to see the device current position over a Google map.
 
 *Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
@@ -399,7 +399,7 @@ You can check the complete sample in [drawposition package](https://github.com/s
 
 
 
-## <a name="drawpois"><a/> Draw pois over Google maps 
+## <a name="drawpois"><a/> Show POIs(points of interes) in Google Maps
 This funcionality allows to draw a list of points of interest that belongs to a building over a 
 google map.
 
@@ -481,7 +481,7 @@ You can check the complete sample in [drawpois package](https://github.com/situm
 
 
 
-## <a name="drawroute"><a/> Draw route over Google maps 
+## <a name="drawroute"><a/> Show route between POIs in Google Maps
 This funcionality allow us to draw a route between two points inside a building. 
 
 First of all we need to get a building and its POIs(To run this example at least is needed a 
@@ -575,7 +575,7 @@ You can check the complete sample in [drawroute package](https://github.com/situ
 
 
 
-## <a name="rt"><a/> Draw realtime devices over Google maps 
+## <a name="rt"><a/> Show realtime devices
 This functionally allow us to get the current devices that are positioning inside a building in 
 real time.
 
