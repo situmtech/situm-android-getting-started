@@ -23,7 +23,7 @@ ablle to:
 3. [Positioning in indoor-outdoor](#indoor-outdoor-positioning)
 4. [Show a building in Google Maps](#drawbuilding)
 5. [Show current position in Google Maps](#drawposition)
-6. [Show POIs(points of interes) in Google Maps](#drawpois)
+6. [Show POIs(points of interest) in Google Maps](#drawpois)
 7. [Show route between POIs in Google Maps](#drawroute)
 8. [Show realtime devices](#rt)
 
@@ -399,7 +399,7 @@ You can check the complete sample in [drawposition package](https://github.com/s
 
 
 
-## <a name="drawpois"><a/> Show POIs(points of interes) in Google Maps
+## <a name="drawpois"><a/> Show POIs(points of interest) in Google Maps
 This funcionality allows to draw a list of points of interest that belongs to a building over a 
 google map.
 
