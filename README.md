@@ -2,10 +2,10 @@ Situm Android SDK Sample app
 =======================
 
 This is a sample Android application built with the Situm SDK. With the sample app you will be able 
-ablle to: 
-  1. List all the buildings of your account and start the positioning for the selected building showing 
- the first floor image of the building and the locations received.
-  2. Draw the buildings floor over the Google map view.
+able to: 
+  1. List all the buildings of your account and start the positioning for a selected building, showing 
+ the image of the first floor of the building and the locations received.
+  2. Draw the building's floor over the Google Maps view.
 
 # Table of contents
 #### [Introduction](#introduction)
@@ -13,19 +13,19 @@ ablle to:
 1. [Step 1: Configure our SDK in your Android project](#configureproject)
 2. [Step 2: Initialize the SDK](#init)
 3. [Step 3: Set your credentials](#config)
-4. [Step 4: Setup Google maps](#mapsapikey)
+4. [Step 4: Setup Google Maps](#mapsapikey)
 5. [Optional step 5: location and runtime permissions](#locationpermissions)
 
 #### [Samples](#samples)
 
-1. [Get buildings information](#communicationmanager)
+1. [Get buildings' information](#communicationmanager)
 2. [Start the positioning](#positioning)
-3. [Positioning in indoor-outdoor](#indoor-outdoor-positioning)
+3. [Indoor-outdoor positioning](#indoor-outdoor-positioning)
 4. [Show a building in Google Maps](#drawbuilding)
-5. [Show current position in Google Maps](#drawposition)
-6. [Show POIs(points of interest) in Google Maps](#drawpois)
-7. [Show route between POIs in Google Maps](#drawroute)
-8. [Show realtime devices](#rt)
+5. [Show the current position in Google Maps](#drawposition)
+6. [Show POIs (Points of Interest) in Google Maps](#drawpois)
+7. [Show routes between POIs in Google Maps](#drawroute)
+8. [Show the location of other devices in real time](#rt)
 
 #### [More information](#moreinfo)
 
@@ -60,7 +60,7 @@ Perfect! Now you are ready to develop your first indoor positioning application.
 ### <a name="configureproject"></a> Step 1: Configure our SDK in your Android project
 
 First of all, you must configure Situm SDK in your Android project. This has been already done for 
-you in the sample application, but nonetheless we will walk you to the process.
+you in the sample application, but nonetheless we will walk you through the process.
 
 * Add the next line to the project *build.gradle* in the *repositories* section of *allprojects* to
 add our maven repository to the project:
@@ -80,7 +80,7 @@ It's important to add the `transitive = true` property to download the Situm SDK
 
 ### <a name="init"></a> Step 2: Initialize the SDK
 
-You must initialize the sdk in the `onCreate()` method of your Application:
+You must initialize the SDK in the `onCreate()` method of your Application:
 
 ```java
 SitumSdk.init(this);
@@ -92,7 +92,7 @@ There are two ways to set the credentials, in the `AndroidManifest.xml` file or 
 
 ##### Option 1: `AndroidManifest.xml` file
 
-You can set the credentials (user and API key)in the `AndroidManifest.xml` file adding the next `meta-data` fields:
+You can set the credentials (user and API key) in the `AndroidManifest.xml` file adding the next `meta-data` fields:
 
 ```xml
 <meta-data
@@ -103,7 +103,7 @@ You can set the credentials (user and API key)in the `AndroidManifest.xml` file 
     android:value="API_KEY" />
 ```
 
-##### Option 2: programmatically
+##### Option 2: Programmatically
 
 In the code, you can set the the user and API key with:
 
@@ -120,29 +120,29 @@ SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 
 
 
-### Step 4: Setup Google maps <a name="mapsapikey"><a/>
-This step is only necessary if you want to run the sample that draws the buildings floor over the 
-Google map, otherwise you can skip it and continue with the [Samples](#samples).
+### Step 4: Setup Google Maps <a name="mapsapikey"><a/>
+This step is only necessary if you want to run the sample that draws the buildings' floorplan over the 
+Google Maps map. Otherwise, you can skip it and continue with the code [Samples](#samples).
 
-First of all, you need to add Google services dependency to the project, if you need more info: 
-[Setup Google Play Services](https://developers.google.com/android/guides/setup). To do this paste the dependency in 
-your module build.gradle as usual:
+First of all, you need to add the Google Services dependency to the project. If you need more info: 
+[Setup Google Play Services](https://developers.google.com/android/guides/setup). To do this, paste the dependency in 
+your module *build.gradle* as usual:
 ```
 compile 'com.google.android.gms:play-services-maps:10.0.1'
 ```
-Add in the app manifest the version of the Google Play Services that we have imported. To do this paste
-the next snippet inside application tag:
+Add in the app manifest the version of the Google Play Services that we have imported. To do this, paste
+the next snippet inside the application tag:
 ```
 <meta-data
     android:name="com.google.android.gms.version"
     android:value="@integer/google_play_services_version" />
 ```
 
-An api key is needed to add Google maps services and use it in an application, if you need more info 
-you can visit the official documentation in [Google maps info](https://developers.google.com/maps/documentation/android-api/intro). 
+An api key is needed to add Google Maps Services and use them in an application. If you need more info,
+you can visit the official documentation in [Google Maps Info](https://developers.google.com/maps/documentation/android-api/intro). 
 To obtain a Google api key please refer to 
-[Google maps obtain api key](https://developers.google.com/maps/documentation/android-api/signup), 
-then go back to your app module file build.gradle and replace 'gmaps_api_key' with the value of the 
+[Google Maps obtain api key](https://developers.google.com/maps/documentation/android-api/signup), 
+then go back to your app module file *build.gradle* and replace 'gmaps_api_key' with the value of the 
 obtained key from Google.
 ```
 resValue 'string', 'google_maps_key', "YOUR_API_KEY"
@@ -152,27 +152,27 @@ resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 
 
 ### Optional step 5: location and runtime permissions <a name="locationpermissions"><a/>
-When we work on features that envolves location we need to add fine location permission to the manifest:
+When we work on features that involve the use of the smartphone location, we need to add fine location permission to the manifest:
 ```xml
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 ```
-And ensure to check the Android Runtime permissions. [More info](https://developer.android.com/training/permissions/requesting.html) 
+Also, ensure to check the Android Runtime permissions. [More info](https://developer.android.com/training/permissions/requesting.html) 
 
 
 
 
 
 ## Samples <a name="samples"></a>
-### <a name="communicationmanager"></a> Get buildings information
+### <a name="communicationmanager"></a> Get buildings' information
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
-In this sample project, all this code has been included in the file 
+In this sample project, all the code has been included in the file 
 [PositioningActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/positioning/PositioningActivity.java)
 
-First of all, you can get and instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
-With this object you can fetch your building's data (list of buildings, floorplans, points of interest, etc.):
+In order to access the buildings' info, first of all you need to get an instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
+This object allows you to fetch your buildings' data (list of buildings, floorplans, points of interest, etc.):
 
-In the next example we fetch all the buildings associated with our user's account and print them to the Logcat:
+For instance, in the next snippet we fetch all the buildings associated with our user's account and print them to the Logcat:
 
 ```java
  SitumSdk.communicationManager().fetchBuildings(new Handler<Collection<Building>>() {
@@ -193,12 +193,9 @@ In the next example we fetch all the buildings associated with our user's accoun
 
 ### <a name="positioning"></a> Start the positioning
 
-To start the positioning we need a building so, first you will need to obtain a building,
-You can check the code to obtain a building in [Get buildings information](#communicationmanager).
+In order to start the indoor positioning within a building, we will need to obtain this building first. In order to do that, please refer to the previous section: [Get buildings' information](#communicationmanager).
 
-Start positioning will allow the app to retrieve the location of the smartphone within this building.
-To do this you need to create a location request indicating the building where you want to start
- the positioning:
+Then, in order to retrieve the location of the smartphone within this building, you will need to create a location request indicating the building where you want to start the positioning:
 
 ```java
 LocationRequest locationRequest = new LocationRequest.Builder()
@@ -206,7 +203,7 @@ LocationRequest locationRequest = new LocationRequest.Builder()
         .build();
 ```
 
-Then, you need to implement the listener in where you will receive the location updates, status and errors.
+Also, you will need to implement the listener that will receive the location updates, status and errors.
 
 ```java
 private LocationListener locationListener = new LocationListener() {
@@ -228,41 +225,43 @@ private LocationListener locationListener = new LocationListener() {
 
 ```
 
-In `onLocationChanged(Location)` you will be updated with the locations. This `Location` object contains
+In `onLocationChanged(Location)` your application will receive the location updates. This `Location` object contains
 the building identifier, level identifier, cartesian coordinates, geographic coordinates, orientation,
-accuracy, among others.
+accuracy, among other location information of the smartphone where the app is running.
 
-In `onStatusChanged(int)` you will received the changes in the status of the system: starting, initializing,
-user not in building, compass need to be calibrated, etc.
+In `onStatusChanged(int)` the app will receive changes in the status of the system: starting, initializing,
+user not in building, compass needs to be calibrated, etc.
 
-In `onError(Error)` you will received the errors produced, the positioning will stop. 
+In `onError(Error)` you will receive updates only if an error has occurred. In this case, the positioning will stop. 
 
-From API 23 you need to ask for the location permissions at runtime, if the location permission is not 
+From API 23 you need to ask you user for the location permissions at runtime. If the location permission is not 
 granted, and error with code `LocationErrorConstant.Code.MISSING_LOCATION_PERMISSION` will be received.
-Also, the location must be enabled in order to scan Wifi and BLE, an error with code `LocationErrorConstant.Code.LOCATION_DISABLED`
-will be received in this case. In the example you can see how to manage this errors.
+Also, the location permission must be enabled in order to scan Wifi and BLE. In other case, an error with code `LocationErrorConstant.Code.LOCATION_DISABLED`
+will be received. In the code sample within this project you can see how to manage this errors.
 
-Finally, you start the positioning with:
+Finally, you can start the positioning with:
 
 ```java
 SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
+and start receiving location updates.
 
 
 
+## <a name="indoor-outdoor-positioning"><a/> Indoor-outdoor positioning
+Situm SDK can also work in hybrid mode, providing the indoor location when the smartphone is inside a building that has the Situm's technology configured, and the GPS location otherwise. In addition, the Situm SDK handles the indoor-outdoor transition seamlessly.
 
-## <a name="indoor-outdoor-positioning"><a/> Positioning in indoor-outdoor
-To enable the positioning mode to operate both indoor and outdoor its mandatory to use the LocationManager
+In order to enable the positioning mode to operate in indoor-outdoor mode it is mandatory to use the LocationManager
 without indicating a specific building.
 
 *Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
 
 
-1. First of all, build a LocationRequest without indicating the building id. This can be configured
-with much more options, but is outside of the scope of this example. Check the 
+1. Build a LocationRequest without indicating the building id. The LocationRequest can be configured
+with many more options, but this is outside of the scope of this example. Check the 
 [Javadoc](http://developers.situm.es/pages/android/api_documentation.html) for more information.
-2. To receive location updates build a LocationListener.
-3. After the creation of the needed objects, request location updates to the LocationManager.
+2. Build a Location Listener in order to receive location updates.
+3. After the creation of the required objects, request location updates to the LocationManager.
 
 ```java
 LocationRequest locationRequest = new LocationRequest.Builder().build();
@@ -287,7 +286,7 @@ SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListe
 ```
 
 
-And dont forget to stop the service in the onDestroy or any method you consider.
+Also, do not forget to stop the service in the onDestroy or any other method you might consider for this purpose.
 ```java
 SitumSdk.locationManager().removeUpdates(locationListener);
 ```
@@ -299,13 +298,12 @@ You can check the complete sample in [indooroutdoor package](https://github.com/
 
 
 ## <a name="drawbuilding"><a/> Show a building in Google Maps
-Drawing the floor of a building will allow us to see the floor plan.
+Another interesting functionality is to show the floorplan of a building on top of your favorite GIS provider. In this example, we will show you how to do it by using Google Maps, but you might use any other of your choosing, such as OpenStreetMaps, Carto, ESRI, Mapbox, etc.
 
-Before this you will need to complete the [Setup Google maps](mapsapikey). Once this is done we must
-need to obtain the floors of the target building, there is a sample in 
+As a required step, you will need to complete the steps in [Setup Google Maps](mapsapikey). Once this is done, you should
+ obtain the floors of the target building. You can find sample in 
 [Obtaining building floors](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java).
-When we have fetch the floors we need to choose a floor and get the bitmap of this floor through the
-Situm CommunicationMananger.
+After that, you can get the floorplan (bitmap) of each floor using the Situm CommunicationMananger.
 ```
 SitumSdk
     .communicationManager()
@@ -322,7 +320,7 @@ SitumSdk
                                 });
 ```
 
-Once we have the Bitmap of the building floor we will draw it in Google map.
+Once you have the bitmap of the building floor you can draw it on top of Google Maps.
 ```
 void drawBuilding(Building building, Bitmap bitmap){
         Bounds drawBounds = building.getBounds();
@@ -346,17 +344,14 @@ You can check the complete sample in [drawbuilding package](https://github.com/s
 
 
 
-## <a name="drawposition"><a/> Show current position in Google Maps
-This functionality allow us to see the device current position over a Google map.
+## <a name="drawposition"><a/> Show the current position in Google Maps
+This functionality will allow you to represent the current position of your device using Google Maps. Instead, you can also use another GIS provider, such as OpenStreetMaps, Carto, ESRI, Mapbox, etc.
+
+First of all, you will need to perform all the steps required to start receiving location updates, as shown in the section [Indoor-outdoor positioning](#indoor-outdoor-positioning)
 
 *Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
 
-
-1. First, we need to build a LocationRequest.
-2. To receive location updates build a LocationListener.
-3. After the creation of the needed objects, request location updates to the LocationManager.
-4. In the listener callback method onLocationChanged, draw the circle that represents the device
-position.
+Then, in the listener callback method onLocationChanged, you can insert the code required to draw the circle that represents the position of the device.
 
 ```java
 
@@ -389,7 +384,7 @@ LocationRequest locationRequest = new LocationRequest.Builder()
 SitumSdk().locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
 
-And dont forget to stop the service in the onDestroy or any method you consider.
+Also,  do not forget to stop the service in the onDestroy or any method you might consider.
 ```java
 SitumSdk.locationManager().removeUpdates(locationListener);
 ```
@@ -399,13 +394,11 @@ You can check the complete sample in [drawposition package](https://github.com/s
 
 
 
-## <a name="drawpois"><a/> Show POIs(points of interest) in Google Maps
-This funcionality allows to draw a list of points of interest that belongs to a building over a 
-google map.
+## <a name="drawpois"><a/> Show POIs (Points of Interest) in Google Maps
+This funcionality allows to show the list of POIs of a building over Google Maps. Instead, you can also use another GIS provider, such as OpenStreetMaps, Carto, ESRI, Mapbox, etc.
 
-First of all we need the target building, then we must query to the communications manager to fetch 
-the pois.
-In this example we use the first building that arrives from the communications manager.
+First of all, we need to retrieve the list of POIs of our building using the CommunicationManager. As an example, in the next code snippet we use the first building retrieved. 
+
 ```java
 SitumSdk.communicationManager().fetchBuildings(new Handler<Collection<Building>>() {
     @Override
@@ -447,7 +440,9 @@ SitumSdk.communicationManager().fetchBuildings(new Handler<Collection<Building>>
 });
 ```
 
-Finally draw the pois over the map.
+Finally, you can draw the POIs over the map.
+
+
 ```java
 getPoisUseCase.get(new GetPoisUseCase.Callback() {
     @Override
@@ -481,19 +476,14 @@ You can check the complete sample in [drawpois package](https://github.com/situm
 
 
 
-## <a name="drawroute"><a/> Show route between POIs in Google Maps
-This funcionality allow us to draw a route between two points inside a building. 
+## <a name="drawroute"><a/> Show routes between POIs in Google Maps
+This funcionality will allow you to draw a route between two points inside a building. As in the previous examples, you can also use another GIS provider, such as OpenStreetMaps, Carto, ESRI, Mapbox, etc.
 
-First of all we need to get a building and its POIs(To run this example at least is needed a 
-building with two POIs configured to make a route).
-In this example we are going to use the first building and the two first POIs returned by the 
-communication manager. To get this information you can use the 
-[Draw pois over Google maps](#drawpois) example.
+In this example, we will show a route between two POIs of a building. Therefore, in the first place you will need to get a building and its POIs using the CommunicationManager. Please refer to the 
+[Draw POIs over Google maps](#drawpois) example in order to retrieve this information.
 
-After obtaining the basic information, we are going to make a request to the directions manager.
-To create a request its mandatory two indoor points that we got from the previous call to communication
-manager. The directions manager will respond us through the callback. 
-When we have the data processed we will draw a Google maps polyline to represent the route.
+After obtaining the basic information, you can request a route between two of the retrieved POIs to the DirectionsManager. The route will be received on the *onSuccess* callback of the DirectionsManager. At this point, you will be able to draw a Google Maps polyline to represent the route.
+
 ```java
 GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
 getPoisUseCase.get(new GetPoisUseCase.Callback() {
@@ -544,7 +534,8 @@ getPoisUseCase.get(new GetPoisUseCase.Callback() {
     });
 ```
 
-Extra: also we can add navigation between the points.
+Additionally, you can request for navigation updates to the SDK. These updates will inform you of several navigation events: destination reached, user went off the planned route, etc. 
+
 ```java
 NavigationRequest navigationRequest = new NavigationRequest.Builder()
             .route(route)
@@ -568,22 +559,18 @@ NavigationRequest navigationRequest = new NavigationRequest.Builder()
         }
     });
 ```
-Dont forget to stop navigation when destroy activity/fragment or whenever you consider.
+Do not forget to stop the navigation when destroying your activity/fragment or whenever you might consider.
 
 You can check the complete sample in [drawroute package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute)
 
 
 
 
-## <a name="rt"><a/> Show realtime devices
-This functionally allow us to get the current devices that are positioning inside a building in 
-real time.
+## <a name="rt"><a/> Show the location of other devices in real time over Google Maps.
+This functionally will allow you to show the real-time location of devices that are being positioned inside a building over Google Maps. Remember that you can use any other GIS of your choosing, such as OpenStreetMaps, Carto, ESRI, Mapbox, etc.
 
-In order to run this example its mandatory to get a building first. Then we will can query realtime 
-manager to obtain devices inside this building.
+First of all, you will need to retrieve the information of the desired building. In the following example, we will just get the first returned building. 
 
-Obtain  list of buildings and pick one. In this example we get the first returned building. Then we 
-will invoke realtime method.
 ```java
 GetBuildingsUseCase getBuildingsUseCase = new GetBuildingsUseCase();
 getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
@@ -601,10 +588,9 @@ getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
 ```
 
 
-The next step is obtain the realtime manager and invoke real time updates. This method needs 
-as parameter a request that contains the target building and the time between querys and a listener 
-that will respond with the current devices inside the building.
-In the response we are going to place/remove markers and animate the camera between to the bounds of them.
+The next step is to obtain the RealtimeManager and retrieve the  real-time location updates of all the smartphones inside the selected building. This method requires a RealTimeRequest object with the following information: milliseconds between location updates and identifier of the target building. Additionally, this method requires the listener where the location updates should be directed. 
+
+In the following example, we are also going to place/remove markers and animate the camera between to the bounds of them.
 ```java
 void realtime(Building building) {
     RealTimeRequest realTimeRequest = new RealTimeRequest.Builder()
@@ -652,7 +638,7 @@ void realtime(Building building) {
 }
 ```
 
-Dont forget to remove real time updates when destroy activity/fragment or whenever you consider.
+Do not forget to remove real time updates when destroying the activity/fragment or whenever you might consider.
 
 You can check the complete sample in [realtime package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime)
 
