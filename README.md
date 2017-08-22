@@ -171,7 +171,7 @@ Also, ensure to check the Android runtime permissions. [More info](https://devel
 
 
 ## Samples <a name="samples"></a>
-### <a name="communicationmanager"></a> Get buildings' information
+## <a name="communicationmanager"></a> Get buildings' information
 
 Now that you have correctly configured your Android project, you can start writing your application's code. 
 In this sample project, all the code has been included in the file 
@@ -199,7 +199,7 @@ For instance, in the next snippet we fetch all the buildings associated with our
         });
 ```
 
-### <a name="positioning"></a> Start the positioning
+## <a name="positioning"></a> Start the positioning
 
 In order to start the indoor positioning within a building, we will need to obtain this building first. In order to do that, please refer to the previous section: [Get buildings' information](#communicationmanager).
 
