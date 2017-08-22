@@ -6,7 +6,11 @@ able to:
   1. List all the buildings of your account and start the positioning for a selected building, showing 
  the image of the first floor of the building and the locations received.
   2. Draw the building's floor over the Google Maps view.
-
+  3. List all the POIs(points of interest) of a building.
+  4. Show routes between two POIs.
+  5. Show the location of other devices in realtime.
+ 
+  
 # Table of contents
 #### [Introduction](#introduction)
 #### [Setup](#configureproject)
