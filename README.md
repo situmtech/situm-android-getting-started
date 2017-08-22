@@ -323,7 +323,7 @@ As a required step, you will need to complete the steps in the [Setup Google Map
  obtain the floors of the target `Building`. For this purpose, you may refer to the 
 [GetBuildingImageUseCase.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java) Java file.
 After that, you can get the floorplan (bitmap) of each floor using the Situm `CommunicationManager`.
-```
+```java
 SitumSdk
     .communicationManager()
     .fetchMapFromFloor(floor, new Handler<Bitmap>() {
@@ -340,7 +340,7 @@ SitumSdk
 ```
 
 Once you have the bitmap of the `Building` floor you can draw it on top of Google Maps.
-```
+```java
 void drawBuilding(Building building, Bitmap bitmap){
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
@@ -366,9 +366,9 @@ You can check the complete sample in the [drawbuilding](https://github.com/situm
 ## <a name="drawposition"><a/> Show the current position in Google Maps
 This functionality will allow you to represent the current position of your device using Google Maps. Instead, you can also use another GIS provider, such as OpenStreetMaps, Carto, ESRI, Mapbox, etc.
 
-First of all, you will need to perform all the steps required to start receiving location updates, as shown in the section [Indoor-outdoor positioning](#indoor-outdoor-positioning).
-
 Note: you are required to configure [Optional step 5: location and runtime permissions](#locationpermissions) before proceed with this sample.
+
+First of all, you will need to perform all the steps required to start receiving location updates, as shown in the section [Indoor-outdoor positioning](#indoor-outdoor-positioning).
 
 Then, in the listener callback method `onLocationChanged`, you can insert the code required to draw the circle that represents the position of the device.
 
@@ -678,6 +678,7 @@ protected void onDestroy() {¡
     SitumSdk.locationManager().removeUpdates(locationListener);
     super.onDestroy();
 }
+```
 
 You can check the complete sample in the [realtime](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime) package.
 
