@@ -264,7 +264,7 @@ and start receiving location updates.
 
 
 ## <a name="indoor-outdoor-positioning"><a/> Indoor-outdoor positioning
-Situm SDK can also work in hybrid mode, providing the indoor location when the smartphone is inside a building that has the Situm's technology configured, and the GPS location otherwise. In addition, the Situm SDK handles the indoor-outdoor transition seamlessly.
+Situm SDK can also work in hybrid mode, providing the indoor location when the smartphone is inside a building that has the Situm's technology configured, and the Google Play services location otherwise. In addition, the Situm SDK handles the indoor-outdoor transition seamlessly.
 
 In order to enable the positioning mode to operate in indoor-outdoor mode it is mandatory to use the LocationManager
 without indicating a specific building.
