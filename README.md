@@ -62,11 +62,14 @@ Perfect! Now you are ready to develop your first indoor positioning application.
 First of all, you must configure Situm SDK in your Android project. This has been already done for 
 you in the sample application, but nonetheless we will walk you to the process.
 
-* Add the next line to the project *build.gradle* in the *repositories* section of *allprojects* to
-add our maven repository to the project:
+* Add the maven repository to the project *build.gradle*:
 
 ```groovy
-maven { url "https://repo.situm.es/artifactory/libs-release-local" }
+allprojects {
+    repositories {
+        maven { url "https://repo.situm.es/artifactory/libs-release-local" }
+    }
+}
 ```
 
 * Then add the Situm SDK library dependency into the section *dependencies* of the app *build.gradle*.
@@ -80,10 +83,15 @@ It's important to add the `transitive = true` property to download the Situm SDK
 
 ### <a name="init"></a> Step 2: Initialize the SDK
 
-You must initialize the sdk in the `onCreate()` method of your Application:
+You must initialize the Situm SDK in the `onCreate()` method of your Application:
 
 ```java
-SitumSdk.init(this);
+@Override
+public void onCreate() {
+    super.onCreate();
+    SitumSdk.init(this);
+
+}
 ```
 
 ### <a name="config"></a> Step 3: Set your credentials
@@ -156,7 +164,7 @@ When we work on features that envolves location we need to add fine location per
 ```xml
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 ```
-And ensure to check the Android Runtime permissions. [More info](https://developer.android.com/training/permissions/requesting.html) 
+And ensure to check the Android runtime permissions. [For More info](https://developer.android.com/training/permissions/requesting.html) 
 
 
 
@@ -197,7 +205,7 @@ To start the positioning we need a building so, first you will need to obtain a 
 You can check the code to obtain a building in [Get buildings information](#communicationmanager).
 
 Start positioning will allow the app to retrieve the location of the smartphone within this building.
-To do this you need to create a location request indicating the building where you want to start
+To do this you need to create a `LocationRequest` indicating the building where you want to start
  the positioning:
 
 ```java
@@ -206,7 +214,7 @@ LocationRequest locationRequest = new LocationRequest.Builder()
         .build();
 ```
 
-Then, you need to implement the listener in where you will receive the location updates, status and errors.
+Then, you need to implement the `LocationListener` in where you will receive the location updates, status and errors.
 
 ```java
 private LocationListener locationListener = new LocationListener() {
@@ -232,10 +240,15 @@ In `onLocationChanged(Location)` you will be updated with the locations. This `L
 the building identifier, level identifier, cartesian coordinates, geographic coordinates, orientation,
 accuracy, among others.
 
-In `onStatusChanged(int)` you will received the changes in the status of the system: starting, initializing,
-user not in building, compass need to be calibrated, etc.
+In `onStatusChanged(int)` the app will receive changes in the status of the system: `STARTING`, `CALCULATING`,
+`USER_NOT_IN_BUILDING`, etc. Please refer to 
+[javadoc](http://developers.situm.es/pages/android/api_documentation.html) for a full explanation of 
+these states.
 
-In `onError(Error)` you will received the errors produced, the positioning will stop. 
+In `onError(Error)` you will receive updates only if an error has occurred. In this case, 
+the positioning will stop. Please refer to 
+[javadoc](http://developers.situm.es/pages/android/api_documentation.html) for a full explanation of 
+these errors.
 
 From API 23 you need to ask for the location permissions at runtime, if the location permission is not 
 granted, and error with code `LocationErrorConstant.Code.MISSING_LOCATION_PERMISSION` will be received.
@@ -251,18 +264,17 @@ SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListe
 
 
 
-## <a name="indoor-outdoor-positioning"><a/> Positioning in indoor-outdoor
-To enable the positioning mode to operate both indoor and outdoor its mandatory to use the LocationManager
+### <a name="indoor-outdoor-positioning"><a/> Positioning in indoor-outdoor
+To enable the positioning mode to operate both indoor and outdoor its mandatory to use the `LocationManager`
 without indicating a specific building.
 
-*Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
+Note: you are required to configure [Optional step 5: location and runtime permissions](#locationpermissions) before proceed with this sample.
 
-
-1. First of all, build a LocationRequest without indicating the building id. This can be configured
-with much more options, but is outside of the scope of this example. Check the 
+1. First of all, build a `LocationRequest` without indicating the building id. This can be configured
+with much more options, but it is outside of the scope of this example. Check the 
 [Javadoc](http://developers.situm.es/pages/android/api_documentation.html) for more information.
-2. To receive location updates build a LocationListener.
-3. After the creation of the needed objects, request location updates to the LocationManager.
+2. To receive location updates build a `LocationListener`.
+3. After the creation of the needed objects, invoke `requestLocationUpdates` method of the `LocationManager`
 
 ```java
 LocationRequest locationRequest = new LocationRequest.Builder().build();
@@ -287,9 +299,13 @@ SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListe
 ```
 
 
-And dont forget to stop the service in the onDestroy or any method you consider.
+And do not forget to stop the service in the `onDestroy` method of the` Activity` or any method you consider.
 ```java
-SitumSdk.locationManager().removeUpdates(locationListener);
+@Override
+protected void onDestroy() {¡
+    SitumSdk.locationManager().removeUpdates(locationListener);
+    super.onDestroy();
+}
 ```
 
 You can check the complete sample in [indooroutdoor package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/indooroutdoor)
@@ -298,14 +314,14 @@ You can check the complete sample in [indooroutdoor package](https://github.com/
 
 
 
-## <a name="drawbuilding"><a/> Show a building in Google Maps
+### <a name="drawbuilding"><a/> Show a building in Google Maps
 Drawing the floor of a building will allow us to see the floor plan.
 
 Before this you will need to complete the [Setup Google maps](mapsapikey). Once this is done we must
 need to obtain the floors of the target building, there is a sample in 
 [Obtaining building floors](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java).
-When we have fetch the floors we need to choose a floor and get the bitmap of this floor through the
-Situm CommunicationMananger.
+When we have fetch the floors we need to choose a floor and get the `Bitmap` of this floor through the
+`CommunicationMananger`.
 ```
 SitumSdk
     .communicationManager()
@@ -322,7 +338,7 @@ SitumSdk
                                 });
 ```
 
-Once we have the Bitmap of the building floor we will draw it in Google map.
+Once we have the `Bitmap` of the building floor we will draw it in Google map.
 ```
 void drawBuilding(Building building, Bitmap bitmap){
         Bounds drawBounds = building.getBounds();
@@ -346,16 +362,15 @@ You can check the complete sample in [drawbuilding package](https://github.com/s
 
 
 
-## <a name="drawposition"><a/> Show current position in Google Maps
+### <a name="drawposition"><a/> Show current position in Google Maps
 This functionality allow us to see the device current position over a Google map.
 
-*Its mandatory to config [Optional step 5: location and runtime permissions](#locationpermissions).
+Note: you are required to configure [Optional step 5: location and runtime permissions](#locationpermissions) before proceed with this sample.
 
-
-1. First, we need to build a LocationRequest.
-2. To receive location updates build a LocationListener.
-3. After the creation of the needed objects, request location updates to the LocationManager.
-4. In the listener callback method onLocationChanged, draw the circle that represents the device
+1. First, we need to build a `LocationRequest`.
+2. To receive location updates build a `LocationListener`.
+3. After the creation of the needed objects, invoke the method `requestLocationUpdates` of the `LocationManager`.
+4. In the `LocationListener` callback method `onLocationChanged`, draw the circle that represents the device
 position.
 
 ```java
@@ -389,9 +404,13 @@ LocationRequest locationRequest = new LocationRequest.Builder()
 SitumSdk().locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
 
-And dont forget to stop the service in the onDestroy or any method you consider.
+And do not forget to stop the service in the `onDestroy` method of the` Activity` or any method you consider.
 ```java
-SitumSdk.locationManager().removeUpdates(locationListener);
+@Override
+protected void onDestroy() {¡
+    SitumSdk.locationManager().removeUpdates(locationListener);
+    super.onDestroy();
+}
 ```
 
 You can check the complete sample in [drawposition package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawposition)
@@ -399,13 +418,13 @@ You can check the complete sample in [drawposition package](https://github.com/s
 
 
 
-## <a name="drawpois"><a/> Show POIs(points of interest) in Google Maps
+### <a name="drawpois"><a/> Show POIs(points of interest) in Google Maps
 This funcionality allows to draw a list of points of interest that belongs to a building over a 
 google map.
 
-First of all we need the target building, then we must query to the communications manager to fetch 
-the pois.
-In this example we use the first building that arrives from the communications manager.
+First of all we need the target `Building`, then we must query to the `CommunicationManager` to fetch 
+the `POI`s.
+In this example we use the first `Building` that arrives from the `CommunicationManager`.
 ```java
 SitumSdk.communicationManager().fetchBuildings(new Handler<Collection<Building>>() {
     @Override
@@ -448,7 +467,10 @@ SitumSdk.communicationManager().fetchBuildings(new Handler<Collection<Building>>
 ```
 
 Finally draw the pois over the map.
+
+For convenience we have created a class called GetPoisUseCase that helps us to obtain the `POI`s for a `Building`.
 ```java
+GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
 getPoisUseCase.get(new GetPoisUseCase.Callback() {
     @Override
     public void onSuccess(Building building, Collection<Poi> pois) {
@@ -481,19 +503,21 @@ You can check the complete sample in [drawpois package](https://github.com/situm
 
 
 
-## <a name="drawroute"><a/> Show route between POIs in Google Maps
+### <a name="drawroute"><a/> Show route between POIs in Google Maps
 This funcionality allow us to draw a route between two points inside a building. 
 
-First of all we need to get a building and its POIs(To run this example at least is needed a 
-building with two POIs configured to make a route).
-In this example we are going to use the first building and the two first POIs returned by the 
-communication manager. To get this information you can use the 
+First of all we need to get a `Building` and its `POI`s(to run this example at least is needed a 
+`Building` with two `POI`s configured to make a route).
+In this example we are going to use the first `Building` and the two first `POI`s returned by the 
+`CommunicationManager`. To get this information you can use the 
 [Draw pois over Google maps](#drawpois) example.
 
-After obtaining the basic information, we are going to make a request to the directions manager.
-To create a request its mandatory two indoor points that we got from the previous call to communication
-manager. The directions manager will respond us through the callback. 
+After obtaining the basic information, we are going to make a `DirectionsRequest` to the `DirectionssManager`.
+To create a `DirectionsRequest` its mandatory two indoor points that we got from the previous call to `CommunicationManager`. 
+The `DirectionsManager` will respond us through the callback. 
 When we have the data processed we will draw a Google maps polyline to represent the route.
+
+For convenience we have created a class called GetPoisUseCase that helps us to obtain the `POI`s for a `Building`.
 ```java
 GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
 getPoisUseCase.get(new GetPoisUseCase.Callback() {
@@ -568,22 +592,32 @@ NavigationRequest navigationRequest = new NavigationRequest.Builder()
         }
     });
 ```
-Dont forget to stop navigation when destroy activity/fragment or whenever you consider.
+
+And do not forget to stop the service in the `onDestroy` method of the` Activity` or any method you consider.
+```java
+@Override
+protected void onDestroy() {¡
+    SitumSdk.locationManager().removeUpdates(locationListener);
+    super.onDestroy();
+}
+```
 
 You can check the complete sample in [drawroute package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute)
 
 
 
 
-## <a name="rt"><a/> Show realtime devices
+### <a name="rt"><a/> Show realtime devices
 This functionally allow us to get the current devices that are positioning inside a building in 
 real time.
 
-In order to run this example its mandatory to get a building first. Then we will can query realtime 
-manager to obtain devices inside this building.
+In order to run this example its mandatory to get a `Building` first. Then we will can query `RealtimeManager`
+to obtain devices inside this `Building`.
 
-Obtain  list of buildings and pick one. In this example we get the first returned building. Then we 
-will invoke realtime method.
+Obtain  list of buildings and pick one. In this example we get the first returned `Building`. Then we 
+will invoke `realtime` method.
+
+For convenience we have created a class called GetBuildingsUseCase that helps us to obtain a list of `Building`s.
 ```java
 GetBuildingsUseCase getBuildingsUseCase = new GetBuildingsUseCase();
 getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
@@ -601,10 +635,10 @@ getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
 ```
 
 
-The next step is obtain the realtime manager and invoke real time updates. This method needs 
-as parameter a request that contains the target building and the time between querys and a listener 
-that will respond with the current devices inside the building.
-In the response we are going to place/remove markers and animate the camera between to the bounds of them.
+The next step is obtain the `RealtimeManager` and invoke the `requestRealTimeUpdates` method. This method needs 
+as parameter a `RealTimeRequest` that contains the target `Building` and the time between querys and a `RealTimeListener` 
+that will respond with the current devices inside the `Building`.
+In the response we are going to remove/place markers and restrict the camera to the markers bounds.
 ```java
 void realtime(Building building) {
     RealTimeRequest realTimeRequest = new RealTimeRequest.Builder()
@@ -652,8 +686,14 @@ void realtime(Building building) {
 }
 ```
 
-Dont forget to remove real time updates when destroy activity/fragment or whenever you consider.
-
+And do not forget to stop the service in the `onDestroy` method of the` Activity` or any method you consider.
+```java
+@Override
+protected void onDestroy() {¡
+    SitumSdk.locationManager().removeUpdates(locationListener);
+    super.onDestroy();
+}
+```
 You can check the complete sample in [realtime package](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime)
 
 
