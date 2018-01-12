@@ -98,10 +98,12 @@
         <!-- Situm SDK credentials -->
         <meta-data
             android:name="es.situm.sdk.API_USER"
-            android:value="@string/api_user" />
+            android:value="@string/api_user"/>
+
         <meta-data
             android:name="es.situm.sdk.API_KEY"
-            android:value="@string/api_key" />
+            android:value="@string/api_key"/>
+
 
         <!-- GMaps api key -->
         <meta-data
