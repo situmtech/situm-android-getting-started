@@ -63,6 +63,33 @@
             android:parentActivityName=".SamplesActivity">
         </activity>
 
+        <activity android:name=".poifiltering.ListBuildingsActivity"
+            android:label="Select your building"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
+        </activity>
+
+        <activity android:name=".poifiltering.FilteringActivity"
+            android:label="Key-Value POI Filtering"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".poifiltering.ListBuildingsActivity">
+
+        </activity>
+
+        <activity android:name=".buildingevents.BuildingListActivity"
+            android:label="Select your building"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity">
+
+        </activity>
+
+        <activity android:name=".buildingevents.GetBuildingEvents"
+            android:label="Building Events"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".buildingevents.BuildingListActivity">
+
+        </activity>
+
         <!-- Google play services version-->
         <meta-data
             android:name="com.google.android.gms.version"

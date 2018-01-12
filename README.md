@@ -30,6 +30,8 @@ able to:
 6. [Show POIs (Points of Interest) in Google Maps](#drawpois)
 7. [Show routes between POIs in Google Maps](#drawroute)
 8. [Show the location of other devices in real time](#rt)
+9. [List all the events in a building](#buildingevents)
+10. [Filter building's POIs](#filterpois)
 
 #### [More information](#moreinfo)
 
@@ -682,6 +684,115 @@ protected void onDestroy() {¡
 
 You can check the complete sample in the [realtime](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime) package.
 
+
+## <a name="buildingevents"></a> List Building Events
+In order to know all the `Event` you have in your `Building`, the first thing you have to do is to fetch your buildings and select the one you want to check. This SDK allows you to know the exact position of the `Event` and to know where the message in your smartphone will be shown. In the following example we will show you how to fetch the `Building's` `Events` and how to list them in order to know the details for each one.
+
+First of all, to fetch the events you will have to use the `communicationManager()` again:
+```java
+SitumSdk.communicationManager().fetchEventsFromBuilding(building, new Handler<Collection<SitumEvent>>(){
+
+	@Override
+	public void onSuccess(Collection<SitumEvent> situmEvents) {
+		events.clear();
+		events.addAll(situmEvents);
+		showEventDataView();
+		eventAdapter.setEventData(events);
+		mProgressBar.setVisibility(View.INVISIBLE);
+	}
+
+	@Override
+	public void onFailure(Error error) {
+		Log.e(TAG, "onFailure: fetching events: " + error);
+		showErrorMessage();
+	}
+});
+```
+
+I you want to show the `Event` data, you will have to use the `SitumEvent`variable that provides a method called `getHtml()` and `getName()`, the first method returns the value that the `Event` will display in the Smartphone when over the `Event's` conversion area, the second one returns the name of the event.
+
+Here you can see a method to display this values in your code after fetching the `Events` in your `Building` with a viewholder for the `RecyclerView` and a `WebView`:
+```java
+@Override
+public void onClick(View view) {
+    int adapterPosition = getAdapterPosition();
+    if (mWebView.getVisibility() == (View.VISIBLE)){
+        mWebView.setVisibility(View.GONE);
+    }else{
+        mWebView.setVisibility(View.VISIBLE);
+    }
+
+    mWebView.loadDataWithBaseURL(null, mEventData.get(adapterPosition).getHtml(), "text/html", "utf-8", null);
+
+    mClickHandler.onClick("");
+
+}
+```
+
+You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/) and check the full example in the [getbuildingevents](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/buildingevents) package.
+
+## <a name="filterpois"></a> Filter Building's POIs
+You can filter your `Building` `POIs` by adding to the `POI` a Key-Value pair. You can add the Key-Value pair in the [Dashboard](https://dashboard.situm.es) when creating or updating a `POI` in the last section of the form.
+In order to get the `Building` `POIs`, you have to fetch your buildings and select the one you want to work with. After that fetch the `Building's` `POIs` with the `CommunicationManager()`
+```java
+SitumSdk.communicationManager().fetchIndoorPOIsFromBuilding(building, new Handler<Collection<Poi>>(){
+
+                    @Override
+                    public void onSuccess(Collection<Poi> pois) {
+                        for(Poi poi : pois){
+                            Log.i(TAG, "onSuccess: poi: " + poi);
+                        }
+                        poiList.clear();
+                        poiList.addAll(pois);
+                        showPoiDataView();
+                        filteringAdapter.setSearchData(poiList);
+                        pbSearchLoading.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onFailure(Error error) {
+                        Log.e(TAG, "onFailure: fetching pois: " + error);
+                        showErrorMessage();
+                    }
+                });
+```
+
+With the `POIs` in an `ArrayList` you can now make your own function to get the `POIs` filtered by the Key and Value you want, here in the example we are providing a layout with a form to select the Key and Value you want:
+```java
+public void filter (String key, String value){
+
+        List<Poi> poiListTemp = new ArrayList<>();
+        Map<String, String> kVList;
+
+
+        for(Poi p : poiList){
+            kVList = p.getCustomFields();
+            Log.d(TAG, kVList.toString());
+            if(!kVList.isEmpty()) {
+                if(!kVList.containsKey(key)){;
+                    continue;
+                }
+                if(!kVList.containsValue(value)){
+                    continue;
+                }
+                if (kVList.get(key).equals(value)) {
+                    poiListTemp.add(p);
+                }
+
+            }
+            else{
+                continue;
+            }
+        }
+        if(!poiListTemp.isEmpty()){
+            filteringAdapter.setSearchData(poiListTemp);
+        }else{
+            showErrorMessage();
+        }
+}
+```
+
+If you want to know more about filtering `POIs` you can check the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/). You can also see the full example in the [poifiltering](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/poifiltering) package.
 
 
 
