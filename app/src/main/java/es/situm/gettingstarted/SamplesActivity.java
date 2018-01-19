@@ -19,6 +19,7 @@ import es.situm.gettingstarted.drawbuilding.DrawBuildingActivity;
 import es.situm.gettingstarted.drawpois.DrawPoisActivity;
 import es.situm.gettingstarted.drawposition.DrawPositionActivity;
 import es.situm.gettingstarted.drawroute.DrawRouteActivity;
+import es.situm.gettingstarted.guideinstructions.SelectBuildingActivity;
 import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.poifiltering.FilteringActivity;
 import es.situm.gettingstarted.poifiltering.ListBuildingsActivity;
@@ -26,6 +27,7 @@ import es.situm.gettingstarted.positioning.PositioningActivity;
 import es.situm.gettingstarted.realtime.RealTimeActivity;
 
 /**
+ *
  * Created by alberto.penas on 13/06/17.
  */
 
@@ -55,6 +57,7 @@ public class SamplesActivity
         items.add(new Sample("Draw realtime devices over the map", RealTimeActivity.class));
         items.add(new Sample("Key-Value POIs Filtering", ListBuildingsActivity.class));
         items.add(new Sample("Show all the events of a building", BuildingListActivity.class));
+        items.add(new Sample("Instructions while going to a destination", SelectBuildingActivity.class));
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));
         recyclerView.setAdapter(new SamplesAdapter(items, this));

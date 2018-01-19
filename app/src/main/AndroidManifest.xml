@@ -90,6 +90,16 @@
 
         </activity>
 
+        <activity android:name=".guideinstructions.SelectBuildingActivity"
+            android:label="Select your building"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity"/>
+
+        <activity android:name=".guideinstructions.GuideInstructionsActivity"
+            android:label="Instructions while going to a POI"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".guideinstructions.SelectBuildingActivity"/>
+
         <!-- Google play services version-->
         <meta-data
             android:name="com.google.android.gms.version"
