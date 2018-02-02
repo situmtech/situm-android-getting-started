@@ -33,6 +33,7 @@ able to:
 9. [List all the events in a building](#buildingevents)
 10. [Filter building's POIs](#filterpois)
 11. [Instructions while going from one point to another](#guideinstructions)
+12. [Animate the position arrow while walking](#animateposition)
 
 #### [More information](#moreinfo)
 
@@ -857,6 +858,62 @@ Situm SDK provides a way to show the indications while you are going from one po
 
 If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/). If you want to see the full example you can check the [guideinstructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions) package.
 
+## <a name="animateposition"></a>Animate position while walking
+Sometimes the difference between a good work and a nice one relies on the little things. Here we want to show you how to animate the arrow position while walking, this feature will make the user experience much better with just a few changes, lets dive in!
+First we are going to optimize the positioning not creating a point everytime we update the location but changing the position of the marker.
+```java 
+		public void onLocationChanged(@NonNull Location location) {
+                current = location;
+                LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                        location.getCoordinate().getLongitude());
+                if (prev == null){
+                    Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.pose);
+                    Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
+
+                    prev = map.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .zIndex(100)
+                            .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
+                }
+```
+The second step is to animate the arrow everytime we walk. For this purpose we can use the ObjectAnimator class provided by android. We will need to create an UpdateListener in order to make the transition smoother everytime the position changes:
+```java
+			locationAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                    LatLng startLatLng = lastLatLng;
+
+                    @Override
+                    public synchronized void onAnimationUpdate(ValueAnimator animation) {
+                        float t = animation.getAnimatedFraction();
+                        lastLatLng = interpolateLatLng(t, startLatLng, toLatLng);
+
+                        marker.setPosition(lastLatLng);
+                    }
+                }); 
+```
+Finally just set the animation duration and that is all!
+```java 
+				locationAnimator.setDuration(DURATION_POSITION_ANIMATION);
+                locationAnimator.start();
+```
+
+Once we have the animation for the position, we will see that it works much smoother than before, but we are missing something, the bearing. In order to make the arrow show us our direction, we will need to implement a new animation for this purpose. This is almost the same as the animation we did before. Everytime we update our position we get a message from our SDK with our exact position ¡and bearing!. Here we will have to deal with the angles in order to rotate always in the shortest way, after that just create another animation and that is all:
+```java
+				locationBearingAnimator = new ObjectAnimator();
+                locationBearingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public synchronized void onAnimationUpdate(ValueAnimator animation) {
+                        lastBearing = (Float) animation.getAnimatedValue();
+                        marker.setRotation(lastBearing);
+                    }
+                });
+                locationBearingAnimator.setFloatValues(lastBearing, toBearing);
+                locationBearingAnimator.setDuration(DURATION_BEARING_ANIMATION);
+                locationBearingAnimator.start();
+
+``` 
+
+If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/) and, if you want to see the full code example check the [animateposition](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition) package. 
 
 ## <a name="moreinfo"></a> More information
 

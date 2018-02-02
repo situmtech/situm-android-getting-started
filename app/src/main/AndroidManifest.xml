@@ -100,6 +100,16 @@
             android:screenOrientation="portrait"
             android:parentActivityName=".guideinstructions.SelectBuildingActivity"/>
 
+        <activity android:name=".animateposition.SelectBuildingActivity"
+            android:label="Select your building"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity"/>
+
+        <activity android:name=".animateposition.AnimatePositionActivity"
+            android:label="Animate the position while walking"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".animateposition.SelectBuildingActivity"/>
+
         <!-- Google play services version-->
         <meta-data
             android:name="com.google.android.gms.version"
