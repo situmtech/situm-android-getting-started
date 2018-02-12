@@ -68,8 +68,10 @@ public class RealTimeActivity
             @Override
             public void onSuccess(List<Building> buildings) {
                 hideProgress();
-                Building building = buildings.get(2);
-                realtime(building);
+                if (buildings != null && !buildings.isEmpty()) {
+                    Building building = buildings.get(0);
+                    realtime(building);
+                }
             }
 
             @Override
