@@ -918,4 +918,4 @@ If you want to know more about location you can check the [SDK Documentation](ht
 ## <a name="moreinfo"></a> More information
 
 More info is available at our [Developers Page](https://des.situm.es/developers/pages/android/).
-For any other question, contact us in https://situm.es/contact.
+For any other question, contact us [here](mailto:support@situm.es)
