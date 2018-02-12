@@ -19,6 +19,7 @@ able to:
 3. [Step 3: Set your credentials](#config)
 4. [Step 4: Setup Google Maps](#mapsapikey)
 5. [Optional step 5: location and runtime permissions](#locationpermissions)
+6. [Optional step 6: Setup indoor positioning](#indoorpositioning)
 
 #### [Samples](#samples)
 
@@ -163,12 +164,20 @@ resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 
 
 
+
 ### <a name="locationpermissions"><a/> Optional step 5: location and runtime permissions 
 When we work on features that involve the use of the smartphone location, we need to add fine location permission to the manifest:
 ```xml
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 ```
 Also, ensure to check the Android runtime permissions. [More info](https://developer.android.com/training/permissions/requesting.html) .
+
+
+
+
+
+### <a name="indoorpositioning"></a> Optional step 6: Setup indoor positioning
+In order to use indoor positioning, you must define which building you want to position in. This can be achieved by editing the value of `private static final String BUILDING_ID = "YOUR_BUILDING_ID";` in PositioningActivity
 
 
 
