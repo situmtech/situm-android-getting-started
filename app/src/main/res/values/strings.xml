@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Getting Started SitumSDK</string>
+    <string name="search_key_hint">Key name...</string>
+    <string name="search_value_hint">Value name...</string>
 </resources>
