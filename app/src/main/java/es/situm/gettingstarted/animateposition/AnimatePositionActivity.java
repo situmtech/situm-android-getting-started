@@ -89,7 +89,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_draw_building);
+        setContentView(R.layout.activity_animate_position);
         locationManager = SitumSdk.locationManager();
 
         Intent intent = getIntent();

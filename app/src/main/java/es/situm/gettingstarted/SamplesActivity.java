@@ -58,7 +58,7 @@ public class SamplesActivity
         items.add(new Sample("Key-Value POIs Filtering", ListBuildingsActivity.class));
         items.add(new Sample("Show all the events of a building", BuildingListActivity.class));
         items.add(new Sample("Instructions while going to a destination", SelectBuildingActivity.class));
-        items.add(new Sample("Animate the position while walking", AnimatePositionActivity.class));
+        items.add(new Sample("Animate the position while walking", es.situm.gettingstarted.animateposition.SelectBuildingActivity.class));
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));
         recyclerView.setAdapter(new SamplesAdapter(items, this));
