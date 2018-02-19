@@ -234,7 +234,8 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         }
         locationManager.removeUpdates(locationListener);
         current = null;
-        prev.remove();
+        if(prev != null)
+            prev.remove();
     }
 
     synchronized void animate(final Marker marker, final Location location) {
