@@ -30,6 +30,10 @@ able to:
 6. [Show POIs (Points of Interest) in Google Maps](#drawpois)
 7. [Show routes between POIs in Google Maps](#drawroute)
 8. [Show the location of other devices in real time](#rt)
+9. [List all the events in a building](#buildingevents)
+10. [Filter building's POIs](#filterpois)
+11. [Instructions while going from one point to another](#guideinstructions)
+12. [Animate the position arrow while walking](#animateposition)
 
 #### [More information](#moreinfo)
 
@@ -80,7 +84,7 @@ allprojects {
 It's important to add the `transitive = true` property to download the Situm SDK dependencies.
 
 ```groovy
-    compile ('es.situm:situm-sdk:2.7.0@aar') {
+    compile ('es.situm:situm-sdk:2.14.0@aar') {
         transitive = true
     }
 ```
@@ -683,9 +687,250 @@ protected void onDestroy() {¡
 You can check the complete sample in the [realtime](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime) package.
 
 
+## <a name="buildingevents"></a> List Building Events
+In order to know all the `Event` you have in your `Building`, the first thing you have to do is to fetch your buildings and select the one you want to check. This SDK allows you to know the exact position of the `Event` and to know where the message in your smartphone will be shown. In the following example we will show you how to fetch the `Building's` `Events` and how to list them in order to know the details for each one.
 
+First of all, to fetch the events you will have to use the `communicationManager()` again:
+```java
+SitumSdk.communicationManager().fetchEventsFromBuilding(building, new Handler<Collection<SitumEvent>>(){
+
+	@Override
+	public void onSuccess(Collection<SitumEvent> situmEvents) {
+		events.clear();
+		events.addAll(situmEvents);
+		showEventDataView();
+		eventAdapter.setEventData(events);
+		mProgressBar.setVisibility(View.INVISIBLE);
+	}
+
+	@Override
+	public void onFailure(Error error) {
+		Log.e(TAG, "onFailure: fetching events: " + error);
+		showErrorMessage();
+	}
+});
+```
+
+I you want to show the `Event` data, you will have to use the `SitumEvent`variable that provides a method called `getHtml()` and `getName()`, the first method returns the value that the `Event` will display in the Smartphone when over the `Event's` conversion area, the second one returns the name of the event.
+
+Here you can see a method to display this values in your code after fetching the `Events` in your `Building` with a viewholder for the `RecyclerView` and a `WebView`:
+```java
+@Override
+public void onClick(View view) {
+    int adapterPosition = getAdapterPosition();
+    if (mWebView.getVisibility() == (View.VISIBLE)){
+        mWebView.setVisibility(View.GONE);
+    }else{
+        mWebView.setVisibility(View.VISIBLE);
+    }
+
+    mWebView.loadDataWithBaseURL(null, mEventData.get(adapterPosition).getHtml(), "text/html", "utf-8", null);
+
+    mClickHandler.onClick("");
+
+}
+```
+
+You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/) and check the full example in the [getbuildingevents](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/buildingevents) package.
+
+## <a name="filterpois"></a> Filter Building's POIs
+You can filter your `Building` `POIs` by adding to the `POI` a Key-Value pair. You can add the Key-Value pair in the [Dashboard](https://dashboard.situm.es) when creating or updating a `POI` in the last section of the form.
+In order to get the `Building` `POIs`, you have to fetch your buildings and select the one you want to work with. After that fetch the `Building's` `POIs` with the `CommunicationManager()`
+```java
+SitumSdk.communicationManager().fetchIndoorPOIsFromBuilding(building, new Handler<Collection<Poi>>(){
+
+                    @Override
+                    public void onSuccess(Collection<Poi> pois) {
+                        for(Poi poi : pois){
+                            Log.i(TAG, "onSuccess: poi: " + poi);
+                        }
+                        poiList.clear();
+                        poiList.addAll(pois);
+                        showPoiDataView();
+                        filteringAdapter.setSearchData(poiList);
+                        pbSearchLoading.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onFailure(Error error) {
+                        Log.e(TAG, "onFailure: fetching pois: " + error);
+                        showErrorMessage();
+                    }
+                });
+```
+
+With the `POIs` in an `ArrayList` you can now make your own function to get the `POIs` filtered by the Key and Value you want, here in the example we are providing a layout with a form to select the Key and Value you want:
+```java
+public void filter (String key, String value){
+
+        List<Poi> poiListTemp = new ArrayList<>();
+        Map<String, String> kVList;
+
+
+        for(Poi p : poiList){
+            kVList = p.getCustomFields();
+            Log.d(TAG, kVList.toString());
+            if(!kVList.isEmpty()) {
+                if(!kVList.containsKey(key)){;
+                    continue;
+                }
+                if(!kVList.containsValue(value)){
+                    continue;
+                }
+                if (kVList.get(key).equals(value)) {
+                    poiListTemp.add(p);
+                }
+
+            }
+            else{
+                continue;
+            }
+        }
+        if(!poiListTemp.isEmpty()){
+            filteringAdapter.setSearchData(poiListTemp);
+        }else{
+            showErrorMessage();
+        }
+}
+```
+
+If you want to know more about filtering `POIs` you can check the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/). You can also see the full example in the [poifiltering](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/poifiltering) package.
+
+## <a name="guideinstructions"></a> Instructions while going from one point to another
+Situm SDK provides a way to show the indications while you are going from one point to another. Since we have already seen how to get your location and how to plan a route between two points, here we will talk only about how to get the indications. This is a two-steps-functionallity, first we have to tell the route we have planned to do and then update every time we move our position in the route.
+  * The route planned:
+  ```java
+  ...
+  navigationRequest = new NavigationRequest.Builder()
+  	.route(bestRoute)
+        .distanceToGoalThreshold(3d)
+        .outsideRouteThreshold(50d)
+        .build();
+
+  startNavigation();
+  ...
+  void startNavigation(){
+
+        Log.d(TAG, "startNavigation: ");
+        SitumSdk.navigationManager().requestNavigationUpdates(navigationRequest, new NavigationListener() {
+            @Override
+            public void onDestinationReached() {
+                Log.d(TAG, "onDestinationReached: ");
+                mNavText.setText("Arrived");
+                polyline.remove();
+            }
+
+            @Override
+            public void onProgress(NavigationProgress navigationProgress) {
+                Context context = getApplicationContext();
+                Log.d(TAG, "onProgress: " + navigationProgress.getCurrentIndication().toText(context));
+                mNavText.setText(navigationProgress.getCurrentIndication().toText(context));
+                getRoute();
+            }
+
+            @Override
+            public void onUserOutsideRoute() {
+                Log.d(TAG, "onUserOutsideRoute: ");
+                mNavText.setText("Outside of the route");
+            }
+        });
+    }
+
+  ```
+
+  * Updating your position in the route:
+  ```java
+  private void startLocation(){
+        if(locationManager.isRunning()){
+            return;
+        }
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+	    
+	    	...
+	    	
+	    	SitumSdk.navigationManager().updateWithLocation(current);
+	    
+	    	...
+
+  ```
+
+If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/). If you want to see the full example you can check the [guideinstructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions) package.
+
+## <a name="animateposition"></a>Animate position while walking
+Sometimes the difference between a good work and a nice one relies on the little things. Here we want to show you how to animate the arrow position while walking, this feature will make the user experience much better with just a few changes, lets dive in!
+First we are going to optimize the positioning not creating a point everytime we update the location but changing the position of the marker.
+```java 
+		public void onLocationChanged(@NonNull Location location) {
+                current = location;
+                LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                        location.getCoordinate().getLongitude());
+                if (prev == null){
+                    Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.pose);
+                    Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
+
+                    prev = map.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .zIndex(100)
+                            .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
+                }
+```
+The second step is to animate the arrow everytime we walk. For this purpose we can use the ObjectAnimator class provided by android. We will need to create an UpdateListener in order to make the transition smoother everytime the position changes:
+```java
+			locationAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                    LatLng startLatLng = lastLatLng;
+
+                    @Override
+                    public synchronized void onAnimationUpdate(ValueAnimator animation) {
+                        float t = animation.getAnimatedFraction();
+                        lastLatLng = interpolateLatLng(t, startLatLng, toLatLng);
+
+                        marker.setPosition(lastLatLng);
+                    }
+                }); 
+```
+Finally just set the animation duration and that is all!
+```java 
+				locationAnimator.setDuration(DURATION_POSITION_ANIMATION);
+                locationAnimator.start();
+```
+
+Once we have the animation for the position, we will see that it works much smoother than before, but we are missing something, the bearing. In order to make the arrow show us our direction, we will need to implement a new animation for this purpose. This is almost the same as the animation we did before. Everytime we update our position we get a message from our SDK with our exact position ¡and bearing!. Here we will have to deal with the angles in order to rotate always in the shortest way, after that just create another animation:
+```java
+				locationBearingAnimator = new ObjectAnimator();
+                locationBearingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public synchronized void onAnimationUpdate(ValueAnimator animation) {
+                        lastBearing = (Float) animation.getAnimatedValue();
+                        marker.setRotation(lastBearing);
+                    }
+                });
+                locationBearingAnimator.setFloatValues(lastBearing, toBearing);
+                locationBearingAnimator.setDuration(DURATION_BEARING_ANIMATION);
+                locationBearingAnimator.start();
+
+``` 
+
+For a better and more fluid results, you have to set the `useDeadReckoning` option to true when starting the positioning as follows:
+```java
+		private void startLocation(){
+			...
+			LocationRequest locationRequest = new LocationRequest.Builder()
+                .buildingIdentifier(buildingId)
+                .useDeadReckoning(true)
+                .build();
+			...
+		}
+	
+```
+This option allows you to get fast position updates using only the inertial sensors (compass, gyro...) without a decrease in the battery duration.
+
+
+If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/) and, if you want to see the full code example check the [animateposition](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition) package. 
 
 ## <a name="moreinfo"></a> More information
 
 More info is available at our [Developers Page](https://des.situm.es/developers/pages/android/).
-For any other question, contact us in https://situm.es/contact.
+For any other question, contact us [here](mailto:support@situm.es)
