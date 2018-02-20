@@ -262,7 +262,8 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
         locationManager.removeUpdates(locationListener);
         current = null;
         stopNavigation();
-        prev.remove();
+        if (prev != null)
+            prev.remove();
         if(polyline!=null)
             polyline.remove();
     }
