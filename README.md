@@ -897,7 +897,7 @@ Finally just set the animation duration and that is all!
                 locationAnimator.start();
 ```
 
-Once we have the animation for the position, we will see that it works much smoother than before, but we are missing something, the bearing. In order to make the arrow show us our direction, we will need to implement a new animation for this purpose. This is almost the same as the animation we did before. Everytime we update our position we get a message from our SDK with our exact position ¡and bearing!. Here we will have to deal with the angles in order to rotate always in the shortest way, after that just create another animation and that is all:
+Once we have the animation for the position, we will see that it works much smoother than before, but we are missing something, the bearing. In order to make the arrow show us our direction, we will need to implement a new animation for this purpose. This is almost the same as the animation we did before. Everytime we update our position we get a message from our SDK with our exact position ¡and bearing!. Here we will have to deal with the angles in order to rotate always in the shortest way, after that just create another animation:
 ```java
 				locationBearingAnimator = new ObjectAnimator();
                 locationBearingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -912,6 +912,21 @@ Once we have the animation for the position, we will see that it works much smoo
                 locationBearingAnimator.start();
 
 ``` 
+
+For a better and more fluid results, you have to set the `useDeadReckoning` option to true when starting the positioning as follows:
+```java
+		private void startLocation(){
+			...
+			LocationRequest locationRequest = new LocationRequest.Builder()
+                .buildingIdentifier(buildingId)
+                .useDeadReckoning(true)
+                .build();
+			...
+		}
+	
+```
+This option allows you to get fast position updates using only the inertial sensors (compass, gyro...) without a decrease in the battery duration.
+
 
 If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/) and, if you want to see the full code example check the [animateposition](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition) package. 
 
