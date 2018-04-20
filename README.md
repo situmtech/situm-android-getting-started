@@ -572,40 +572,6 @@ getPoisUseCase.get(new GetPoisUseCase.Callback() {
     });
 ```
 
-Additionally, you can request navigation updates to the SDK. These updates will inform you of several navigation events: destination reached, user went off the planned route, etc. 
-
-```java
-NavigationRequest navigationRequest = new NavigationRequest.Builder()
-            .route(route)
-            .distanceToGoalThreshold(3d)
-            .outsideRouteThreshold(50d)
-            .build();
-    SitumSdk.navigationManager().requestNavigationUpdates(navigationRequest, new NavigationListener() {
-        @Override
-        public void onDestinationReached() {
-            Log.d(TAG, "onDestinationReached: ");
-        }
-
-        @Override
-        public void onProgress(NavigationProgress navigationProgress) {
-            Log.d(TAG, "onProgress: ");
-        }
-
-        @Override
-        public void onUserOutsideRoute() {
-            Log.d(TAG, "onUserOutsideRoute: ");
-        }
-    });
-```
-Do not forget to stop the navigation when destroying your activity/fragment or whenever you might consider.
-```java
-@Override
-protected void onDestroy() {¡
-    SitumSdk.locationManager().removeUpdates(locationListener);
-    super.onDestroy();
-}
-```
-
 You can check the complete sample in the [drawroute](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute) package.
 
 
