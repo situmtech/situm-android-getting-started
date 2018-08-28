@@ -86,7 +86,7 @@ allprojects {
 It's important to add the `transitive = true` property to download the Situm SDK dependencies.
 
 ```groovy
-    compile ('es.situm:situm-sdk:2.24.3@aar') {
+    compile ('es.situm:situm-sdk:2.25.0@aar') {
         transitive = true
     }
 ```
@@ -711,7 +711,7 @@ You can get more information about `Event` in the [SDK documentation](http://dev
 
 ## <a name="positionevents"></a> Calculate if the user is inside en event
 In order to determine if the user is inside the trigger area of a `SitumEvent`, you should intersect every new location with the `trigger` area of every event in the building. 
-This can be done by following the next example:
+This can be done by following the next example (Please note that minimun Android SDK version is 2.25.0):
 
 ```java
 ···
