@@ -32,9 +32,10 @@ able to:
 7. [Show routes between POIs in Google Maps](#drawroute)
 8. [Show the location of other devices in real time](#rt)
 9. [List all the events in a building](#buildingevents)
-10. [Filter building's POIs](#filterpois)
-11. [Instructions while going from one point to another](#guideinstructions)
-12. [Animate the position arrow while walking](#animateposition)
+10. [Calculate if the user is inside an event](#positionevents)
+11. [Filter building's POIs](#filterpois)
+12. [Instructions while going from one point to another](#guideinstructions)
+13. [Animate the position arrow while walking](#animateposition)
 
 #### [More information](#moreinfo)
 
@@ -706,7 +707,46 @@ public void onClick(View view) {
 }
 ```
 
-You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/) and check the full example in the [getbuildingevents](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/buildingevents) package.
+You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/) and check the full example in the [getbuildingevents](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/buildingevents) package.
+
+## <a name="positionevents"></a> Calculate if the user is inside en event
+In order to determine if the user is inside the trigger area of a `SitumEvent`, you should intersect every new location with the `trigger` area of every event in the building. 
+This can be done by following the next example:
+
+```java
+···
+//This is a method of LocationListener, which provides information 
+//about the user's location
+@Override
+public void onLocationChanged(@NonNull Location location) {
+    SitumEvent event = getEventForLocation(location);
+    if (event != null) {
+        Log.d("Event", "User inside event: " + event.getName());
+    }
+}
+
+···
+private SitumEvent getEventForLocation(Location location) {
+    for (SitumEvent event : buildingInfo.getEvents()) {
+        if (isLocationInsideEvent(location, event)) {
+            return event;
+       }
+   }
+   return null;
+}
+
+private boolean isLocationInsideEvent(Location location, SitumEvent situmEvent) {
+    if (!location.getFloorIdentifier()
+    		.equals(String.valueOf(situmEvent.getFloor_id()))) {
+        return false;
+    }
+   CartesianCoordinate eventCenter = situmEvent.getCenter().getTrigger().getCartesianCoordinate();
+
+   return location.getCartesianCoordinate()
+   		.distanceTo(eventCenter) <= situmEvent.getRadius();
+}
+```
+
 
 ## <a name="filterpois"></a> Filter Building's POIs
 You can filter your `Building` `POIs` by adding to the `POI` a Key-Value pair. You can add the Key-Value pair in the [Dashboard](https://dashboard.situm.es) when creating or updating a `POI` in the last section of the form.
@@ -769,7 +809,7 @@ public void filter (String key, String value){
 }
 ```
 
-If you want to know more about filtering `POIs` you can check the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/). You can also see the full example in the [poifiltering](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/poifiltering) package.
+If you want to know more about filtering `POIs` you can check the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/). You can also see the full example in the [poifiltering](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/poifiltering) package.
 
 ## <a name="guideinstructions"></a> Instructions while going from one point to another
 Situm SDK provides a way to show the indications while you are going from one point to another. Since we have already seen how to get your location and how to plan a route between two points, here we will talk only about how to get the indications. This is a two-steps-functionallity, first we have to tell the route we have planned to do and then update every time we move our position in the route.
@@ -831,7 +871,7 @@ Situm SDK provides a way to show the indications while you are going from one po
 
   ```
 
-If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/). If you want to see the full example you can check the [guideinstructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions) package.
+If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/). If you want to see the full example you can check the [guideinstructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions) package.
 
 ## <a name="animateposition"></a>Animate position while walking
 Sometimes the difference between a good work and a nice one relies on the little things. Here we want to show you how to animate the arrow position while walking, this feature will make the user experience much better with just a few changes, lets dive in!
@@ -903,7 +943,7 @@ For a better and more fluid results, you have to set the `useDeadReckoning` opti
 This option allows you to get fast position updates using only the inertial sensors (compass, gyro...) without a decrease in the battery duration.
 
 
-If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.13.0/) and, if you want to see the full code example check the [animateposition](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition) package. 
+If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/) and, if you want to see the full code example check the [animateposition](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition) package. 
 
 ## <a name="moreinfo"></a> More information
 
