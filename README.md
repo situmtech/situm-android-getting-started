@@ -38,6 +38,7 @@ able to:
 13. [Animate the position arrow while walking](#animateposition)
 
 #### [More information](#moreinfo)
+#### [Support information](#supportinfo)
 
 ### Introduction <a name="introduction"></a>
 
@@ -948,4 +949,7 @@ If you want to know more about location you can check the [SDK Documentation](ht
 ## <a name="moreinfo"></a> More information
 
 More info is available at our [Developers Page](https://des.situm.es/developers/pages/android/).
-For any other question, contact us [here](mailto:support@situm.es)
+
+## <a name="supportinfo"></a> Support information
+
+For any question or bug report, please send an email to [support@situm.es](mailto:support@situm.es)
