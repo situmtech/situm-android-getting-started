@@ -100,7 +100,6 @@ public class DrawRouteActivity
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
 
                             hideProgress();
-                            startNav(route);
                         }
 
                         @Override
@@ -120,30 +119,6 @@ public class DrawRouteActivity
         });
     }
 
-
-    private void startNav(Route route){
-        NavigationRequest navigationRequest = new NavigationRequest.Builder()
-                .route(route)
-                .distanceToGoalThreshold(3d)
-                .outsideRouteThreshold(50d)
-                .build();
-        SitumSdk.navigationManager().requestNavigationUpdates(navigationRequest, new NavigationListener() {
-            @Override
-            public void onDestinationReached() {
-                Log.d(TAG, "onDestinationReached: ");
-            }
-
-            @Override
-            public void onProgress(NavigationProgress navigationProgress) {
-                Log.d(TAG, "onProgress: ");
-            }
-
-            @Override
-            public void onUserOutsideRoute() {
-                Log.d(TAG, "onUserOutsideRoute: ");
-            }
-        });
-    }
 
     private void setup() {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);

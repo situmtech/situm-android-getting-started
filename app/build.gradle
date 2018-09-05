@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "es.situm.gettingstarted"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -34,7 +34,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.android.gms:play-services-maps:11.2.0'
-    compile ('es.situm:situm-sdk:2.14.0@aar') {
+    compile ('es.situm:situm-sdk:2.25.0@aar') {
         transitive = true
     }
     compile 'com.android.support:cardview-v7:25.3.1'
