@@ -504,7 +504,6 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
                 Context context = getApplicationContext();
                 Log.d(TAG, "onProgress: " + navigationProgress.getCurrentIndication().toText(context));
                 mNavText.setText(navigationProgress.getCurrentIndication().toText(context));
-                getRoute();
             }
 
             @Override
