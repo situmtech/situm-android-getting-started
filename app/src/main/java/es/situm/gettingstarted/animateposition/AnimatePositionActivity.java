@@ -25,6 +25,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -76,7 +77,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
 
     private float lastBearing;
     private float destinationBearing;
-
+    private boolean markerWithOrientation = false;
 
 
 
@@ -151,6 +152,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                     stopLocation();
                     SitumSdk.locationManager().removeUpdates(locationListener);
                 }else {
+                    markerWithOrientation = false;
                     startLocation();
                 }
             }
@@ -187,15 +189,16 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
                         location.getCoordinate().getLongitude());
                 if (prev == null){
-                    Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.pose);
+                    Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.position);
                     Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
 
                     prev = map.addMarker(new MarkerOptions()
                             .position(latLng)
                             .zIndex(100)
+                            .anchor(0.5f,0.5f)
                             .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
                 }
-
+                updateMarkerIcon(location);
 
                 if (location.getQuality() == Location.Quality.LOW) {
                     prev.setPosition(latLng);
@@ -229,12 +232,34 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
     }
 
+    private void updateMarkerIcon(Location location) {
+        boolean newLocationHasOrientation = (location.hasBearing()) && location.isIndoor();
+        if (markerWithOrientation == newLocationHasOrientation) {
+            return;
+        }
+        markerWithOrientation = newLocationHasOrientation;
+
+        BitmapDescriptor bitmapDescriptor;
+        Bitmap bitmapScaled;
+        if(markerWithOrientation){
+            Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.pose);
+            bitmapScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
+        } else {
+            Bitmap bitmapCircle = BitmapFactory.decodeResource(getResources(), R.drawable.position);
+            bitmapScaled = Bitmap.createScaledBitmap(bitmapCircle, bitmapCircle.getWidth() / 4,bitmapCircle.getHeight() / 4, false);
+        }
+        bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmapScaled);
+        prev.setIcon(bitmapDescriptor);
+    }
+
+
     private void stopLocation(){
         if (!locationManager.isRunning()){
             return;
         }
         locationManager.removeUpdates(locationListener);
         current = null;
+        lastLocation = null;
         if(prev != null){
             prev.remove();
             prev = null;
@@ -252,6 +277,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
 
             lastLocation = location;
             lastLatLng = toLatLng;
+            lastBearing = toBearing;
             return;
         }
 
@@ -323,7 +349,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         degrees = normalizeAngle(degrees);
         final float toBearing = degrees;
 
-        if (Math.abs(destinationBearing - toBearing) < 1) {
+        if (destinationBearing == toBearing) {
             return;
         }
 
