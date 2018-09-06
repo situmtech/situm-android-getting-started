@@ -841,7 +841,6 @@ Situm SDK provides a way to show the indications while you are going from one po
                 Context context = getApplicationContext();
                 Log.d(TAG, "onProgress: " + navigationProgress.getCurrentIndication().toText(context));
                 mNavText.setText(navigationProgress.getCurrentIndication().toText(context));
-                getRoute();
             }
 
             @Override
@@ -879,18 +878,19 @@ Sometimes the difference between a good work and a nice one relies on the little
 First we are going to optimize the positioning not creating a point everytime we update the location but changing the position of the marker.
 ```java 
 		public void onLocationChanged(@NonNull Location location) {
-                current = location;
-                LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
-                        location.getCoordinate().getLongitude());
-                if (prev == null){
-                    Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.pose);
-                    Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
-
-                    prev = map.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .zIndex(100)
-                            .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
-                }
+                        current = location;
+                        LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                                location.getCoordinate().getLongitude());
+                        if (prev == null){
+                            Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.position);
+                            Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
+        
+                            prev = map.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .zIndex(100)
+                                    .anchor(0.5f,0.5f)
+                                    .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
+                        }
 ```
 The second step is to animate the arrow everytime we walk. For this purpose we can use the ObjectAnimator class provided by android. We will need to create an UpdateListener in order to make the transition smoother everytime the position changes:
 ```java
