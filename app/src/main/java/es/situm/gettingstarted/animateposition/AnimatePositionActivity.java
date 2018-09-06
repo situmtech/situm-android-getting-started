@@ -152,6 +152,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                     stopLocation();
                     SitumSdk.locationManager().removeUpdates(locationListener);
                 }else {
+                    markerWithOrientation = false;
                     startLocation();
                 }
             }
@@ -258,6 +259,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         }
         locationManager.removeUpdates(locationListener);
         current = null;
+        lastLocation = null;
         if(prev != null){
             prev.remove();
             prev = null;
