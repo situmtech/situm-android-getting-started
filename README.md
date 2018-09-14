@@ -747,7 +747,7 @@ private boolean isLocationInsideEvent(Location location, SitumEvent situmEvent) 
    		.distanceTo(eventCenter) <= situmEvent.getRadius();
 }
 ```
-
+You can check the complete sample in the [userinsideevent](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/userinsideevent) package.
 
 ## <a name="filterpois"></a> Filter Building's POIs
 You can filter your `Building` `POIs` by adding to the `POI` a Key-Value pair. You can add the Key-Value pair in the [Dashboard](https://dashboard.situm.es) when creating or updating a `POI` in the last section of the form.
