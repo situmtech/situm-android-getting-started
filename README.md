@@ -741,7 +741,7 @@ private boolean isLocationInsideEvent(Location location, SitumEvent situmEvent) 
     		.equals(String.valueOf(situmEvent.getFloor_id()))) {
         return false;
     }
-   CartesianCoordinate eventCenter = situmEvent.getCenter().getTrigger().getCartesianCoordinate();
+   CartesianCoordinate eventCenter = situmEvent.getTrigger().getCenter().getCartesianCoordinate();
 
    return location.getCartesianCoordinate()
    		.distanceTo(eventCenter) <= situmEvent.getRadius();

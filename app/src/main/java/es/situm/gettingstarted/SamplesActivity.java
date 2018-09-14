@@ -14,7 +14,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.situm.gettingstarted.animateposition.AnimatePositionActivity;
 import es.situm.gettingstarted.buildingevents.BuildingListActivity;
 import es.situm.gettingstarted.drawbuilding.DrawBuildingActivity;
 import es.situm.gettingstarted.drawpois.DrawPoisActivity;
@@ -59,6 +58,7 @@ public class SamplesActivity
         items.add(new Sample("Show all the events of a building", BuildingListActivity.class));
         items.add(new Sample("Instructions while going to a destination", SelectBuildingActivity.class));
         items.add(new Sample("Animate the position while walking", es.situm.gettingstarted.animateposition.SelectBuildingActivity.class));
+        items.add(new Sample("Show if user is inside an event", es.situm.gettingstarted.userinsideevent.ListBuildingsActivity.class));
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));
         recyclerView.setAdapter(new SamplesAdapter(items, this));
