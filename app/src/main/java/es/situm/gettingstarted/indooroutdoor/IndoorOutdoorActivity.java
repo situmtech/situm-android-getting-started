@@ -90,13 +90,9 @@ public class IndoorOutdoorActivity
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(IndoorOutdoorActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
                 Snackbar.make(findViewById(android.R.id.content),
                         "Needed location permission to enable service",
                         Snackbar.LENGTH_INDEFINITE)
@@ -108,13 +104,7 @@ public class IndoorOutdoorActivity
                 }).show();
             } else {
 
-                // No explanation needed, we can request the permission.
-
                 requestPermission();
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         }else{
             toggleButton.setEnabled(true);
@@ -135,23 +125,17 @@ public class IndoorOutdoorActivity
                                            int[] grantResults) {
         switch (requestCode) {
             case ACCESS_FINE_LOCATION_REQUEST_CODE: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                     toggleButton.setEnabled(true);
                 } else {
                     statusTV.setText("Info: permissions must be accepted to use location manager");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 

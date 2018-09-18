@@ -38,8 +38,8 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
     private LocationManager locationManager;
     private LocationListener locationListener;
     private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
-    private TextView calculating;
-    private ProgressBar progressBar;
+    private TextView mCalculatingTv;
+    private ProgressBar mProgressBar;
     private boolean dontShowAgain;
     private AlertDialog alertDialog ;
 
@@ -54,8 +54,7 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
             buildingInfo = intent.getExtras().getParcelable(Intent.EXTRA_TEXT);
         }
         locationManager = SitumSdk.locationManager();
-        calculating = (TextView) findViewById(R.id.calculating);
-        progressBar = (ProgressBar) findViewById(R.id.pb_loading_positioning);
+        prepareRecyclerView();
 
         dontShowAgain = false;
         checkPermissions();
@@ -68,14 +67,14 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
         builder.setCancelable(true);
 
         builder.setPositiveButton(
-                "Dismiss",
+                getString(R.string.dismiss),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
                 });
         builder.setNegativeButton(
-                "Do not show again",
+                getString(R.string.dont_show),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dontShowAgain = true;
@@ -93,13 +92,9 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(UserInsideEventActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
                 Snackbar.make(findViewById(android.R.id.content),
                         "Needed location permission to enable service",
                         Snackbar.LENGTH_INDEFINITE)
@@ -110,14 +105,7 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
                             }
                         }).show();
             } else {
-
-                // No explanation needed, we can request the permission.
-
                 requestPermission();
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         }else{
             startLocation();
@@ -142,19 +130,13 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                     startLocation();
                 } else {
-                    calculating.setText("Info: permissions must be accepted to use location manager");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    mCalculatingTv.setText("Info: permissions must be accepted to use location manager");
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -218,11 +200,11 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
                 .distanceTo(eventCenter) <= situmEvent.getRadius();
     }
     private void hideProgress(){
-        progressBar.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     private void hideText(){
-        calculating.setVisibility(View.GONE);
+        mCalculatingTv.setVisibility(View.GONE);
     }
 
     @Override
@@ -252,5 +234,10 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
     protected void onDestroy() {
         stopLocation();
         super.onDestroy();
+    }
+
+    private void prepareRecyclerView(){
+        mCalculatingTv = (TextView) findViewById(R.id.calculating);
+        mProgressBar = (ProgressBar) findViewById(R.id.pb_loading_positioning);
     }
 }

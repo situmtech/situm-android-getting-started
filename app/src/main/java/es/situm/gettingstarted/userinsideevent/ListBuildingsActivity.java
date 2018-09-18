@@ -93,13 +93,16 @@ public class ListBuildingsActivity extends AppCompatActivity implements ListBuil
         });
     }
 
+    private void startUserInsideEventActivity(BuildingInfo buildingInfo){
+        Intent intent = new Intent(getApplicationContext(), UserInsideEventActivity.class);
+        intent.putExtra(Intent.EXTRA_TEXT, buildingInfo);
+        startActivity(intent);
+    }
     private void getBuildingInfo(Building building){
         SitumSdk.communicationManager().fetchBuildingInfo(building, new Handler<BuildingInfo>() {
             @Override
             public void onSuccess(BuildingInfo buildingInfo) {
-                Intent intent = new Intent(getApplicationContext(), UserInsideEventActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, buildingInfo);
-                startActivity(intent);
+                startUserInsideEventActivity(buildingInfo);
             }
 
             @Override
