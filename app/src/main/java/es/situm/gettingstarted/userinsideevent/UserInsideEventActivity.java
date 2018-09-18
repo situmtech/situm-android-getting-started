@@ -63,7 +63,7 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
 
     private void userInsideEventDialog(){
         AlertDialog.Builder builder; builder = new AlertDialog.Builder(this);
-        builder.setMessage("You are inside an event");
+        builder.setMessage(getString(R.string.user_inside_event));
         builder.setCancelable(true);
 
         builder.setPositiveButton(

@@ -73,10 +73,7 @@ public class ListBuildingsAdapter extends RecyclerView.Adapter<ListBuildingsAdap
     }
 
     public void setBuildingData(List<Building> buildingList){
-        mBuildingList.clear();
-        if (!buildingList.isEmpty() || buildingList != null){
-            mBuildingList.addAll(buildingList);
-        }
+        mBuildingList = new ArrayList<>(buildingList);
         notifyDataSetChanged();
     }
 
