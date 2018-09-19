@@ -102,6 +102,7 @@ public class ListBuildingsActivity extends AppCompatActivity implements ListBuil
         SitumSdk.communicationManager().fetchBuildingInfo(building, new Handler<BuildingInfo>() {
             @Override
             public void onSuccess(BuildingInfo buildingInfo) {
+                mProgressBar.setVisibility(View.INVISIBLE);
                 startUserInsideEventActivity(buildingInfo);
             }
 
@@ -114,6 +115,7 @@ public class ListBuildingsActivity extends AppCompatActivity implements ListBuil
     }
     @Override
     public void onClick(Building building) {
+        mProgressBar.setVisibility(View.VISIBLE);
         getBuildingInfo(building);
     }
 

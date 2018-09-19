@@ -62,34 +62,18 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
                 hideProgress();
                 noEventsInBuildingDialog();
             }else{
-                checkPermissions();
+               startLocation();
             }
         }
     }
 
-    private void checkPermissions() {
-
+    private boolean hasPermissions() {
         if (ContextCompat.checkSelfPermission(UserInsideEventActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(UserInsideEventActivity.this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Needed location permission to enable service",
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Open", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                requestPermission();
-                            }
-                        }).show();
-            } else {
-                requestPermission();
-            }
+            return false;
         }else{
-            startLocation();
+            return true;
         }
     }
 
@@ -114,6 +98,7 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
                     startLocation();
                 } else {
                     mCalculatingTv.setText("Info: permissions must be accepted to use location manager");
+                    hideProgress();
                 }
                 return;
             }
@@ -123,6 +108,10 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
 
     private void startLocation() {
         if (locationManager.isRunning()) {
+            return;
+        }
+        if(!hasPermissions()){
+            requestPermission();
             return;
         }
         locationListener = new LocationListener(){
