@@ -54,13 +54,9 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
             buildingInfo = intent.getExtras().getParcelable(Intent.EXTRA_TEXT);
         }
         locationManager = SitumSdk.locationManager();
-        prepareRecyclerView();
+        prepareView();
         dontShowAgain = false;
 
-        displayIfUserInsideEvent();
-    }
-
-    private void displayIfUserInsideEvent(){
         if(buildingInfo != null){
             if(buildingInfo.getEvents()== null || buildingInfo.getEvents().isEmpty()){
                 hideProgress();
@@ -70,6 +66,7 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
             }
         }
     }
+
     private void checkPermissions() {
 
         if (ContextCompat.checkSelfPermission(UserInsideEventActivity.this,
@@ -219,7 +216,7 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
         super.onDestroy();
     }
 
-    private void prepareRecyclerView(){
+    private void prepareView(){
         mCalculatingTv = (TextView) findViewById(R.id.calculating);
         mProgressBar = (ProgressBar) findViewById(R.id.pb_loading_positioning);
     }
