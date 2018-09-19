@@ -2,4 +2,7 @@
     <string name="app_name">Getting Started SitumSDK</string>
     <string name="search_key_hint">Key name...</string>
     <string name="search_value_hint">Value name...</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="dont_show">Do not show again</string>
+    <string name="user_inside_event">You are inside an event</string>
 </resources>

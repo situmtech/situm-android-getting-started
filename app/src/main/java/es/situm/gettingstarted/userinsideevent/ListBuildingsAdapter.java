@@ -1,4 +1,4 @@
-package es.situm.gettingstarted.poifiltering;
+package es.situm.gettingstarted.userinsideevent;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -13,11 +13,6 @@ import java.util.List;
 import es.situm.gettingstarted.R;
 import es.situm.sdk.model.cartography.Building;
 
-/**
- *
- * Created by alejandro.trigo on 12/01/18.
- */
-
 public class ListBuildingsAdapter extends RecyclerView.Adapter<ListBuildingsAdapter.ListBuildingsViewHolder>{
 
     private List<Building> mBuildingList = new ArrayList<>();
@@ -25,7 +20,7 @@ public class ListBuildingsAdapter extends RecyclerView.Adapter<ListBuildingsAdap
 
 
     interface ListBuildingsAdapterOnClickHandler{
-        void onClick(String eventClick);
+        void onClick(Building building);
     }
 
     public ListBuildingsAdapter(ListBuildingsAdapter.ListBuildingsAdapterOnClickHandler handler){
@@ -45,8 +40,8 @@ public class ListBuildingsAdapter extends RecyclerView.Adapter<ListBuildingsAdap
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
-            String buildingId = mBuildingList.get(adapterPosition).getIdentifier();
-            mClickHandler.onClick(buildingId);
+            Building building = mBuildingList.get(adapterPosition);
+            mClickHandler.onClick(building);
         }
     }
 
@@ -59,6 +54,7 @@ public class ListBuildingsAdapter extends RecyclerView.Adapter<ListBuildingsAdap
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
         return new ListBuildingsAdapter.ListBuildingsViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(ListBuildingsAdapter.ListBuildingsViewHolder holder, int position) {
@@ -78,4 +74,3 @@ public class ListBuildingsAdapter extends RecyclerView.Adapter<ListBuildingsAdap
     }
 
 }
-

@@ -87,7 +87,7 @@ allprojects {
 It's important to add the `transitive = true` property to download the Situm SDK dependencies.
 
 ```groovy
-    compile ('es.situm:situm-sdk:2.25.3@aar') {
+    compile ('es.situm:situm-sdk:2.25.4@aar') {
         transitive = true
     }
 ```
@@ -741,13 +741,13 @@ private boolean isLocationInsideEvent(Location location, SitumEvent situmEvent) 
     		.equals(String.valueOf(situmEvent.getFloor_id()))) {
         return false;
     }
-   CartesianCoordinate eventCenter = situmEvent.getCenter().getTrigger().getCartesianCoordinate();
+   CartesianCoordinate eventCenter = situmEvent.getTrigger().getCenter().getCartesianCoordinate();
 
    return location.getCartesianCoordinate()
    		.distanceTo(eventCenter) <= situmEvent.getRadius();
 }
 ```
-
+You can check the complete sample in the [userinsideevent](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/userinsideevent) package.
 
 ## <a name="filterpois"></a> Filter Building's POIs
 You can filter your `Building` `POIs` by adding to the `POI` a Key-Value pair. You can add the Key-Value pair in the [Dashboard](https://dashboard.situm.es) when creating or updating a `POI` in the last section of the form.

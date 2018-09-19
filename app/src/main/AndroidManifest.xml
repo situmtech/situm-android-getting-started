@@ -110,6 +110,17 @@
             android:screenOrientation="portrait"
             android:parentActivityName=".animateposition.SelectBuildingActivity"/>
 
+        <activity android:name=".userinsideevent.ListBuildingsActivity"
+            android:label="Select your building"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".SamplesActivity"
+            />
+        <activity android:name=".userinsideevent.UserInsideEventActivity"
+            android:label="User inside an event"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".userinsideevent.ListBuildingsActivity" />
+
+
         <!-- Google play services version-->
         <meta-data
             android:name="com.google.android.gms.version"
