@@ -55,37 +55,21 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
         }
         locationManager = SitumSdk.locationManager();
         prepareRecyclerView();
-
         dontShowAgain = false;
-        checkPermissions();
 
+        displayIfUserInsideEvent();
     }
 
-    private void userInsideEventDialog(){
-        AlertDialog.Builder builder; builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.user_inside_event));
-        builder.setCancelable(true);
-
-        builder.setPositiveButton(
-                getString(R.string.dismiss),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        builder.setNegativeButton(
-                getString(R.string.dont_show),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dontShowAgain = true;
-                        dialog.cancel();
-                    }
-                });
-
-        alertDialog = builder.create();
-        alertDialog.show();
+    private void displayIfUserInsideEvent(){
+        if(buildingInfo != null){
+            if(buildingInfo.getEvents()== null || buildingInfo.getEvents().isEmpty()){
+                hideProgress();
+                noEventsInBuildingDialog();
+            }else{
+                checkPermissions();
+            }
+        }
     }
-
     private void checkPermissions() {
 
         if (ContextCompat.checkSelfPermission(UserInsideEventActivity.this,
@@ -139,7 +123,6 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
 
         }
     }
-
 
     private void startLocation() {
         if (locationManager.isRunning()) {
@@ -239,5 +222,46 @@ public class UserInsideEventActivity extends AppCompatActivity implements Locati
     private void prepareRecyclerView(){
         mCalculatingTv = (TextView) findViewById(R.id.calculating);
         mProgressBar = (ProgressBar) findViewById(R.id.pb_loading_positioning);
+    }
+    private void noEventsInBuildingDialog(){
+        AlertDialog.Builder builder; builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.no_events_in_building));
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                getString(R.string.dismiss),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        onBackPressed();
+                    }
+                });
+
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+    private void userInsideEventDialog(){
+        AlertDialog.Builder builder; builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.user_inside_event));
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                getString(R.string.dismiss),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setNegativeButton(
+                getString(R.string.dont_show),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dontShowAgain = true;
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 }
