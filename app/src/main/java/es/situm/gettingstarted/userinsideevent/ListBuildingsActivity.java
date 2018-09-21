@@ -27,7 +27,7 @@ import es.situm.sdk.utils.Handler;
 
 public class ListBuildingsActivity extends AppCompatActivity implements ListBuildingsAdapter.ListBuildingsAdapterOnClickHandler{
 
-    private static final String TAG = es.situm.gettingstarted.utils.ListBuildingsActivity.class.getSimpleName();
+    private static final String TAG = es.situm.gettingstarted.userinsideevent.ListBuildingsActivity.class.getSimpleName();
 
     private RecyclerView mRVBuildingList;
     private TextView mErrorMessage;
