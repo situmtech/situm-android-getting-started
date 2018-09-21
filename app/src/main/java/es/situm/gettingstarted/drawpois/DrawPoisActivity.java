@@ -1,8 +1,11 @@
 package es.situm.gettingstarted.drawpois;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -11,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -30,6 +34,7 @@ public class DrawPoisActivity
     implements OnMapReadyCallback {
 
     private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
+    private GetPoiCategoryIconUseCase getPoiCategoryIconUseCase = new GetPoiCategoryIconUseCase();
     private ProgressBar progressBar;
 
     @Override
@@ -63,17 +68,41 @@ public class DrawPoisActivity
                 if (pois.isEmpty()){
                     Toast.makeText(DrawPoisActivity.this, "There isnt any poi in the building: " + building.getName() + ". Go to the situm dashboard and create at least one poi before execute again this example", Toast.LENGTH_LONG).show();
                 }else {
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    for (Poi poi : pois) {
-                        LatLng latLng = new LatLng(poi.getCoordinate().getLatitude(),
-                                poi.getCoordinate().getLongitude());
-                        googleMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .title(poi.getName()));
-                        builder.include(latLng);
+                    for (final Poi poi : pois) {
+                        getPoiCategoryIconUseCase.getUnselectedIcon(poi, new GetPoiCategoryIconUseCase.Callback() {
+                            @Override
+                            public void onSuccess(Bitmap bitmap) {
+                                drawPoi(poi, bitmap);
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Log.d("Error fetching poi icon", error);
+                                drawPoi(poi);
+                            }
+                        });
                     }
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+
                 }
+            }
+
+            private void drawPoi(Poi poi, Bitmap bitmap) {
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                LatLng latLng = new LatLng(poi.getCoordinate().getLatitude(),
+                        poi.getCoordinate().getLongitude());
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(latLng)
+                        .title(poi.getName());
+                if (bitmap != null) {
+                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                }
+                googleMap.addMarker(markerOptions);
+                builder.include(latLng);
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+            }
+
+            private void drawPoi(Poi poi) {
+                drawPoi(poi, null);
             }
 
             @Override
