@@ -195,6 +195,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                     prev = map.addMarker(new MarkerOptions()
                             .position(latLng)
                             .zIndex(100)
+                            .flat(true)
                             .anchor(0.5f,0.5f)
                             .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
                 }
