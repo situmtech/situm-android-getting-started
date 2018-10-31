@@ -87,7 +87,7 @@ allprojects {
 It's important to add the `transitive = true` property to download the Situm SDK dependencies.
 
 ```groovy
-    compile ('es.situm:situm-sdk:2.26.2@aar') {
+    compile ('es.situm:situm-sdk:2.27.0@aar') {
         transitive = true
     }
 ```
