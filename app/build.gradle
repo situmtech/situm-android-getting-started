@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "es.situm.gettingstarted"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }
@@ -28,14 +28,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.google.android.gms:play-services-maps:11.2.0'
-    compile ('es.situm:situm-sdk:2.27.0@aar') {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+
+    def supportLibsVersion = "28.0.0"
+    implementation "com.android.support:recyclerview-v7:$supportLibsVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibsVersion"
+    implementation "com.android.support:design:$supportLibsVersion"
+    implementation "com.android.support:cardview-v7:$supportLibsVersion"
+
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+
+    implementation ('es.situm:situm-sdk:2.28.0@aar') {
         transitive = true
     }
-    compile 'com.android.support:cardview-v7:25.3.1'
 }
