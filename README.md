@@ -87,7 +87,7 @@ allprojects {
 It's important to add the `transitive = true` property to download the Situm SDK dependencies.
 
 ```groovy
-    compile ('es.situm:situm-sdk:2.27.0@aar') {
+    implementation ('es.situm:situm-sdk:2.28.0@aar') {
         transitive = true
     }
 ```
@@ -147,7 +147,7 @@ First of all, you need to add the Google Services dependency to the project. If 
 [Setup Google Play Services](https://developers.google.com/android/guides/setup). To do this, paste the dependency in 
 your module *build.gradle* as usual:
 ```
-compile 'com.google.android.gms:play-services-maps:10.0.1'
+implementation 'com.google.android.gms:play-services-maps:16.0.0'
 ```
 Add in the app manifest the version of the Google Play Services that we have imported. To do this, paste
 the next snippet inside the application tag:
