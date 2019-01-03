@@ -68,7 +68,7 @@ positioning system in your buildings.
 
 Perfect! Now you are ready to develop your first indoor positioning application.
 
-### <a name="configureproject"></a> Step 1: Configure our SDK in your Android project
+### <a name="configureproject"></a> Step 1: configure our SDK in your Android project
 
 First of all, you must configure Situm SDK in your Android project. This has been already done for 
 you in the sample application, but nonetheless we will walk you through the process.
@@ -92,7 +92,7 @@ It's important to add the `transitive = true` property to download the Situm SDK
     }
 ```
 
-### <a name="init"></a> Step 2: Initialize the SDK
+### <a name="init"></a> Step 2: initialize the SDK
 
 You must initialize the SDK in the `onCreate()` method of your Application:
 
@@ -105,7 +105,7 @@ public void onCreate() {
 }
 ```
 
-### <a name="config"></a> Step 3: Set your credentials
+### <a name="config"></a> Step 3: set your credentials
 
 There are two ways to set the credentials, in the `AndroidManifest.xml` file or programmatically.
 
@@ -122,7 +122,7 @@ You can set the credentials (user and API key) in the `AndroidManifest.xml` file
     android:value="API_KEY" />
 ```
 
-##### Option 2: Programmatically
+##### Option 2: programmatically
 
 In the code, you can set the the user and API key with:
 
@@ -139,7 +139,7 @@ SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 
 
 
-### <a name="mapsapikey"><a/> Step 4: Setup Google Maps 
+### <a name="mapsapikey"><a/> Step 4: setup Google Maps 
 This step is only necessary if you want to run the sample that draws the buildings' floorplan over the 
 Google Maps map. Otherwise, you can skip it and continue with the [code samples](#samples).
 
@@ -171,18 +171,15 @@ resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 
 
 
-### <a name="locationpermissions"><a/> Optional step 5: location and runtime permissions 
-When we work on features that involve the use of the smartphone location, we need to add fine location permission to the manifest:
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-```
-Also, ensure to check the Android runtime permissions. [More info](https://developer.android.com/training/permissions/requesting.html) .
+### <a name="locationpermissions"><a/> Optional step 5: location runtime permissions
+	
+All the necessary permissions are already declared by the SDK, but the `ACCESS_COARSE_LOCATION` is a dangerous permission, so your app must prompt the user to grant permission at runtime. More info at [Android Developers](https://developer.android.com/training/permissions/requesting.html) .
+
+If you want to use indoor-outdoor positioning using GPS, you must declare `ACCESS_FINE_LOCATION` permission in your `AndroidManifest.xml` and request the permission at runtime. 
 
 
 
-
-
-### <a name="indoorpositioning"></a> Optional step 6: Setup indoor positioning
+### <a name="indoorpositioning"></a> Optional step 6: setup indoor positioning
 In order to use indoor positioning, you must define which building you want to position in. This can be achieved by editing the value of `private static final String BUILDING_ID = "YOUR_BUILDING_ID";` in PositioningActivity
 
 
