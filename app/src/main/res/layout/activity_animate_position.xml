@@ -46,12 +46,12 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/start_button"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
-        app:backgroundTint="#0000ff"
-        android:src="@android:drawable/ic_menu_compass"/>
+        app:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/positioning"/>
 
 </RelativeLayout>
