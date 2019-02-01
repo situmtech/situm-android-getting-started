@@ -68,7 +68,7 @@ positioning system in your buildings.
 
 Perfect! Now you are ready to develop your first indoor positioning application.
 
-### <a name="configureproject"></a> Step 1: Configure our SDK in your Android project
+### <a name="configureproject"></a> Step 1: configure our SDK in your Android project
 
 First of all, you must configure Situm SDK in your Android project. This has been already done for 
 you in the sample application, but nonetheless we will walk you through the process.
@@ -87,12 +87,12 @@ allprojects {
 It's important to add the `transitive = true` property to download the Situm SDK dependencies.
 
 ```groovy
-    compile ('es.situm:situm-sdk:2.25.4@aar') {
+    implementation ('es.situm:situm-sdk:2.31.2@aar') {
         transitive = true
     }
 ```
 
-### <a name="init"></a> Step 2: Initialize the SDK
+### <a name="init"></a> Step 2: initialize the SDK
 
 You must initialize the SDK in the `onCreate()` method of your Application:
 
@@ -105,7 +105,7 @@ public void onCreate() {
 }
 ```
 
-### <a name="config"></a> Step 3: Set your credentials
+### <a name="config"></a> Step 3: set your credentials
 
 There are two ways to set the credentials, in the `AndroidManifest.xml` file or programmatically.
 
@@ -122,7 +122,7 @@ You can set the credentials (user and API key) in the `AndroidManifest.xml` file
     android:value="API_KEY" />
 ```
 
-##### Option 2: Programmatically
+##### Option 2: programmatically
 
 In the code, you can set the the user and API key with:
 
@@ -139,7 +139,7 @@ SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 
 
 
-### <a name="mapsapikey"><a/> Step 4: Setup Google Maps 
+### <a name="mapsapikey"><a/> Step 4: setup Google Maps 
 This step is only necessary if you want to run the sample that draws the buildings' floorplan over the 
 Google Maps map. Otherwise, you can skip it and continue with the [code samples](#samples).
 
@@ -147,7 +147,7 @@ First of all, you need to add the Google Services dependency to the project. If 
 [Setup Google Play Services](https://developers.google.com/android/guides/setup). To do this, paste the dependency in 
 your module *build.gradle* as usual:
 ```
-compile 'com.google.android.gms:play-services-maps:10.0.1'
+implementation 'com.google.android.gms:play-services-maps:16.0.0'
 ```
 Add in the app manifest the version of the Google Play Services that we have imported. To do this, paste
 the next snippet inside the application tag:
@@ -171,18 +171,15 @@ resValue 'string', 'google_maps_key', "YOUR_API_KEY"
 
 
 
-### <a name="locationpermissions"><a/> Optional step 5: location and runtime permissions 
-When we work on features that involve the use of the smartphone location, we need to add fine location permission to the manifest:
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-```
-Also, ensure to check the Android runtime permissions. [More info](https://developer.android.com/training/permissions/requesting.html) .
+### <a name="locationpermissions"><a/> Optional step 5: location runtime permissions
+	
+All the necessary permissions are already declared by the SDK, but the `ACCESS_COARSE_LOCATION` is a dangerous permission, so your app must prompt the user to grant permission at runtime. More info at [Android Developers](https://developer.android.com/training/permissions/requesting.html) .
+
+If you want to use indoor-outdoor positioning using GPS, you must declare `ACCESS_FINE_LOCATION` permission in your `AndroidManifest.xml` and request the permission at runtime. 
 
 
 
-
-
-### <a name="indoorpositioning"></a> Optional step 6: Setup indoor positioning
+### <a name="indoorpositioning"></a> Optional step 6: setup indoor positioning
 In order to use indoor positioning, you must define which building you want to position in. This can be achieved by editing the value of `private static final String BUILDING_ID = "YOUR_BUILDING_ID";` in PositioningActivity
 
 
@@ -708,7 +705,7 @@ public void onClick(View view) {
 }
 ```
 
-You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/) and check the full example in the [getbuildingevents](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/buildingevents) package.
+You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.26.2/) and check the full example in the [getbuildingevents](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/buildingevents) package.
 
 ## <a name="positionevents"></a> Calculate if the user is inside en event
 In order to determine if the user is inside the trigger area of a `SitumEvent`, you should intersect every new location with the `trigger` area of every event in the building. 
@@ -810,7 +807,7 @@ public void filter (String key, String value){
 }
 ```
 
-If you want to know more about filtering `POIs` you can check the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/). You can also see the full example in the [poifiltering](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/poifiltering) package.
+If you want to know more about filtering `POIs` you can check the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.26.2/). You can also see the full example in the [poifiltering](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/poifiltering) package.
 
 ## <a name="guideinstructions"></a> Instructions while going from one point to another
 Situm SDK provides a way to show the indications while you are going from one point to another. Since we have already seen how to get your location and how to plan a route between two points, here we will talk only about how to get the indications. This is a two-steps-functionallity, first we have to tell the route we have planned to do and then update every time we move our position in the route.
@@ -871,7 +868,7 @@ Situm SDK provides a way to show the indications while you are going from one po
 
   ```
 
-If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/). If you want to see the full example you can check the [guideinstructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions) package.
+If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.26.2/). If you want to see the full example you can check the [guideinstructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions) package.
 
 ## <a name="animateposition"></a>Animate position while walking
 Sometimes the difference between a good work and a nice one relies on the little things. Here we want to show you how to animate the arrow position while walking, this feature will make the user experience much better with just a few changes, lets dive in!
@@ -944,7 +941,7 @@ For a better and more fluid results, you have to set the `useDeadReckoning` opti
 This option allows you to get fast position updates using only the inertial sensors (compass, gyro...) without a decrease in the battery duration.
 
 
-If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.25.0/) and, if you want to see the full code example check the [animateposition](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition) package. 
+If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/2.26.2/) and, if you want to see the full code example check the [animateposition](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition) package. 
 
 ## <a name="moreinfo"></a> More information
 
