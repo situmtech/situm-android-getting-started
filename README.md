@@ -281,13 +281,12 @@ Situm SDK can also work in hybrid mode, providing the indoor location when the s
 In order to enable the positioning mode to operate in indoor-outdoor mode it is mandatory to use the LocationManager
 without indicating a specific building.
 
-Before Android 9 there were three location modes: High accuracy, Battery saving and device only.
+In Android 9 the location does not have modes, is just enabled or disabled, but before Android 9 there were three location modes: High accuracy, Battery saving and device only.
 To use the indoor-outdoor location the user must set the location mode to High Accuracy. Otherwise the location won't start if the device can't get an outdoor position.
 * The High Accuracy mode uses GPS, Wi-Fi, Bluetooth and mobile networks to get the location. This mode will return the most accurate location possible
 * The Battery Saving mode uses Wi-Fi, Bluetooth and mobile networks. It does not use GPS so the positioning won't work because the indoor-outdoor mode needs the GPS signal to be available.
 * The Device Only mode uses the GPS, so the positioning will not start if there is no GPS signal.
 
-In Android 9 the location does not have modes, is just enabled or disabled.
 You can know more about the location modes [here](https://developer.android.com/training/location/change-location-settings#location-request)
 
 Note: you are required to configure [Optional step 5: location and runtime permissions](#locationpermissions) before proceed with this sample.
