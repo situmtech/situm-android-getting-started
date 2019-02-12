@@ -1,13 +1,10 @@
 package es.situm.gettingstarted.animateposition;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -51,15 +49,11 @@ import es.situm.sdk.model.location.Location;
  */
 
 public class AnimatePositionActivity extends AppCompatActivity implements OnMapReadyCallback {
-    private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
+    private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
     private static final String TAG = "AnimatePositionActivity";
 
-    private static final double DISTANCE_CHANGE_TO_ANIMATE = 0.2;
-    private static final int BEARING_CHANGE_TO_ANIMATE = 1;
-
-    private static final int DURATION_POSITION_ANIMATION = 500;
-    private static final int DURATION_BEARING_ANIMATION = 200;
-
+    private static final int UPDATE_LOCATION_ANIMATION_TIME = 600;
+    private static final int MIN_CHANGE_IN_BEARING_TO_ANIMATE_CAMERA = 10;
 
     private GoogleMap map;
     private Marker prev;
@@ -69,23 +63,17 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location current;
-    private Location lastLocation;
     private String buildingId;
     private Building building;
-    private LatLng destinationLatLng;
-    private LatLng lastLatLng;
 
-    private float lastBearing;
-    private float destinationBearing;
     private boolean markerWithOrientation = false;
+    private LatLng lastCameraLatLng;
+    private float lastCameraBearing;
 
-
+    PositionAnimator positionAnimator = new PositionAnimator();
 
     private FloatingActionButton button;
     private ProgressBar progressBar;
-
-    private ValueAnimator locationAnimator = new ValueAnimator();
-    private ValueAnimator locationBearingAnimator = new ValueAnimator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -206,8 +194,9 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                     prev.setRotation((float) location.getBearing().degrees());
 
                 } else {
-                    animate(prev, current);
+                    positionAnimator.animate(prev, current);
                 }
+                centerInUser(location);
 
 
             }
@@ -231,6 +220,29 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 .useDeadReckoning(true)
                 .build();
         SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
+    }
+
+    private void centerInUser(Location location) {
+        float tilt = 2;
+        float bearing = (location.hasBearing()) && location.isIndoor() ? (float) (location.getBearing().degrees()) : map.getCameraPosition().bearing;
+
+        LatLng latLng = new LatLng(location.getCoordinate().getLatitude(), location.getCoordinate().getLongitude());
+
+        //Skip if no change in location and little bearing change
+        boolean skipAnimation = lastCameraLatLng != null && lastCameraLatLng.equals(latLng)
+                && (Math.abs(bearing - lastCameraBearing)) < MIN_CHANGE_IN_BEARING_TO_ANIMATE_CAMERA;
+        lastCameraLatLng = latLng;
+        lastCameraBearing = bearing;
+        if (!skipAnimation) {
+            CameraPosition cameraPosition = new CameraPosition.Builder(map.getCameraPosition())
+                    .target(latLng)
+                    .bearing(bearing)
+                    .tilt(tilt)
+                    .build();
+
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), UPDATE_LOCATION_ANIMATION_TIME, null);
+        }
+
     }
 
     private void updateMarkerIcon(Location location) {
@@ -260,146 +272,12 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         }
         locationManager.removeUpdates(locationListener);
         current = null;
-        lastLocation = null;
+        positionAnimator.clear();
         if(prev != null){
             prev.remove();
             prev = null;
         }
     }
-
-    synchronized void animate(final Marker marker, final Location location) {
-        Coordinate toCoordinate = location.getCoordinate();
-        final LatLng toLatLng = new LatLng(toCoordinate.getLatitude(), toCoordinate.getLongitude());
-        final float toBearing = (float) location.getBearing().degrees();
-
-        if (lastLocation == null) { //First location
-            marker.setRotation(toBearing);
-            marker.setPosition(toLatLng);
-
-            lastLocation = location;
-            lastLatLng = toLatLng;
-            lastBearing = toBearing;
-            return;
-        }
-
-        animatePosition(marker, location);
-        animateBearing(marker, location);
-    }
-
-    private void animatePosition(final Marker marker, Location toLocation){
-        Coordinate toCoordinate = toLocation.getCoordinate();
-        final LatLng toLatLng = new LatLng(toCoordinate.getLatitude(), toCoordinate.getLongitude());
-
-        if ( destinationLatLng != null) {
-            float[] results = new float[1];
-            android.location.Location.distanceBetween(toCoordinate.getLatitude(), toCoordinate.getLongitude(),
-                    destinationLatLng.latitude, destinationLatLng.longitude, results);
-            float distance = results[0];
-            if (distance < DISTANCE_CHANGE_TO_ANIMATE) {
-                return;
-            }
-        }
-        if (destinationLatLng == toLatLng) {
-            return;
-        }
-
-        locationAnimator.cancel();
-        if (lastLocation != toLocation) {
-
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
-                //hardfix for crash in API 19 at PropertyValuesHolder.setupSetterAndGetter()
-                marker.setPosition(toLatLng);
-            } else {
-
-                locationAnimator = new ObjectAnimator();
-                locationAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                    LatLng startLatLng = lastLatLng;
-
-                    @Override
-                    public synchronized void onAnimationUpdate(ValueAnimator animation) {
-                        float t = animation.getAnimatedFraction();
-                        lastLatLng = interpolateLatLng(t, startLatLng, toLatLng);
-
-                        marker.setPosition(lastLatLng);
-                    }
-                });
-                locationAnimator.setFloatValues(0, 1); //Ignored
-                locationAnimator.setDuration(DURATION_POSITION_ANIMATION);
-                locationAnimator.start();
-            }
-            destinationLatLng = toLatLng;
-        }
-    }
-
-    private LatLng interpolateLatLng(float fraction, LatLng a, LatLng b) {
-        double lat = (b.latitude - a.latitude) * fraction + a.latitude;
-        double lng = (b.longitude - a.longitude) * fraction + a.longitude;
-        return new LatLng(lat, lng);
-    }
-
-    private float normalizeAngle(float degrees) {
-        degrees = degrees % 360;
-        return (degrees + 360) % 360;
-    }
-
-    private void animateBearing(final Marker marker, Location location) {
-        float degrees = (float) location.getBearing().degrees();
-
-        //Normalize angle
-        degrees = normalizeAngle(degrees);
-        final float toBearing = degrees;
-
-        if (destinationBearing == toBearing) {
-            return;
-        }
-
-
-        locationBearingAnimator.cancel();
-
-        lastBearing =  normalizeAngle(lastBearing);
-
-        //Avoid turning in the wrong direction
-        if (lastBearing - toBearing > 180) {
-            lastBearing -= 360;
-        } else if (toBearing - lastBearing > 180) {
-            lastBearing += 360;
-        }
-
-
-        float diffBearing = Math.abs(toBearing - lastBearing);
-        if (diffBearing < BEARING_CHANGE_TO_ANIMATE) {
-            return;
-        }
-
-
-
-        if (lastBearing != toBearing) {
-
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
-                //hardfix for crash in API 19 at PropertyValuesHolder.setupSetterAndGetter()
-                marker.setRotation(toBearing);
-            } else {
-
-                locationBearingAnimator = new ObjectAnimator();
-                locationBearingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public synchronized void onAnimationUpdate(ValueAnimator animation) {
-                        lastBearing = (Float) animation.getAnimatedValue();
-                        marker.setRotation(lastBearing);
-                    }
-                });
-                locationBearingAnimator.setFloatValues(lastBearing, toBearing);
-                locationBearingAnimator.setDuration(DURATION_BEARING_ANIMATION);
-                locationBearingAnimator.start();
-            }
-            destinationBearing = toBearing;
-        }
-    }
-
-
-
-
 
     /**
      * Getting the permisions we need about localization.
