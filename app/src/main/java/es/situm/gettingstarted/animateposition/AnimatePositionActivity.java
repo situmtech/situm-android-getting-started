@@ -25,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -65,6 +66,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
     private Location current;
     private String buildingId;
     private Building building;
+    private GroundOverlay groundOverlay;
 
     private boolean markerWithOrientation = false;
     private LatLng lastCameraLatLng;
@@ -177,15 +179,10 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
                         location.getCoordinate().getLongitude());
                 if (prev == null){
-                    Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.position);
-                    Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
-
-                    prev = map.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .zIndex(100)
-                            .flat(true)
-                            .anchor(0.5f,0.5f)
-                            .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
+                    initializeMarker(latLng);
+                }
+                if (groundOverlay == null) {
+                    initializeGroundOverlay();
                 }
                 updateMarkerIcon(location);
 
@@ -193,8 +190,10 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                     prev.setPosition(latLng);
                     prev.setRotation((float) location.getBearing().degrees());
 
+                    groundOverlay.setDimensions(location.getAccuracy() * 2);
+                    groundOverlay.setPosition(latLng);
                 } else {
-                    positionAnimator.animate(prev, current);
+                    positionAnimator.animate(prev, groundOverlay, current);
                 }
                 centerInUser(location);
 
@@ -221,6 +220,29 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 .build();
         SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
     }
+
+    private void initializeMarker(LatLng latLng) {
+        Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.position);
+        Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
+
+        prev = map.addMarker(new MarkerOptions()
+                .position(latLng)
+                .zIndex(100)
+                .flat(true)
+                .anchor(0.5f,0.5f)
+                .icon(BitmapDescriptorFactory.fromBitmap(arrowScaled)));
+    }
+
+    private void initializeGroundOverlay() {
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inSampleSize = 1;
+        Bitmap bitmapPosbg = BitmapFactory.decodeResource(getResources(), R.drawable.situm_posbg, opts);
+        GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromBitmap(bitmapPosbg))
+                .anchor(0.5f, 0.5f)
+                .position(new LatLng(0, 0), 2)
+                .zIndex(2);
+        groundOverlay = map.addGroundOverlay(groundOverlayOptions);}
 
     private void centerInUser(Location location) {
         float tilt = 2;
@@ -273,6 +295,10 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         locationManager.removeUpdates(locationListener);
         current = null;
         positionAnimator.clear();
+        if (groundOverlay != null) {
+            groundOverlay.remove();
+            groundOverlay = null;
+        }
         if(prev != null){
             prev.remove();
             prev = null;

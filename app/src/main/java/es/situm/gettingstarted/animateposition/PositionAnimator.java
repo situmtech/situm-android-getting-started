@@ -3,7 +3,9 @@ package es.situm.gettingstarted.animateposition;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.os.Build;
+import android.support.annotation.Nullable;
 
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
@@ -12,42 +14,55 @@ import es.situm.sdk.model.location.Location;
 
 public class PositionAnimator {
 
-    private static final double DISTANCE_CHANGE_TO_ANIMATE = 0.2;
-    private static final int BEARING_CHANGE_TO_ANIMATE = 1;
-
+    private static final String TAG = PositionAnimator.class.getSimpleName();
     private static final int DURATION_POSITION_ANIMATION = 500;
     private static final int DURATION_BEARING_ANIMATION = 200;
+    private static final int DURATION_RADIUS_ANIMATION = 500;
 
+    private static final double DISTANCE_CHANGE_TO_ANIMATE = 0.2;
+    private static final int BEARING_CHANGE_TO_ANIMATE = 1;
+    private static final double GROUND_OVERLAY_DIAMETER_CHANGE_TO_ANIMATE = 0.2;
+
+    @Nullable
     private Location lastLocation;
-    private LatLng destinationLatLng;
     private LatLng lastLatLng;
+    private LatLng destinationLatLng;
 
     private float lastBearing;
     private float destinationBearing;
+    private float lastGroundOverlayDimensions;
+    private float destinationGroundOverlayDimensions;
 
     private ValueAnimator locationAnimator = new ValueAnimator();
     private ValueAnimator locationBearingAnimator = new ValueAnimator();
+    private ValueAnimator groundOverlayAnimator = new ValueAnimator();
 
-    synchronized void animate(final Marker marker, final Location location) {
+    synchronized void animate(final Marker marker, final GroundOverlay groundOverlay, final Location location) {
         Coordinate toCoordinate = location.getCoordinate();
         final LatLng toLatLng = new LatLng(toCoordinate.getLatitude(), toCoordinate.getLongitude());
         final float toBearing = (float) location.getBearing().degrees();
+        final float groundOverlayDiameter = location.getAccuracy() * 2;
 
         if (lastLocation == null) { //First location
             marker.setRotation(toBearing);
             marker.setPosition(toLatLng);
 
+            groundOverlay.setPosition(toLatLng);
+            groundOverlay.setDimensions(groundOverlayDiameter);
+
             lastLocation = location;
             lastLatLng = toLatLng;
             lastBearing = toBearing;
+            lastGroundOverlayDimensions = groundOverlayDiameter;
             return;
         }
 
-        animatePosition(marker, location);
+        animatePosition(marker, groundOverlay, location);
         animateBearing(marker, location);
+        animateGroundOverlay(groundOverlay, groundOverlayDiameter);
     }
 
-    private void animatePosition(final Marker marker, Location toLocation){
+    private void animatePosition(final Marker marker, final GroundOverlay groundOverlay, Location toLocation){
         Coordinate toCoordinate = toLocation.getCoordinate();
         final LatLng toLatLng = new LatLng(toCoordinate.getLatitude(), toCoordinate.getLongitude());
 
@@ -70,6 +85,7 @@ public class PositionAnimator {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
                 //hardfix for crash in API 19 at PropertyValuesHolder.setupSetterAndGetter()
                 marker.setPosition(toLatLng);
+                groundOverlay.setPosition(toLatLng);
             } else {
 
                 locationAnimator = new ObjectAnimator();
@@ -83,6 +99,7 @@ public class PositionAnimator {
                         lastLatLng = interpolateLatLng(t, startLatLng, toLatLng);
 
                         marker.setPosition(lastLatLng);
+                        groundOverlay.setPosition(lastLatLng);
                     }
                 });
                 locationAnimator.setFloatValues(0, 1); //Ignored
@@ -151,6 +168,41 @@ public class PositionAnimator {
                 locationBearingAnimator.start();
             }
             destinationBearing = toBearing;
+        }
+    }
+
+    private synchronized void animateGroundOverlay(final GroundOverlay groundOverlay, float toGroundOverlayDiameter) {
+        if (destinationGroundOverlayDimensions == toGroundOverlayDiameter) {
+            return;
+        }
+
+        groundOverlayAnimator.cancel();
+
+        float diffDimensions = Math.abs(toGroundOverlayDiameter - lastGroundOverlayDimensions);
+        if (diffDimensions < GROUND_OVERLAY_DIAMETER_CHANGE_TO_ANIMATE) {
+            return;
+        }
+        if (lastGroundOverlayDimensions != toGroundOverlayDiameter) {
+
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
+                //hardfix for crash in API 19 at PropertyValuesHolder.setupSetterAndGetter()
+                groundOverlay.setDimensions(toGroundOverlayDiameter);
+            } else {
+
+                groundOverlayAnimator = new ObjectAnimator();
+                groundOverlayAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                    @Override
+                    public synchronized void onAnimationUpdate(ValueAnimator animation) {
+                        lastGroundOverlayDimensions = (Float) animation.getAnimatedValue();
+                        groundOverlay.setDimensions(lastGroundOverlayDimensions);
+                    }
+                });
+                groundOverlayAnimator.setFloatValues(lastGroundOverlayDimensions, toGroundOverlayDiameter);
+                groundOverlayAnimator.setDuration(DURATION_RADIUS_ANIMATION);
+                groundOverlayAnimator.start();
+            }
+            destinationGroundOverlayDimensions = toGroundOverlayDiameter;
         }
     }
 
