@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SamplesActivity"
+        <activity android:name=".samplelist.SamplesActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask">
             <intent-filter>
@@ -21,52 +21,59 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".common.selectbuilding.SelectBuildingActivity"
+            android:label="Select a building"
+            android:parentActivityName=".samplelist.SamplesActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
         <activity android:name=".positioning.PositioningActivity"
             android:label="Indoor positioning"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".drawbuilding.DrawBuildingActivity"
             android:label="Draw building"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".indooroutdoor.IndoorOutdoorActivity"
             android:label="Indoor-outdoor positioning"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".drawposition.DrawPositionActivity"
             android:label="Draw position"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".drawpois.DrawPoisActivity"
             android:label="Draw POIs"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".drawroute.DrawRouteActivity"
             android:label="Draw route"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".realtime.RealTimeActivity"
             android:label="Draw realtime"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".poifiltering.ListBuildingsActivity"
             android:label="Select your building"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
 
         <activity android:name=".poifiltering.FilteringActivity"
@@ -79,7 +86,7 @@
         <activity android:name=".buildingevents.BuildingListActivity"
             android:label="Select your building"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
+            android:parentActivityName=".samplelist.SamplesActivity">
 
         </activity>
 
@@ -93,7 +100,7 @@
         <activity android:name=".guideinstructions.SelectBuildingActivity"
             android:label="Select your building"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity"/>
+            android:parentActivityName=".samplelist.SamplesActivity"/>
 
         <activity android:name=".guideinstructions.GuideInstructionsActivity"
             android:label="Instructions while going to a POI"
@@ -103,7 +110,7 @@
         <activity android:name=".animateposition.SelectBuildingActivity"
             android:label="Select your building"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity"/>
+            android:parentActivityName=".samplelist.SamplesActivity"/>
 
         <activity android:name=".animateposition.AnimatePositionActivity"
             android:label="Animate the position while walking"
@@ -113,7 +120,7 @@
         <activity android:name=".userinsideevent.ListBuildingsActivity"
             android:label="Select your building"
             android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity"
+            android:parentActivityName=".samplelist.SamplesActivity"
             />
         <activity android:name=".userinsideevent.UserInsideEventActivity"
             android:label="User inside an event"

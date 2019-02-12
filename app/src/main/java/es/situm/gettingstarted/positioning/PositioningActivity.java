@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import es.situm.gettingstarted.R;
+import es.situm.gettingstarted.common.SampleActivity;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.location.LocationListener;
@@ -31,12 +31,10 @@ import es.situm.sdk.model.location.CartesianCoordinate;
 import es.situm.sdk.model.location.Location;
 import es.situm.sdk.utils.Handler;
 
-public class PositioningActivity extends AppCompatActivity {
+public class PositioningActivity extends SampleActivity {
     private static final String TAG = PositioningActivity.class.getSimpleName();
 
-    // The building identifier where positioning will start.
-    // You can see your buildings IDs and names running this example in the Logcat
-    private static final String BUILDING_ID = "YOUR_BUILDING_ID";
+    private String buildingId;
 
     private ToggleButton toggleButtonStart;
     private TextView tvLocation;
@@ -71,8 +69,8 @@ public class PositioningActivity extends AppCompatActivity {
         @Override
         public void onError(@NonNull Error error) {
             Log.e(TAG, "onError() called with: error = [" + error + "]");
-            tvLocationStatus.setText(error.toString());
             toggleButtonStart.setChecked(false);
+            tvLocationStatus.setText(error.toString());
 
             switch (error.getCode()) {
                 case LocationManager.Code.MISSING_LOCATION_PERMISSION:
@@ -99,6 +97,8 @@ public class PositioningActivity extends AppCompatActivity {
 //        SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 //        SitumSdk.configuration().setApiKey("USER_EMAIL", "API_KEY");
 
+        buildingId = getBuildingFromIntent().getIdentifier();
+
         toggleButtonStart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -118,7 +118,7 @@ public class PositioningActivity extends AppCompatActivity {
                 for (Building building : buildings) {
                     Log.i(TAG, "onSuccess: " + building.getIdentifier() + " - " + building.getName());
 
-                    if (BUILDING_ID.equals(building.getIdentifier())) {
+                    if (buildingId.equals(building.getIdentifier())) {
                         selectedBuilding = building;
                     }
                 }
@@ -176,7 +176,7 @@ public class PositioningActivity extends AppCompatActivity {
     private void startPositioning() {
         if (selectedBuilding == null) {
             toggleButtonStart.setChecked(false);
-            Log.e(TAG, "onSuccess: building with id=" + BUILDING_ID + " not found");
+            Log.e(TAG, "onSuccess: building with id=" + buildingId + " not found");
             return;
         }
 
