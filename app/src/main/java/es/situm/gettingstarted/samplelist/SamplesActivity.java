@@ -35,11 +35,11 @@ public class SamplesActivity
 
         items.add(new Sample("Indoor positioning", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, PositioningActivity.class)));
         items.add(new Sample("Indoor-Outdoor positioning", new Intent(this, IndoorOutdoorActivity.class)));
-        items.add(new Sample("Draw building over the map", new Intent(this, DrawBuildingActivity.class)));
+        items.add(new Sample("Draw building over the map", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, DrawBuildingActivity.class)));
         items.add(new Sample("Draw position over the map", new Intent(this, DrawPositionActivity.class)));
         items.add(new Sample("Draw POIs over the map", new Intent(this, DrawPoisActivity.class)));
         items.add(new Sample("Draw Route between two points over the map", new Intent(this, DrawRouteActivity.class)));
-        items.add(new Sample("Draw realtime devices over the map", new Intent(this, RealTimeActivity.class)));
+        items.add(new Sample("Draw realtime devices over the map", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, RealTimeActivity.class)));
         items.add(new Sample("Key-Value POIs Filtering", new Intent(this, ListBuildingsActivity.class)));
         items.add(new Sample("Show all the events of a building", new Intent(this, BuildingListActivity.class)));
         items.add(new Sample("Instructions while going to a destination", new Intent(this, SelectBuildingActivity.class)));

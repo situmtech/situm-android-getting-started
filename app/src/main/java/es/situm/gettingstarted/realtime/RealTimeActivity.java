@@ -2,10 +2,7 @@ package es.situm.gettingstarted.realtime;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,9 +16,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import es.situm.gettingstarted.R;
+import es.situm.gettingstarted.common.SampleActivity;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.model.cartography.Building;
@@ -35,20 +32,23 @@ import es.situm.sdk.realtime.RealTimeRequest;
  */
 
 public class RealTimeActivity
-        extends AppCompatActivity
+        extends SampleActivity
         implements OnMapReadyCallback {
 
-    private GetBuildingsUseCase getBuildingsUseCase = new GetBuildingsUseCase();
     private GoogleMap googleMap;
-    private ProgressBar progressBar;
-    private TextView noDevicesTV;
-    private List<Marker>markers = new ArrayList<>();
+    private List<Marker> markers = new ArrayList<>();
+    private Building building;
+
+    @Nullable
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_realtime);
-        setup();
+        setContentView(R.layout.activity_map);
+
+        building = getBuildingFromIntent();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -56,7 +56,6 @@ public class RealTimeActivity
 
     @Override
     protected void onDestroy() {
-        getBuildingsUseCase.cancel();
         SitumSdk.realtimeManager().removeRealTimeUpdates();
         super.onDestroy();
     }
@@ -64,26 +63,10 @@ public class RealTimeActivity
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
-        getBuildingsUseCase.get(new GetBuildingsUseCase.Callback() {
-            @Override
-            public void onSuccess(List<Building> buildings) {
-                hideProgress();
-                if (buildings != null && !buildings.isEmpty()) {
-                    Building building = buildings.get(0);
-                    realtime(building);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                hideProgress();
-                Toast.makeText(RealTimeActivity.this, error, Toast.LENGTH_LONG).show();
-            }
-        });
-
+        startRealtime();
     }
 
-    private void realtime(Building building) {
+    private void startRealtime() {
         RealTimeRequest realTimeRequest = new RealTimeRequest.Builder()
                 .pollTimeMs(3000)
                 .building(building)
@@ -91,33 +74,28 @@ public class RealTimeActivity
         SitumSdk.realtimeManager().requestRealTimeUpdates(realTimeRequest, new RealTimeListener() {
             @Override
             public void onUserLocations(RealTimeData realTimeData) {
-                if(realTimeData.getLocations().isEmpty()){
-                    noDevicesTV.setVisibility(View.VISIBLE);
-                    for (Marker marker : markers) {
-                        marker.remove();
-                    }
-                    markers.clear();
-                }else {
-                    noDevicesTV.setVisibility(View.GONE);
-                    for (Marker marker : markers) {
-                        marker.remove();
-                    }
-                    markers.clear();
+                for (Marker marker : markers) {
+                    marker.remove();
+                }
+                markers.clear();
+
+                if (realTimeData.getLocations().isEmpty()) {
+                    showNoDevicesMessage();
+                } else {
+                    hideNoDevicesMessage();
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                     for (Location location : realTimeData.getLocations()) {
                         LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
                                 location.getCoordinate().getLongitude());
-                        MarkerOptions markerOptions = new MarkerOptions()
+                        Marker marker = googleMap.addMarker(new MarkerOptions()
                                 .position(latLng)
-                                .title(location.getDeviceId());
-                        Marker marker = googleMap.addMarker(markerOptions);
+                                .title(location.getDeviceId())
+                        );
                         markers.add(marker);
+
                         builder.include(latLng);
                     }
-                    try {
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
-                    } catch (IllegalStateException e) {
-                    }
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
                 }
             }
 
@@ -128,13 +106,18 @@ public class RealTimeActivity
         });
     }
 
-
-    private void setup() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        noDevicesTV = (TextView) findViewById(R.id.rt_nodevices_tv);
+    void hideNoDevicesMessage() {
+        if (snackbar != null) {
+            snackbar.dismiss();
+            snackbar = null;
+        }
     }
 
-    private void hideProgress(){
-        progressBar.setVisibility(View.GONE);
+    void showNoDevicesMessage() {
+        if (snackbar != null) {
+            return;
+        }
+        snackbar = Snackbar.make(findViewById(R.id.container), "There are no devices positioning inside this building", Snackbar.LENGTH_INDEFINITE);
+        snackbar.show();
     }
 }
