@@ -57,7 +57,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
     private static final int MIN_CHANGE_IN_BEARING_TO_ANIMATE_CAMERA = 10;
 
     private GoogleMap map;
-    private Marker prev;
+    private Marker marker;
 
     private GetBuildingCaseUse getBuildingCaseUse = new GetBuildingCaseUse();
 
@@ -178,7 +178,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 current = location;
                 LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
                         location.getCoordinate().getLongitude());
-                if (prev == null){
+                if (marker == null){
                     initializeMarker(latLng);
                 }
                 if (groundOverlay == null) {
@@ -187,13 +187,13 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 updateMarkerIcon(location);
 
                 if (location.getQuality() == Location.Quality.LOW) {
-                    prev.setPosition(latLng);
-                    prev.setRotation((float) location.getBearing().degrees());
+                    marker.setPosition(latLng);
+                    marker.setRotation((float) location.getBearing().degrees());
 
                     groundOverlay.setDimensions(location.getAccuracy() * 2);
                     groundOverlay.setPosition(latLng);
                 } else {
-                    positionAnimator.animate(prev, groundOverlay, current);
+                    positionAnimator.animate(marker, groundOverlay, current);
                 }
                 centerInUser(location);
 
@@ -225,7 +225,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         Bitmap bitmapArrow = BitmapFactory.decodeResource(getResources(), R.drawable.position);
         Bitmap arrowScaled = Bitmap.createScaledBitmap(bitmapArrow, bitmapArrow.getWidth() / 4,bitmapArrow.getHeight() / 4, false);
 
-        prev = map.addMarker(new MarkerOptions()
+        marker = map.addMarker(new MarkerOptions()
                 .position(latLng)
                 .zIndex(100)
                 .flat(true)
@@ -245,7 +245,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         groundOverlay = map.addGroundOverlay(groundOverlayOptions);}
 
     private void centerInUser(Location location) {
-        float tilt = 2;
+        float tilt = 40;
         float bearing = (location.hasBearing()) && location.isIndoor() ? (float) (location.getBearing().degrees()) : map.getCameraPosition().bearing;
 
         LatLng latLng = new LatLng(location.getCoordinate().getLatitude(), location.getCoordinate().getLongitude());
@@ -284,7 +284,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
             bitmapScaled = Bitmap.createScaledBitmap(bitmapCircle, bitmapCircle.getWidth() / 4,bitmapCircle.getHeight() / 4, false);
         }
         bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmapScaled);
-        prev.setIcon(bitmapDescriptor);
+        marker.setIcon(bitmapDescriptor);
     }
 
 
@@ -299,9 +299,9 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
             groundOverlay.remove();
             groundOverlay = null;
         }
-        if(prev != null){
-            prev.remove();
-            prev = null;
+        if(marker != null){
+            marker.remove();
+            marker = null;
         }
     }
 

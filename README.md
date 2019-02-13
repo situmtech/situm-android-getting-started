@@ -936,13 +936,22 @@ Once we have the animation for the position, we will see that it works much smoo
 
 Aside from animate the position it is also interesting to animate the camera so the user is always seeing where he is. To do this you just need to animate the camera when the SDK returns a location.
 ```java
-            CameraPosition cameraPosition = new CameraPosition.Builder(map.getCameraPosition())
-                    .target(latLng)
-                    .bearing(bearing)
-                    .tilt(tilt)
-                    .build();
+        float bearing = (location.hasBearing()) && location.isIndoor() ? (float) (location.getBearing().degrees()) : map.getCameraPosition().bearing;
 
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), UPDATE_LOCATION_ANIMATION_TIME, null);
+        LatLng latLng = new LatLng(location.getCoordinate().getLatitude(), location.getCoordinate().getLongitude());
+
+        //Skip if no change in location and little bearing change
+        boolean skipAnimation = lastCameraLatLng != null && lastCameraLatLng.equals(latLng)
+                && (Math.abs(bearing - lastCameraBearing)) < MIN_CHANGE_IN_BEARING_TO_ANIMATE_CAMERA;
+        lastCameraLatLng = latLng;
+        lastCameraBearing = bearing;
+        CameraPosition cameraPosition = new CameraPosition.Builder(map.getCameraPosition())
+                .target(latLng)
+                .bearing(bearing)
+                .tilt(40)
+                .build();
+
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), UPDATE_LOCATION_ANIMATION_TIME, null);
 
 ```
 
