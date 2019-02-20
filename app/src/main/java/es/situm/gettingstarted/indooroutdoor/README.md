@@ -21,34 +21,4 @@ with many more options, but this is outside of the scope of this example. Check 
 2. Build a `LocationListener` in order to receive location updates.
 3. After the creation of the required objects, request location updates to the `LocationManager`.
 
-```java
-LocationRequest locationRequest = new LocationRequest.Builder().build();
-LocationListener locationListener = new LocationListener(){
-
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                //location result
-            }
-
-            @Override
-            public void onStatusChanged(@NonNull LocationStatus locationStatus) {
-                //location manager status, check the codes
-            }
-
-            @Override
-            public void onError(@NonNull Error error) {
-                //an error using location manager, check the code and message to debug operations
-            }
-        };
-SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
-```
-
-
 Also, do not forget to stop the service in the `onDestroy` or any other method you might consider for this purpose.
-```java
-@Override
-protected void onDestroy() {¡
-    SitumSdk.locationManager().removeUpdates(locationListener);
-    super.onDestroy();
-}
-```

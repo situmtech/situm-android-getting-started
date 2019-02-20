@@ -21,7 +21,7 @@ able to:
 5. [Optional step 5: location and runtime permissions](#locationpermissions)
 6. [Optional step 6: Setup indoor positioning](#indoorpositioning)
 
-#### [Samples](#samples)
+#### Samples
 
 1. [Positioning](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/positioning):
 This example shows how to download the buildings in your account and how to start the positioning in a building.

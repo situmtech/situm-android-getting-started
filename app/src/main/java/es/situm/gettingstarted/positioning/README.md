@@ -7,30 +7,11 @@ In this sample project, all the code has been included in the file
 In order to access the buildings' info, first of all you need to get an instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
 This object allows you to fetch your buildings' data (list of buildings, floorplans, points of interest, etc.):
 
-For instance, in the next snippet we fetch all the buildings associated with our user's account and print them to the Logcat:
-
-```java
- SitumSdk.communicationManager().fetchBuildings(new Handler<Collection<Building>>() {
-            @Override
-            public void onSuccess(Collection<Building> buildings) {
-                Log.d(TAG, "onSuccess: Your buildings: ");
-                for (Building building : buildings) {
-                    Log.i(TAG, "onSuccess: " + building.getIdentifier() + " - " + building.getName());
-                }
-            }
-
-            @Override
-            public void onFailure(Error error) {
-                Log.e(TAG, "onFailure:" + error);
-            }
-        });
-```
+To get the buildings you need to call the method `fetchBuildings`
 
 ## <a name="positioning"></a> Start the positioning
 
-In order to start the indoor positioning within a building, we will need to obtain this building first. In order to do that, please refer to the previous section: [Get buildings' information](#communicationmanager).
-
-Then, in order to retrieve the location of the smartphone within this `Building`, you will need to create a `LocationRequest` indicating the `Building` where you want to start the positioning:
+Then, in order to retrieve the location of the smartphone within a `Building`, you will need to create a `LocationRequest` indicating the `Building` where you want to start the positioning:
 
 ```java
 LocationRequest locationRequest = new LocationRequest.Builder()
@@ -39,26 +20,6 @@ LocationRequest locationRequest = new LocationRequest.Builder()
 ```
 
 Also, you will need to implement the `LocationListener` that will receive the location updates, status and errors.
-
-```java
-private LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            Log.i(TAG, "onLocationChanged() called with: location = [" + location + "]");
-        }
-
-        @Override
-        public void onStatusChanged(@NonNull LocationStatus status) {
-            Log.i(TAG, "onStatusChanged() called with: status = [" + status + "]");
-        }
-
-        @Override
-        public void onError(@NonNull Error error) {
-            Log.e(TAG, "onError() called with: error = [" + error + "]");
-        }
-    };
-
-```
 
 In `onLocationChanged(Location)` your application will receive the location updates. This `Location` object contains
 the building identifier, level identifier, cartesian coordinates, geographic coordinates, orientation,
