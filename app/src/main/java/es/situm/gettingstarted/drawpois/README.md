@@ -5,4 +5,4 @@ First of all, we need to retrieve the list of `POI`s of our `Building` using the
 
 Now, you can draw the `POI`s over the map,to do this we created a method `drawPoi` in the example.
 
-You can see how to do this in DrawPoisActivity.java
+You can see how to do this in `DrawPoisActivity`

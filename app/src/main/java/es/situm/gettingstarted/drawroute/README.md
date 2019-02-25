@@ -6,4 +6,4 @@ In this example, we will show a route between two `POI`s of a `Building`. Theref
 
 After obtaining the basic information, you can request a route between two of the retrieved `POI`s to the `DirectionsManager`. The route will be received on the `onSuccess` callback of the `DirectionsManager`. At this point, you will be able to draw a Google Maps polyline to represent the route.
 
-You can see how to do this in `DrawRouteActivity.java`
+You can see how to do this in `DrawRouteActivity`

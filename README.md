@@ -1,15 +1,5 @@
 Situm Android SDK Sample app
 =======================
-
-This is a sample Android application built with the Situm SDK. With the sample app you will be able 
-able to: 
-  1. List all the buildings of your account and start the positioning for a selected building, showing 
- the image of the first floor of the building and the locations received.
-  2. Draw the building's floor over the Google Maps view.
-  3. List all the POIs(points of interest) of a building.
-  4. Show routes between two POIs.
-  5. Show the location of other devices in realtime.
- 
   
 # Table of contents
 #### [Introduction](#introduction)
@@ -24,29 +14,29 @@ able to:
 #### Samples
 
 1. [Positioning](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/positioning):
-This example shows how to download the buildings in your account and how to start the positioning in a building.
+Download the buildings in your account and how to start the positioning in a building.
 2. [Indoor-Outdoor](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/indooroutdoor):
-This example shows how to use the indoor-outdoor positioning.
+Use the indoor-outdoor positioning.
 3. [Draw building](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawbuilding):
-This example shows how to draw the floorplan of a building over a map.
+Draw the floorplan of a building over a map.
 4. [Draw position](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawposition):
-This example shows how to draw the position you obtain from the SDK in the map.
+Draw the position you obtain from the SDK in the map.
 5. [Draw pois](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawpois):
-This example shows how to draw the pois of a buildin over the map
+Draw the pois of a building over the map
 6. [Draw route](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute):
-This example shows how to draw a route between to points over the map
+Draw a route between to points over the map
 7. [Show realtime](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime):
-This example shows how to draw the users that are position inside a building over a map.
+Draw the users that are position inside a building over a map.
 8. [Building events](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/buildingevents):
-This example shows how to get the events of a building.
+Get the events of a building.
 9. [User inside event](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/userinsideevent):
-This example shows how to calculate if the user is inside a event.
+Calculate if the user is inside a event.
 10. [Poi filtering](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/poifiltering):
-This example shows how to filter the pois with a especific key-value.
+Filter the pois with a especific key-value.
 11. [Guide instructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions):
-This example shows how to give indications when you are going to a point.
+Give indications when you are going to a point.
 12. [Animate position](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition):
-This example shows how to animate the position and the camera.
+Animate the position and the camera.
 
 #### [More information](#moreinfo)
 #### [Support information](#supportinfo)

@@ -3,8 +3,8 @@ Another interesting functionality is to show the floorplan of a building on top 
 
 As a required step, you will need to complete the steps in the [Setup Google Maps](https://github.com/situmtech/situm-android-getting-started#mapsapikey) section. Once this is done, you should
  obtain the floors of the target `Building`. For this purpose, you may refer to the
-[GetBuildingImageUseCase.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java) Java file.
+[GetBuildingImageUseCase.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/drawbuilding/GetBuildingImageUseCase.java) file.
 After that, you can get the floorplan (bitmap) of each floor using the Situm `CommunicationManager` and calling `fetchMapFromFloor`.
 
 Once you have the bitmap of the `Building` floor you can draw it on top of Google Maps.
-You can see how to do it in the method `drawBuilding` of the class `DrawBuildingActivity.java`
+You can see how to do it in the method `drawBuilding` of the class `DrawBuildingActivity`
