@@ -185,16 +185,8 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                     initializeGroundOverlay();
                 }
                 updateMarkerIcon(location);
+                positionAnimator.animate(marker, groundOverlay, current);
 
-                if (location.getQuality() == Location.Quality.LOW) {
-                    marker.setPosition(latLng);
-                    marker.setRotation((float) location.getBearing().degrees());
-
-                    groundOverlay.setDimensions(location.getAccuracy() * 2);
-                    groundOverlay.setPosition(latLng);
-                } else {
-                    positionAnimator.animate(marker, groundOverlay, current);
-                }
                 centerInUser(location);
 
 
