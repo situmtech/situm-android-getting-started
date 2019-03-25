@@ -52,6 +52,7 @@ import es.situm.sdk.model.cartography.Floor;
 import es.situm.sdk.model.cartography.Poi;
 import es.situm.sdk.model.cartography.Point;
 import es.situm.sdk.model.directions.Route;
+import es.situm.sdk.model.directions.RouteSegment;
 import es.situm.sdk.model.location.Bounds;
 import es.situm.sdk.model.location.Coordinate;
 import es.situm.sdk.model.location.Location;
@@ -70,9 +71,9 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
     private final static String TAG = GuideInstructionsActivity.class.getSimpleName();
     private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
 
-    private GoogleMap map;
+    private GoogleMap googleMap;
     private NavigationRequest navigationRequest;
-    private Polyline polyline;
+    private List<Polyline> polylines = new ArrayList<>();
     private GetBuildingsCaseUse getBuildingsCaseUse = new GetBuildingsCaseUse();
     private GetPoisCaseUse getPoisCaseUse = new GetPoisCaseUse();
 
@@ -86,8 +87,6 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
     private Point to;
     private Building currentBuilding;
 
-
-    private Route bestRoute;
 
     private ProgressBar progressBar;
     private FloatingActionButton button;
@@ -197,7 +196,6 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
         getPoisCaseUse.cancel();
         SitumSdk.locationManager().removeUpdates(locationListener);
         stopLocation();
-        bestRoute = null;
         super.onDestroy();
     }
 
@@ -216,7 +214,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
                 if (prev != null) prev.remove();
                 LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
                         location.getCoordinate().getLongitude());
-                prev = map.addCircle(new CircleOptions()
+                prev = googleMap.addCircle(new CircleOptions()
                         .center(latLng)
                         .radius(1d)
                         .strokeWidth(0f)
@@ -264,8 +262,15 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
         stopNavigation();
         if (prev != null)
             prev.remove();
-        if(polyline!=null)
+
+        removePolylines();
+    }
+
+    private void removePolylines() {
+        for (Polyline polyline : polylines) {
             polyline.remove();
+        }
+        polylines.clear();
     }
 
     /*
@@ -280,7 +285,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
+        this.googleMap = googleMap;
         getBuildingsCaseUse.get(buildingId, new GetBuildingsCaseUse.Callback() {
             @Override
             public void onSuccess(Building building, Floor floor, Bitmap bitmap) {
@@ -309,11 +314,11 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
 
         });
 
-        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+        this.googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(polyline != null) polyline.remove();
+                removePolylines();
                 destination = marker;
                 Poi p;
                 p = getPoiFromMarker(marker);
@@ -383,13 +388,13 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
                 new LatLng(coordinateSW.getLatitude(), coordinateSW.getLongitude()),
                 new LatLng(coordinateNE.getLatitude(), coordinateNE.getLongitude()));
 
-        map.addGroundOverlay(new GroundOverlayOptions()
+        googleMap.addGroundOverlay(new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromBitmap(bitmap))
                 .bearing((float) building.getRotation().degrees())
                 .positionFromBounds(latLngBounds)
                 .zIndex(1));
 
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 
     void drawPois(List<Poi> pois){
@@ -404,7 +409,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
                     continue;
                 }
                 LatLng latLng = new LatLng(p.getCoordinate().getLatitude(), p.getCoordinate().getLongitude());
-                map.addMarker(new MarkerOptions()
+                googleMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .title(p.getName())
                         .zIndex(10));
@@ -445,24 +450,12 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
         SitumSdk.directionsManager().requestDirections(directionsRequest, new Handler<Route>() {
             @Override
             public void onSuccess(Route route) {
-                if (polyline!=null) polyline.remove();
-                bestRoute = route;
-                PolylineOptions polylineOptions = new PolylineOptions().color(Color.GREEN).width(4f).zIndex(3);
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                List<Point> routesPoints = route.getPoints();
-                for(Point point : routesPoints){
-                    LatLng latLng = new LatLng(point.getCoordinate().getLatitude(), point.getCoordinate().getLongitude());
-                    builder.include(latLng);
-                    polylineOptions.add(latLng);
-                }
-                builder.include(new LatLng(current.getPosition().getCoordinate().getLatitude(), current.getPosition().getCoordinate().getLongitude()));
-                builder.include(new LatLng(to.getCoordinate().getLatitude(), to.getCoordinate().getLongitude()));
-
-                polyline = (map.addPolyline(polylineOptions));
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+                removePolylines();
+                drawRoute(route);
+                centerCamera(route);
 
                 navigationRequest = new NavigationRequest.Builder()
-                        .route(bestRoute)
+                        .route(route)
                         .distanceToGoalThreshold(3d)
                         .outsideRouteThreshold(50d)
                         .build();
@@ -476,6 +469,35 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
 
             }
         });
+    }
+
+    private void drawRoute(Route route) {
+        for (RouteSegment segment : route.getSegments()) {
+            //For each segment you must draw a polyline
+            //Add an if to filter and draw only the current selected floor
+            List<LatLng> latLngs = new ArrayList<>();
+            for (Point point : segment.getPoints()) {
+                latLngs.add(new LatLng(point.getCoordinate().getLatitude(), point.getCoordinate().getLongitude()));
+            }
+
+            PolylineOptions polyLineOptions = new PolylineOptions()
+                    .color(Color.GREEN)
+                    .width(4f)
+                    .zIndex(3)
+                    .addAll(latLngs);
+            Polyline polyline = googleMap.addPolyline(polyLineOptions);
+            polylines.add(polyline);
+        }
+    }
+
+    private void centerCamera(Route route) {
+        Coordinate from = route.getFrom().getCoordinate();
+        Coordinate to = route.getTo().getCoordinate();
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder()
+                .include(new LatLng(from.getLatitude(), from.getLongitude()))
+                .include(new LatLng(to.getLatitude(), to.getLongitude()));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
     }
 
 
@@ -496,7 +518,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
             public void onDestinationReached() {
                 Log.d(TAG, "onDestinationReached: ");
                 mNavText.setText("Arrived");
-                polyline.remove();
+                removePolylines();
             }
 
             @Override
@@ -516,9 +538,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
 
     void stopNavigation(){
         mBtnNav.setText("Start");
-        if(polyline != null){
-            polyline.remove();
-        }
+        removePolylines();
         destination = null;
         navigationRequest = null;
         navigationLayout.setVisibility(View.GONE);
