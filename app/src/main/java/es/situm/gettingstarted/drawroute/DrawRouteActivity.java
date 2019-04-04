@@ -1,5 +1,7 @@
 package es.situm.gettingstarted.drawroute;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,25 +14,32 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
+import es.situm.gettingstarted.guideinstructions.GetBuildingsCaseUse;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.directions.DirectionsRequest;
 import es.situm.sdk.error.Error;
+import es.situm.sdk.location.util.CoordinateConverter;
 import es.situm.sdk.model.cartography.Building;
-import es.situm.sdk.model.cartography.Poi;
+import es.situm.sdk.model.cartography.Floor;
 import es.situm.sdk.model.cartography.Point;
 import es.situm.sdk.model.directions.Route;
 import es.situm.sdk.model.directions.RouteSegment;
+import es.situm.sdk.model.location.Bounds;
+import es.situm.sdk.model.location.CartesianCoordinate;
 import es.situm.sdk.model.location.Coordinate;
 import es.situm.sdk.utils.Handler;
 
@@ -44,13 +53,28 @@ public class DrawRouteActivity
 
     private final String TAG = getClass().getSimpleName();
     private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
+    private GetBuildingsCaseUse getBuildingsCaseUse = new GetBuildingsCaseUse();
     private ProgressBar progressBar;
     private GoogleMap googleMap;
+    private Building currentBuilding;
+    private List<Polyline> polylines = new ArrayList<>();
+    private Marker destination;
+    private Marker origin;
+    private String  buildingId;
+    private String floorId;
+    private Point pointOrigin;
+    private CoordinateConverter coordinateConverter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_route);
+        Intent intent = getIntent();
+        getSupportActionBar().setSubtitle(R.string.tv_select_points);
+        if (intent != null)
+            if (intent.hasExtra(Intent.EXTRA_TEXT))
+                buildingId = intent.getStringExtra(Intent.EXTRA_TEXT);
+
         setup();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -60,6 +84,7 @@ public class DrawRouteActivity
     @Override
     protected void onDestroy() {
         getPoisUseCase.cancel();
+        getBuildingsCaseUse.cancel();
         SitumSdk.navigationManager().removeUpdates();
         super.onDestroy();
     }
@@ -67,22 +92,37 @@ public class DrawRouteActivity
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
-        getPoisUseCase.get(new GetPoisUseCase.Callback() {
+        getBuildingsCaseUse.get(buildingId, new GetBuildingsCaseUse.Callback() {
             @Override
-            public void onSuccess(Building building, Collection<Poi> pois) {
-                if (pois.size() < 2){
-                    hideProgress();
-                    Toast.makeText(DrawRouteActivity.this,
-                            "Its mandatory to have at least two pois in a building: " + building.getName() + " to start directions manager",
-                            Toast.LENGTH_LONG)
-                            .show();
-                }else {
-                    Iterator<Poi>iterator = pois.iterator();
-                    final Point from = iterator.next().getPosition();
-                    final Point to = iterator.next().getPosition();
+            public void onSuccess(Building building, Floor floor, Bitmap bitmap) {
+                progressBar.setVisibility(View.GONE);
+                floorId = floor.getIdentifier();
+                currentBuilding = building;
+                coordinateConverter = new CoordinateConverter(building.getDimensions(),building.getCenter(),building.getRotation());
+                drawBuilding(building, bitmap);
+            }
+
+            @Override
+            public void onError(Error error) {
+                Toast.makeText(DrawRouteActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        this.googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if (pointOrigin == null) {
+                    if(origin!=null){
+                        clearMap();
+                    }
+                    origin = googleMap.addMarker(new MarkerOptions().position(latLng).title("origin"));
+                    pointOrigin = createPoint(latLng);
+                }else{
+                    destination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
+                    Point pointDestination=createPoint(latLng);
                     DirectionsRequest directionsRequest = new DirectionsRequest.Builder()
-                            .from(from, null)
-                            .to(to)
+                            .from(pointOrigin, null)
+                            .to(pointDestination)
                             .build();
                     SitumSdk.directionsManager().requestDirections(directionsRequest, new Handler<Route>() {
                         @Override
@@ -90,6 +130,8 @@ public class DrawRouteActivity
                             drawRoute(route);
                             centerCamera(route);
                             hideProgress();
+                            pointOrigin =null;
+
                         }
 
                         @Override
@@ -98,15 +140,30 @@ public class DrawRouteActivity
                             Toast.makeText(DrawRouteActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
+
                 }
             }
-
-            @Override
-            public void onError(String error) {
-                hideProgress();
-                Toast.makeText(DrawRouteActivity.this, error, Toast.LENGTH_LONG).show();
-            }
         });
+
+    }
+
+    private void clearMap(){
+        origin.remove();
+        destination.remove();
+        removePolylines();
+    }
+    private Point createPoint(LatLng latLng) {
+        Coordinate c = new Coordinate(latLng.latitude, latLng.longitude);
+        CartesianCoordinate cc= coordinateConverter.toCartesianCoordinate(c);
+        Point p = new Point(buildingId,floorId,c,cc );
+        return p;
+    }
+
+    private void removePolylines() {
+        for (Polyline polyline : polylines) {
+            polyline.remove();
+        }
+        polylines.clear();
     }
 
     private void drawRoute(Route route) {
@@ -122,8 +179,24 @@ public class DrawRouteActivity
                     .color(Color.GREEN)
                     .width(4f)
                     .addAll(latLngs);
-            googleMap.addPolyline(polyLineOptions);
+            polylines.add(googleMap.addPolyline(polyLineOptions));
+
         }
+    }
+    void drawBuilding(Building building, Bitmap bitmap){
+        Bounds drawBounds = building.getBounds();
+        Coordinate coordinateNE = drawBounds.getNorthEast();
+        Coordinate coordinateSW = drawBounds.getSouthWest();
+        LatLngBounds latLngBounds = new LatLngBounds(
+                new LatLng(coordinateSW.getLatitude(), coordinateSW.getLongitude()),
+                new LatLng(coordinateNE.getLatitude(), coordinateNE.getLongitude()));
+
+        this.googleMap.addGroundOverlay(new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                .bearing((float) building.getRotation().degrees())
+                .positionFromBounds(latLngBounds));
+
+        this.googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 
     private void centerCamera(Route route) {

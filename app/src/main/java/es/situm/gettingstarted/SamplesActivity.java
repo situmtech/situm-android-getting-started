@@ -18,7 +18,7 @@ import es.situm.gettingstarted.buildingevents.BuildingListActivity;
 import es.situm.gettingstarted.drawbuilding.DrawBuildingActivity;
 import es.situm.gettingstarted.drawpois.DrawPoisActivity;
 import es.situm.gettingstarted.drawposition.DrawPositionActivity;
-import es.situm.gettingstarted.drawroute.DrawRouteActivity;
+import es.situm.gettingstarted.drawroute.SelectionBuildingListActivity;
 import es.situm.gettingstarted.guideinstructions.SelectBuildingActivity;
 import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.poifiltering.ListBuildingsActivity;
@@ -52,7 +52,7 @@ public class SamplesActivity
         items.add(new Sample("Draw building over the map", DrawBuildingActivity.class));
         items.add(new Sample("Draw position over the map", DrawPositionActivity.class));
         items.add(new Sample("Draw POIs over the map", DrawPoisActivity.class));
-        items.add(new Sample("Draw Route between two points over the map", DrawRouteActivity.class));
+        items.add(new Sample("Draw Route between two points over the map", SelectionBuildingListActivity.class));
         items.add(new Sample("Draw realtime devices over the map", RealTimeActivity.class));
         items.add(new Sample("Key-Value POIs Filtering", ListBuildingsActivity.class));
         items.add(new Sample("Show all the events of a building", BuildingListActivity.class));

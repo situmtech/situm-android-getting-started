@@ -36,7 +36,7 @@ public class PositioningActivity extends AppCompatActivity {
 
     // The building identifier where positioning will start.
     // You can see your buildings IDs and names running this example in the Logcat
-    private static final String BUILDING_ID = "YOUR_BUILDING_ID";
+    private static final String BUILDING_ID = "5145";
 
     private ToggleButton toggleButtonStart;
     private TextView tvLocation;
