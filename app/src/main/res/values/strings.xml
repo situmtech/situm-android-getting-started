@@ -6,4 +6,5 @@
     <string name="dont_show">Do not show again</string>
     <string name="user_inside_event">You are inside an event</string>
     <string name="no_events_in_building">There are not events in the building. You can create them in the Dashboard</string>
+    <string name="retry">Retry</string>
 </resources>
