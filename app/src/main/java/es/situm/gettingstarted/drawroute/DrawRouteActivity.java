@@ -53,16 +53,14 @@ public class DrawRouteActivity
 
     private final String TAG = getClass().getSimpleName();
     private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
-    private GetBuildingsCaseUse getBuildingsCaseUse = new GetBuildingsCaseUse();
+    private GetBuildingsCaseUse getBuildingsUseCase = new GetBuildingsCaseUse();
     private ProgressBar progressBar;
     private GoogleMap googleMap;
     private Building currentBuilding;
     private List<Polyline> polylines = new ArrayList<>();
-    private Marker destination;
-    private Marker origin;
-    private String  buildingId;
-    private String floorId;
-    private Point pointOrigin;
+    private Marker markerDestination,markerOrigin;
+    private String  buildingId,floorId;
+    private Point pointOrigin,pointDestination;
     private CoordinateConverter coordinateConverter;
 
     @Override
@@ -71,10 +69,9 @@ public class DrawRouteActivity
         setContentView(R.layout.activity_draw_route);
         Intent intent = getIntent();
         getSupportActionBar().setSubtitle(R.string.tv_select_points);
-        if (intent != null)
-            if (intent.hasExtra(Intent.EXTRA_TEXT))
+        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
                 buildingId = intent.getStringExtra(Intent.EXTRA_TEXT);
-
+        }
         setup();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -84,7 +81,7 @@ public class DrawRouteActivity
     @Override
     protected void onDestroy() {
         getPoisUseCase.cancel();
-        getBuildingsCaseUse.cancel();
+        getBuildingsUseCase.cancel();
         SitumSdk.navigationManager().removeUpdates();
         super.onDestroy();
     }
@@ -92,7 +89,7 @@ public class DrawRouteActivity
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
-        getBuildingsCaseUse.get(buildingId, new GetBuildingsCaseUse.Callback() {
+        getBuildingsUseCase.get(buildingId, new GetBuildingsCaseUse.Callback() {
             @Override
             public void onSuccess(Building building, Floor floor, Bitmap bitmap) {
                 progressBar.setVisibility(View.GONE);
@@ -112,44 +109,49 @@ public class DrawRouteActivity
             @Override
             public void onMapClick(LatLng latLng) {
                 if (pointOrigin == null) {
-                    if(origin!=null){
+                    if(markerOrigin!=null){
                         clearMap();
                     }
-                    origin = googleMap.addMarker(new MarkerOptions().position(latLng).title("origin"));
+                    markerOrigin = googleMap.addMarker(new MarkerOptions().position(latLng).title("origin"));
                     pointOrigin = createPoint(latLng);
-                }else{
-                    destination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
-                    Point pointDestination=createPoint(latLng);
-                    DirectionsRequest directionsRequest = new DirectionsRequest.Builder()
-                            .from(pointOrigin, null)
-                            .to(pointDestination)
-                            .build();
-                    SitumSdk.directionsManager().requestDirections(directionsRequest, new Handler<Route>() {
-                        @Override
-                        public void onSuccess(Route route) {
-                            drawRoute(route);
-                            centerCamera(route);
-                            hideProgress();
-                            pointOrigin =null;
-
-                        }
-
-                        @Override
-                        public void onFailure(Error error) {
-                            hideProgress();
-                            Toast.makeText(DrawRouteActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
-
+                }else {
+                    markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
+                    calculateRoute(latLng);
                 }
+
+
             }
         });
 
     }
 
+    private void calculateRoute(LatLng latLng) {
+        Point pointDestination = createPoint(latLng);
+        DirectionsRequest directionsRequest = new DirectionsRequest.Builder()
+                .from(pointOrigin, null)
+                .to(pointDestination)
+                .build();
+        SitumSdk.directionsManager().requestDirections(directionsRequest, new Handler<Route>() {
+            @Override
+            public void onSuccess(Route route) {
+                drawRoute(route);
+                centerCamera(route);
+                hideProgress();
+                pointOrigin = null;
+
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                hideProgress();
+                Toast.makeText(DrawRouteActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void clearMap(){
-        origin.remove();
-        destination.remove();
+        markerOrigin.remove();
+        markerDestination.remove();
         removePolylines();
     }
     private Point createPoint(LatLng latLng) {
