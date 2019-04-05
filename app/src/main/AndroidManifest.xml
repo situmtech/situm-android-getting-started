@@ -63,11 +63,6 @@
             android:screenOrientation="portrait"
             android:parentActivityName=".samplelist.SamplesActivity">
         </activity>
-        <activity android:name=".drawroute.SelectionBuildingListActivity"
-            android:label="Selection Building"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".SamplesActivity">
-        </activity>
 
         <activity android:name=".realtime.RealTimeActivity"
             android:label="Draw realtime"

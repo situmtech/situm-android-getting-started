@@ -1,11 +1,10 @@
 package es.situm.gettingstarted.drawroute;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -24,9 +23,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import es.situm.gettingstarted.R;
+import es.situm.gettingstarted.common.SampleActivity;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
 import es.situm.gettingstarted.guideinstructions.GetBuildingsCaseUse;
 import es.situm.sdk.SitumSdk;
@@ -48,7 +49,7 @@ import es.situm.sdk.utils.Handler;
  */
 
 public class DrawRouteActivity
-        extends AppCompatActivity
+        extends SampleActivity
         implements OnMapReadyCallback {
 
     private final String TAG = getClass().getSimpleName();
@@ -56,22 +57,19 @@ public class DrawRouteActivity
     private GetBuildingsCaseUse getBuildingsUseCase = new GetBuildingsCaseUse();
     private ProgressBar progressBar;
     private GoogleMap googleMap;
-    private Building currentBuilding;
+    private Building building;
     private List<Polyline> polylines = new ArrayList<>();
     private Marker markerDestination,markerOrigin;
-    private String  buildingId,floorId;
-    private Point pointOrigin,pointDestination;
+    private String floorId;
+    private Point pointOrigin;
     private CoordinateConverter coordinateConverter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_route);
-        Intent intent = getIntent();
         getSupportActionBar().setSubtitle(R.string.tv_select_points);
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                buildingId = intent.getStringExtra(Intent.EXTRA_TEXT);
-        }
+        building = getBuildingFromIntent();
         setup();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -89,38 +87,32 @@ public class DrawRouteActivity
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
-        getBuildingsUseCase.get(buildingId, new GetBuildingsCaseUse.Callback() {
+        fetchFirstFloorImage(building, new Callback() {
             @Override
-            public void onSuccess(Building building, Floor floor, Bitmap bitmap) {
-                progressBar.setVisibility(View.GONE);
-                floorId = floor.getIdentifier();
-                currentBuilding = building;
+            public void onSuccess(Bitmap floorImage) {
                 coordinateConverter = new CoordinateConverter(building.getDimensions(),building.getCenter(),building.getRotation());
-                drawBuilding(building, bitmap);
+                drawBuilding(floorImage);
             }
 
             @Override
             public void onError(Error error) {
-                Toast.makeText(DrawRouteActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(R.id.container), error.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
             }
         });
 
-        this.googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                if (pointOrigin == null) {
-                    if(markerOrigin!=null){
-                        clearMap();
-                    }
-                    markerOrigin = googleMap.addMarker(new MarkerOptions().position(latLng).title("origin"));
-                    pointOrigin = createPoint(latLng);
-                }else {
-                    markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
-                    calculateRoute(latLng);
+        this.googleMap.setOnMapClickListener(latLng -> {
+            if (pointOrigin == null) {
+                if(markerOrigin!=null){
+                    clearMap();
                 }
-
-
+                markerOrigin = googleMap.addMarker(new MarkerOptions().position(latLng).title("origin"));
+                pointOrigin = createPoint(latLng);
+            }else {
+                markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
+                calculateRoute(latLng);
             }
+
+
         });
 
     }
@@ -155,10 +147,10 @@ public class DrawRouteActivity
         removePolylines();
     }
     private Point createPoint(LatLng latLng) {
-        Coordinate c = new Coordinate(latLng.latitude, latLng.longitude);
-        CartesianCoordinate cc= coordinateConverter.toCartesianCoordinate(c);
-        Point p = new Point(buildingId,floorId,c,cc );
-        return p;
+        Coordinate coordinate = new Coordinate(latLng.latitude, latLng.longitude);
+        CartesianCoordinate cartesianCoordinate= coordinateConverter.toCartesianCoordinate(coordinate);
+        Point point = new Point(building.getIdentifier(), floorId,coordinate,cartesianCoordinate );
+        return point;
     }
 
     private void removePolylines() {
@@ -185,7 +177,7 @@ public class DrawRouteActivity
 
         }
     }
-    void drawBuilding(Building building, Bitmap bitmap){
+    void drawBuilding(Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
         Coordinate coordinateSW = drawBounds.getSouthWest();
@@ -217,5 +209,37 @@ public class DrawRouteActivity
 
     private void hideProgress(){
         progressBar.setVisibility(View.GONE);
+    }
+    void fetchFirstFloorImage(Building building,Callback callback) {
+        SitumSdk.communicationManager().fetchFloorsFromBuilding(building, new Handler<Collection<Floor>>() {
+            @Override
+            public void onSuccess(Collection<Floor> floorsCollection) {
+                List<Floor> floors = new ArrayList<>(floorsCollection);
+                Floor firstFloor = floors.get(0);
+                floorId =firstFloor.getIdentifier();
+                SitumSdk.communicationManager().fetchMapFromFloor(firstFloor, new Handler<Bitmap>() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        callback.onSuccess(bitmap);
+                    }
+
+                    @Override
+                    public void onFailure(Error error) {
+                        callback.onError(error);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                callback.onError(error);
+            }
+        });
+    }
+
+    interface Callback {
+        void onSuccess(Bitmap floorImage);
+
+        void onError(Error error);
     }
 }
