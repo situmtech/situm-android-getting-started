@@ -96,7 +96,7 @@ public class GetBuildingsCaseUse {
         return currBuilding;
     }
 
-    void cancel (){
+    void cancel(){
         callback = null;
     }
 
