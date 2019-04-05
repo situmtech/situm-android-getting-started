@@ -23,7 +23,7 @@ public class GetBuildingsCaseUse {
     private Building currBuilding;
     private Floor currFloor;
 
-    public interface Callback{
+     interface Callback{
         void onSuccess(Building building, Floor floor,  Bitmap bitmap);
         void onError(Error error);
     }
