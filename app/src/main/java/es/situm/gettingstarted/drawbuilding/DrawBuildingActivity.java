@@ -2,10 +2,7 @@ package es.situm.gettingstarted.drawbuilding;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.support.design.widget.Snackbar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,64 +13,61 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import es.situm.gettingstarted.R;
+import es.situm.gettingstarted.common.SampleActivity;
+import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.model.cartography.Building;
+import es.situm.sdk.model.cartography.Floor;
 import es.situm.sdk.model.location.Bounds;
 import es.situm.sdk.model.location.Coordinate;
+import es.situm.sdk.utils.Handler;
 
 public class DrawBuildingActivity
-        extends AppCompatActivity
+        extends SampleActivity
         implements OnMapReadyCallback {
 
 
     private GoogleMap map;
-    private ProgressBar progressBar;
-    private GetBuildingImageUseCase getBuildingImageUseCase = new GetBuildingImageUseCase();
+    private Building building;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_draw_building);
-        setup();
+        setContentView(R.layout.activity_map);
+
+        building = getBuildingFromIntent();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-
-    @Override
-    protected void onDestroy() {
-        getBuildingImageUseCase.cancel();
-        super.onDestroy();
-    }
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        getBuildingImageUseCase.get(new GetBuildingImageUseCase.Callback() {
+
+        fetchFirstFloorImage(building, new Callback() {
             @Override
-            public void onSuccess(Building building, Bitmap bitmap) {
-                progressBar.setVisibility(View.GONE);
-                drawBuilding(building, bitmap);
+            public void onSuccess(Bitmap floorImage) {
+                drawBuilding(floorImage);
             }
 
             @Override
             public void onError(Error error) {
-                Toast.makeText(DrawBuildingActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(R.id.container), error.getMessage(), Snackbar.LENGTH_INDEFINITE)
+                        .show();
             }
         });
+
     }
 
-
-    private void setup() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-    }
-
-
-    void drawBuilding(Building building, Bitmap bitmap){
+    void drawBuilding(Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
         Coordinate coordinateSW = drawBounds.getSouthWest();
@@ -87,5 +81,37 @@ public class DrawBuildingActivity
                 .positionFromBounds(latLngBounds));
 
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+    }
+
+    void fetchFirstFloorImage(Building building, Callback callback) {
+        SitumSdk.communicationManager().fetchFloorsFromBuilding(building, new Handler<Collection<Floor>>() {
+            @Override
+            public void onSuccess(Collection<Floor> floorsCollection) {
+                List<Floor> floors = new ArrayList<>(floorsCollection);
+                Floor firstFloor = floors.get(0);
+                SitumSdk.communicationManager().fetchMapFromFloor(firstFloor, new Handler<Bitmap>() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        callback.onSuccess(bitmap);
+                    }
+
+                    @Override
+                    public void onFailure(Error error) {
+                        callback.onError(error);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                callback.onError(error);
+            }
+        });
+    }
+
+    interface Callback {
+        void onSuccess(Bitmap floorImage);
+
+        void onError(Error error);
     }
 }
