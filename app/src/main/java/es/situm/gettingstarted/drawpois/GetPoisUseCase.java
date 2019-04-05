@@ -16,13 +16,13 @@ import es.situm.sdk.utils.Handler;
 
 public class GetPoisUseCase {
 
-     interface Callback{
+    public interface Callback{
         void onSuccess(Building building, Collection<Poi>pois);
         void onError(String error);
     }
     private Callback callback;
 
-     void get(final Callback callback){
+    public void get(final Callback callback){
         if (hasCallback()){
             Log.d("GetPoisUseCase", "already running");
             return;

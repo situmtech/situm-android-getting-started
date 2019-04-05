@@ -29,7 +29,6 @@ import java.util.List;
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.common.SampleActivity;
 import es.situm.gettingstarted.drawpois.GetPoisUseCase;
-import es.situm.gettingstarted.guideinstructions.GetBuildingsCaseUse;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.directions.DirectionsRequest;
 import es.situm.sdk.error.Error;
@@ -54,7 +53,6 @@ public class DrawRouteActivity
 
     private final String TAG = getClass().getSimpleName();
     private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
-    private GetBuildingsCaseUse getBuildingsUseCase = new GetBuildingsCaseUse();
     private ProgressBar progressBar;
     private GoogleMap googleMap;
     private Building building;
@@ -79,7 +77,6 @@ public class DrawRouteActivity
     @Override
     protected void onDestroy() {
         getPoisUseCase.cancel();
-        getBuildingsUseCase.cancel();
         SitumSdk.navigationManager().removeUpdates();
         super.onDestroy();
     }

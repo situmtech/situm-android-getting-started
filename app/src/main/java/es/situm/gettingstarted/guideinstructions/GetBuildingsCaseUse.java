@@ -23,14 +23,14 @@ public class GetBuildingsCaseUse {
     private Building currBuilding;
     private Floor currFloor;
 
-     interface Callback{
+    interface Callback{
         void onSuccess(Building building, Floor floor,  Bitmap bitmap);
         void onError(Error error);
     }
 
     private Callback callback;
 
-    public Building get(final String buildingId, final Callback callback){
+    Building get(final String buildingId, final Callback callback){
         if(hasCallback()){
             Log.d(TAG, "get: already runing");
             return null;
@@ -96,7 +96,7 @@ public class GetBuildingsCaseUse {
         return currBuilding;
     }
 
-    public void cancel(){
+    void cancel(){
         callback = null;
     }
 
