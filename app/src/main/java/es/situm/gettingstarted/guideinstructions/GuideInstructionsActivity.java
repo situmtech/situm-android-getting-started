@@ -2,20 +2,16 @@ package es.situm.gettingstarted.guideinstructions;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,9 +33,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import es.situm.gettingstarted.R;
+import es.situm.gettingstarted.common.SampleActivity;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.directions.DirectionsRequest;
 import es.situm.sdk.error.Error;
@@ -66,7 +64,7 @@ import es.situm.sdk.utils.Handler;
  * Created by alejandro.trigo on 19/01/18.
  */
 
-public class GuideInstructionsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class GuideInstructionsActivity extends SampleActivity implements OnMapReadyCallback {
 
     private final static String TAG = GuideInstructionsActivity.class.getSimpleName();
     private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
@@ -74,31 +72,27 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
     private GoogleMap googleMap;
     private NavigationRequest navigationRequest;
     private List<Polyline> polylines = new ArrayList<>();
-    private GetBuildingsCaseUse getBuildingsCaseUse = new GetBuildingsCaseUse();
     private GetPoisCaseUse getPoisCaseUse = new GetPoisCaseUse();
-
-    private String  buildingId;
-
     private List<Poi> poiList = new ArrayList<>();
+    private List<Poi> poiListFloor = new ArrayList<>();
 
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location current;
     private Point to;
-    private Building currentBuilding;
 
-
+    private Building building;
     private ProgressBar progressBar;
-    private FloatingActionButton button;
     private RelativeLayout navigationLayout;
     private TextView mNavText;
-    private Button mBtnNav;
 
     private Circle prev;
     private Marker destination;
 
     private boolean navigation = false;
     private String floorId;
+
+    boolean isDrawMap;
 
 
     /**
@@ -168,18 +162,22 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide_indications);
         locationManager = SitumSdk.locationManager();
-
-        Intent intent = getIntent();
-        if (intent != null)
-            if (intent.hasExtra(Intent.EXTRA_TEXT))
-                buildingId = intent.getStringExtra(Intent.EXTRA_TEXT);
-
+        building = getBuildingFromIntent();
         setup();
+        checkLocationManager();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
 
+    private void checkLocationManager() {
+        if (locationManager.isRunning()) {
+            stopLocation();
+            SitumSdk.locationManager().removeUpdates(locationListener);
+        } else {
+            startLocation();
 
+        }
     }
 
     @Override
@@ -192,7 +190,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
     @Override
     protected void onDestroy(){
         Log.d(TAG, "onDestroy: ");
-        getBuildingsCaseUse.cancel();
+        SitumSdk.navigationManager().removeUpdates();
         getPoisCaseUse.cancel();
         SitumSdk.locationManager().removeUpdates(locationListener);
         stopLocation();
@@ -221,6 +219,11 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
                         .fillColor(Color.BLUE)
                         .zIndex(100));
                 current = location;
+                floorId = current.getPosition().getFloorIdentifier();
+                if (!isDrawMap) {
+                    drawMap();
+                    isDrawMap = true;
+                }
 
                 if(destination != null){
                     if(navigation) {
@@ -246,6 +249,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
             }
         };
         LocationRequest locationRequest = new LocationRequest.Builder()
+                .buildingIdentifier(building.getIdentifier())
                 .useWifi(true)
                 .useBle(true)
                 .useForegroundService(true)
@@ -286,18 +290,41 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        getBuildingsCaseUse.get(buildingId, new GetBuildingsCaseUse.Callback() {
+        this.googleMap.getUiSettings().setMapToolbarEnabled(false);
+        this.googleMap.setOnMarkerClickListener(marker -> {
+            removePolylines();
+            destination = marker;
+            Poi p;
+            p = getPoiFromMarker(marker);
+            to = p.getPosition();
+
+            if((current != null) && (destination != null)){
+                navigation = true;
+                getRoute();
+            }
+
+            return false;
+        });
+    }
+
+    void drawMap() {
+
+        fetchCurrentFloorImage(building, new GuideInstructionsActivity.Callback() {
             @Override
-            public void onSuccess(Building building, Floor floor, Bitmap bitmap) {
+            public void onSuccess(Bitmap floorImage) {
+
+                drawBuilding(floorImage);
                 progressBar.setVisibility(View.GONE);
-                floorId = floor.getIdentifier();
-                currentBuilding = building;
-                drawBuilding(building, bitmap);
-                getPoisCaseUse.get(currentBuilding, new GetPoisCaseUse.Callback() {
+                getPoisCaseUse.get(building, new GetPoisCaseUse.Callback() {
                     @Override
                     public void onSuccess(List<Poi> pois) {
                         poiList.addAll(pois);
-                        drawPois(poiList);
+                        for (Poi poi : poiList) {
+                            if (poi.getPosition().getFloorIdentifier().equals(floorId)) {
+                                poiListFloor.add(poi);
+                            }
+                        }
+                        drawPois(poiListFloor);
                     }
 
                     @Override
@@ -311,26 +338,45 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
             public void onError(Error error) {
                 Toast.makeText(GuideInstructionsActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
-
         });
+    }
 
-        this.googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+    void fetchCurrentFloorImage(Building building, GuideInstructionsActivity.Callback callback) {
+        SitumSdk.communicationManager().fetchFloorsFromBuilding(building, new Handler<Collection<Floor>>() {
+            @Override
+            public void onSuccess(Collection<Floor> floorsCollection) {
+                List<Floor> floors = new ArrayList<>(floorsCollection);
+                Floor currentFloor = floors.get(0);
+                for (Floor floor : floors) {
+                    if (floor.getIdentifier().equals(current.getPosition().getFloorIdentifier())) {
+                        currentFloor = floor;
+                    }
+                }
+                floorId = currentFloor.getIdentifier();
+                SitumSdk.communicationManager().fetchMapFromFloor(currentFloor, new Handler<Bitmap>() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        callback.onSuccess(bitmap);
+                    }
+
+                    @Override
+                    public void onFailure(Error error) {
+                        callback.onError(error);
+                    }
+                });
+            }
 
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                removePolylines();
-                destination = marker;
-                Poi p;
-                p = getPoiFromMarker(marker);
-                to = p.getPosition();
-
-                if((current != null) && (destination != null)){
-                    getRoute();
-                }
-
-                return false;
+            public void onFailure(Error error) {
+                callback.onError(error);
             }
         });
+    }
+
+    interface Callback {
+        void onSuccess(Bitmap floorImage);
+
+        void onError(Error error);
     }
 
     /**
@@ -339,48 +385,15 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
 
     private void setup(){
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        button = (FloatingActionButton) findViewById(R.id.start_button);
         navigationLayout = (RelativeLayout) findViewById(R.id.navigation_layout);
-        mBtnNav = (Button) findViewById(R.id.btn_start_navigation);
         mNavText = (TextView) findViewById(R.id.tv_indication);
-
-        View.OnClickListener buttonListenerLocalization = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(locationManager.isRunning()){
-                    stopLocation();
-                    SitumSdk.locationManager().removeUpdates(locationListener);
-                }else {
-                    startLocation();
-                }
-            }
-        };
-        button.setOnClickListener(buttonListenerLocalization);
-
-
-        View.OnClickListener onClickListenerNav = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mBtnNav.getText().equals("Stop")){
-                    stopNavigation();
-
-                }else {
-                    mBtnNav.setText("Stop");
-                    navigation = true;
-                    getRoute();
-                }
-            }
-        };
-
-        mBtnNav.setOnClickListener(onClickListenerNav);
     }
 
     /**
      * DRAWING
      *
      */
-
-    void drawBuilding(Building building, Bitmap bitmap){
+    void drawBuilding(Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
         Coordinate coordinateSW = drawBounds.getSouthWest();
@@ -388,13 +401,13 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
                 new LatLng(coordinateSW.getLatitude(), coordinateSW.getLongitude()),
                 new LatLng(coordinateNE.getLatitude(), coordinateNE.getLongitude()));
 
-        googleMap.addGroundOverlay(new GroundOverlayOptions()
+        this.googleMap.addGroundOverlay(new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromBitmap(bitmap))
                 .bearing((float) building.getRotation().degrees())
                 .positionFromBounds(latLngBounds)
                 .zIndex(1));
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+        this.googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 
     void drawPois(List<Poi> pois){
@@ -428,7 +441,7 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
 
 
     Poi getPoiFromMarker(Marker marker){
-        for(Poi p : poiList){
+        for(Poi p : poiListFloor){
             if(p.getName().equals(marker.getTitle()))
                 return p;
         }
@@ -537,7 +550,6 @@ public class GuideInstructionsActivity extends AppCompatActivity implements OnMa
     }
 
     void stopNavigation(){
-        mBtnNav.setText("Start");
         removePolylines();
         destination = null;
         navigationRequest = null;

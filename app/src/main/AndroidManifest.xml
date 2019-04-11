@@ -97,15 +97,10 @@
 
         </activity>
 
-        <activity android:name=".guideinstructions.SelectBuildingActivity"
-            android:label="Select your building"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".samplelist.SamplesActivity"/>
-
         <activity android:name=".guideinstructions.GuideInstructionsActivity"
             android:label="Instructions while going to a POI"
             android:screenOrientation="portrait"
-            android:parentActivityName=".guideinstructions.SelectBuildingActivity"/>
+            android:parentActivityName=".samplelist.SamplesActivity"/>
 
         <activity android:name=".animateposition.SelectBuildingActivity"
             android:label="Select your building"
@@ -115,7 +110,7 @@
         <activity android:name=".animateposition.AnimatePositionActivity"
             android:label="Animate the position while walking"
             android:screenOrientation="portrait"
-            android:parentActivityName=".animateposition.SelectBuildingActivity"/>
+            android:parentActivityName=".samplelist.SamplesActivity"/>
 
         <activity android:name=".userinsideevent.ListBuildingsActivity"
             android:label="Select your building"
