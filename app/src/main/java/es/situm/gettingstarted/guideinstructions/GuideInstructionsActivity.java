@@ -45,13 +45,14 @@ import es.situm.sdk.location.LocationListener;
 import es.situm.sdk.location.LocationManager;
 import es.situm.sdk.location.LocationRequest;
 import es.situm.sdk.location.LocationStatus;
+import es.situm.sdk.location.util.CoordinateConverter;
 import es.situm.sdk.model.cartography.Building;
 import es.situm.sdk.model.cartography.Floor;
-import es.situm.sdk.model.cartography.Poi;
 import es.situm.sdk.model.cartography.Point;
 import es.situm.sdk.model.directions.Route;
 import es.situm.sdk.model.directions.RouteSegment;
 import es.situm.sdk.model.location.Bounds;
+import es.situm.sdk.model.location.CartesianCoordinate;
 import es.situm.sdk.model.location.Coordinate;
 import es.situm.sdk.model.location.Location;
 import es.situm.sdk.model.navigation.NavigationProgress;
@@ -72,9 +73,6 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
     private GoogleMap googleMap;
     private NavigationRequest navigationRequest;
     private List<Polyline> polylines = new ArrayList<>();
-    private GetPoisCaseUse getPoisCaseUse = new GetPoisCaseUse();
-    private List<Poi> poiList = new ArrayList<>();
-    private List<Poi> poiListFloor = new ArrayList<>();
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -87,12 +85,14 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
     private TextView mNavText;
 
     private Circle prev;
-    private Marker destination;
+    private Marker markerDestination;
 
     private boolean navigation = false;
     private String floorId;
 
-    boolean isDrawMap;
+    boolean isMapShow;
+    private CoordinateConverter coordinateConverter;
+
 
 
     /**
@@ -191,7 +191,6 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
     protected void onDestroy(){
         Log.d(TAG, "onDestroy: ");
         SitumSdk.navigationManager().removeUpdates();
-        getPoisCaseUse.cancel();
         SitumSdk.locationManager().removeUpdates(locationListener);
         stopLocation();
         super.onDestroy();
@@ -220,12 +219,12 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
                         .zIndex(100));
                 current = location;
                 floorId = current.getPosition().getFloorIdentifier();
-                if (!isDrawMap) {
+                if (!isMapShow) {
                     drawMap();
-                    isDrawMap = true;
+                    isMapShow = true;
                 }
 
-                if(destination != null){
+                if(to != null){
                     if(navigation) {
 
                         SitumSdk.navigationManager().updateWithLocation(current);
@@ -290,22 +289,27 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        coordinateConverter = new CoordinateConverter(building.getDimensions(),building.getCenter(),building.getRotation());
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
-        this.googleMap.setOnMarkerClickListener(marker -> {
-            removePolylines();
-            destination = marker;
-            Poi p;
-            p = getPoiFromMarker(marker);
-            to = p.getPosition();
-
-            if((current != null) && (destination != null)){
-                navigation = true;
-                getRoute();
-            }
-
-            return false;
+        this.googleMap.setOnMapClickListener(latLng -> {
+            onMapClickListener(googleMap, latLng);
         });
     }
+
+    private void onMapClickListener(GoogleMap googleMap, LatLng latLng) {
+        removePolylines();
+        if (markerDestination != null) {
+            markerDestination.remove();
+        }
+        to = createPoint(latLng);
+        if (current == null || to == null) {
+            return;
+        }
+        navigation = true;
+        getRoute();
+        markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
+    }
+
 
     void drawMap() {
 
@@ -315,23 +319,6 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
 
                 drawBuilding(floorImage);
                 progressBar.setVisibility(View.GONE);
-                getPoisCaseUse.get(building, new GetPoisCaseUse.Callback() {
-                    @Override
-                    public void onSuccess(List<Poi> pois) {
-                        poiList.addAll(pois);
-                        for (Poi poi : poiList) {
-                            if (poi.getPosition().getFloorIdentifier().equals(floorId)) {
-                                poiListFloor.add(poi);
-                            }
-                        }
-                        drawPois(poiListFloor);
-                    }
-
-                    @Override
-                    public void onError(Error error) {
-                        Toast.makeText(GuideInstructionsActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
             }
 
             @Override
@@ -373,6 +360,13 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
         });
     }
 
+    private Point createPoint(LatLng latLng) {
+        Coordinate coordinate = new Coordinate(latLng.latitude, latLng.longitude);
+        CartesianCoordinate cartesianCoordinate= coordinateConverter.toCartesianCoordinate(coordinate);
+        Point point = new Point(building.getIdentifier(), floorId,coordinate,cartesianCoordinate );
+        return point;
+    }
+
     interface Callback {
         void onSuccess(Bitmap floorImage);
 
@@ -410,44 +404,11 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
         this.googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 
-    void drawPois(List<Poi> pois){
-
-        if(pois.isEmpty()){
-            Toast.makeText(GuideInstructionsActivity.this, "There is no POIs in this building", Toast.LENGTH_LONG).show();
-        }else{
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (Poi p : pois){
-                Log.d(TAG, "drawPois: Poi floor id: " + p.getFloorIdentifier() + " curr foor id: " + floorId);
-                if(!p.getFloorIdentifier().equals(floorId)){
-                    continue;
-                }
-                LatLng latLng = new LatLng(p.getCoordinate().getLatitude(), p.getCoordinate().getLongitude());
-                googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(p.getName())
-                        .zIndex(10));
-                builder.include(latLng);
-
-
-            }
-        }
-
-    }
-
     /**
      *  END DRAWING
      *
      */
 
-
-    Poi getPoiFromMarker(Marker marker){
-        for(Poi p : poiListFloor){
-            if(p.getName().equals(marker.getTitle()))
-                return p;
-        }
-
-        return null;
-    }
 
     /**
      * ROUTE
@@ -523,8 +484,6 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
     }
 
     void startNavigation(){
-
-
         Log.d(TAG, "startNavigation: ");
         SitumSdk.navigationManager().requestNavigationUpdates(navigationRequest, new NavigationListener() {
             @Override
@@ -551,7 +510,7 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
 
     void stopNavigation(){
         removePolylines();
-        destination = null;
+        to = null;
         navigationRequest = null;
         navigationLayout.setVisibility(View.GONE);
         navigation = false;
