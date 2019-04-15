@@ -292,11 +292,11 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
         coordinateConverter = new CoordinateConverter(building.getDimensions(),building.getCenter(),building.getRotation());
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.setOnMapClickListener(latLng -> {
-            onMapClickListener(googleMap, latLng);
+            getPoint(googleMap, latLng);
         });
     }
 
-    private void onMapClickListener(GoogleMap googleMap, LatLng latLng) {
+    private void getPoint(GoogleMap googleMap, LatLng latLng) {
         removePolylines();
         if (markerDestination != null) {
             markerDestination.remove();
