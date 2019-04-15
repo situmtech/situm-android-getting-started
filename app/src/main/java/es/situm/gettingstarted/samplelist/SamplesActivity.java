@@ -16,7 +16,7 @@ import es.situm.gettingstarted.drawbuilding.DrawBuildingActivity;
 import es.situm.gettingstarted.drawpois.DrawPoisActivity;
 import es.situm.gettingstarted.drawposition.DrawPositionActivity;
 import es.situm.gettingstarted.drawroute.DrawRouteActivity;
-import es.situm.gettingstarted.guideinstructions.SelectBuildingActivity;
+import es.situm.gettingstarted.guideinstructions.GuideInstructionsActivity;
 import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.poifiltering.ListBuildingsActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
@@ -42,7 +42,7 @@ public class SamplesActivity
         items.add(new Sample("Draw realtime devices over the map", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, RealTimeActivity.class)));
         items.add(new Sample("Key-Value POIs Filtering", new Intent(this, ListBuildingsActivity.class)));
         items.add(new Sample("Show all the events of a building", new Intent(this, BuildingListActivity.class)));
-        items.add(new Sample("Instructions while going to a destination", new Intent(this, SelectBuildingActivity.class)));
+        items.add(new Sample("Instructions while going to a destination", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, GuideInstructionsActivity.class)));
         items.add(new Sample("Animate the position while walking", new Intent(this, es.situm.gettingstarted.animateposition.SelectBuildingActivity.class)));
         items.add(new Sample("Show if user is inside an event", new Intent(this, es.situm.gettingstarted.userinsideevent.ListBuildingsActivity.class)));
 
