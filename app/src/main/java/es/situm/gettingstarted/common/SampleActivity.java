@@ -1,6 +1,6 @@
 package es.situm.gettingstarted.common;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import es.situm.sdk.model.cartography.Building;
 

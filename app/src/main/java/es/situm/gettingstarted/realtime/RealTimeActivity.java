@@ -1,8 +1,8 @@
 package es.situm.gettingstarted.realtime;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;

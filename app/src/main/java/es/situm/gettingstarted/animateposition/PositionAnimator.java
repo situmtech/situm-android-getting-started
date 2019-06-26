@@ -3,7 +3,7 @@ package es.situm.gettingstarted.animateposition;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.os.Build;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;

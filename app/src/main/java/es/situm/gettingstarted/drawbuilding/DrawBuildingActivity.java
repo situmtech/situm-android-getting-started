@@ -2,7 +2,7 @@ package es.situm.gettingstarted.drawbuilding;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
