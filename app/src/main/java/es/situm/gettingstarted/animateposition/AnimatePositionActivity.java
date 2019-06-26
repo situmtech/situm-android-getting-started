@@ -194,14 +194,12 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
 
             @Override
             public void onStatusChanged(@NonNull LocationStatus locationStatus) {
-                if(!locationManager.isRunning()){
-                    locationManager.removeUpdates(locationListener);
-                }
+                Log.d(TAG, "onStatusChanged: " + locationStatus);
             }
 
             @Override
             public void onError(@NonNull Error error) {
-                Log.e(TAG, "onError: " + error);
+                Log.e(TAG, "onError: " + error.getMessage());
             }
 
         };

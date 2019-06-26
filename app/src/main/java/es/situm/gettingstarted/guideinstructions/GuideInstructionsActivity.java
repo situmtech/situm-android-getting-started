@@ -237,14 +237,11 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
             @Override
             public void onStatusChanged(@NonNull LocationStatus locationStatus) {
                 Log.d(TAG, "onStatusChanged: " + locationStatus.toString());
-                if(!locationManager.isRunning()){
-                    locationManager.removeUpdates(locationListener);
-                }
             }
 
             @Override
             public void onError(@NonNull Error error) {
-
+                Log.e(TAG, "onError: " + error.getMessage());
             }
         };
         LocationRequest locationRequest = new LocationRequest.Builder()
