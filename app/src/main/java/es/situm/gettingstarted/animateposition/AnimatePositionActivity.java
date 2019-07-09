@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import es.situm.gettingstarted.common.GetBuildingCaseUse;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.location.LocationListener;

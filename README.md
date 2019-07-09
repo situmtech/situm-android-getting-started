@@ -37,6 +37,8 @@ Filter the pois with a especific key-value.
 Give indications when you are going to a point.
 12. [Animate position](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition):
 Animate the position and the camera.
+13. [Point inside geofence](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/pointinsidegeofence):
+Draw geofences and calculate if a point is inside them.
 
 #### [More information](#moreinfo)
 #### [Support information](#supportinfo)
