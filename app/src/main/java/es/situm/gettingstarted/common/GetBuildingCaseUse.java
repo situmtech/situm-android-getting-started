@@ -1,15 +1,17 @@
-package es.situm.gettingstarted.animateposition;
+package es.situm.gettingstarted.common;
 
 
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.Collection;
+import java.util.List;
 
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.model.cartography.Building;
 import es.situm.sdk.model.cartography.Floor;
+import es.situm.sdk.model.cartography.Geofence;
 import es.situm.sdk.utils.Handler;
 
 /**
@@ -24,14 +26,19 @@ public class GetBuildingCaseUse {
     private Building currBuilding;
     private Floor currFloor;
 
-    interface Callback{
+    public interface Callback{
         void onSuccess(Building building, Floor floor, Bitmap bitmap);
+        void onError(Error error);
+    }
+
+    public interface GeofencesCallback {
+        void onSuccess(Floor floor, Bitmap bitmap, List<Geofence> geofences);
         void onError(Error error);
     }
 
     private Callback callback;
 
-    Building get(final String buildingId, final Callback callback){
+    public Building get(final String buildingId, final Callback callback){
         if(hasCallback()){
             Log.d(TAG, "get: already running");
             return null;
@@ -98,7 +105,46 @@ public class GetBuildingCaseUse {
         return currBuilding;
     }
 
-    void cancel (){
+    public void getGeofences(Building building, GeofencesCallback geofencesCallback) {
+        SitumSdk.communicationManager().fetchFloorsFromBuilding(building, new Handler<Collection<Floor>>() {
+            @Override
+            public void onSuccess(Collection<Floor> floors) {
+                if(!floors.isEmpty()){
+                    Floor floor = floors.iterator().next();
+                    SitumSdk.communicationManager().fetchMapFromFloor(floor, new Handler<Bitmap>() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            SitumSdk.communicationManager().fetchGeofencesFromBuilding(building, new Handler<List<Geofence>>() {
+                                @Override
+                                public void onSuccess(List<Geofence> geofences) {
+                                    geofencesCallback.onSuccess(floor, bitmap, geofences);
+                                }
+
+                                @Override
+                                public void onFailure(Error error) {
+                                    geofencesCallback.onError(error);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(Error error) {
+                            geofencesCallback.onError(error);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                geofencesCallback.onError(error);
+            }
+
+        });
+
+    }
+
+    public void cancel (){
         callback = null;
     }
 

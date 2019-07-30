@@ -1,11 +1,10 @@
 package es.situm.gettingstarted;
 
-import android.app.Application;
-import android.util.Log;
+import androidx.multidex.MultiDexApplication;
 
 import es.situm.sdk.SitumSdk;
 
-public class GettingStartedApplication extends Application{
+public class GettingStartedApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();

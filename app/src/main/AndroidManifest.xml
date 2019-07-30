@@ -122,6 +122,11 @@
             android:screenOrientation="portrait"
             android:parentActivityName=".userinsideevent.ListBuildingsActivity" />
 
+        <activity android:name=".pointinsidegeofence.PointInsideGeofenceActivity"
+            android:label="Point inside a geofence"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".common.selectbuilding.SelectBuildingActivity"></activity>
+
 
         <!-- Google play services version-->
         <meta-data
