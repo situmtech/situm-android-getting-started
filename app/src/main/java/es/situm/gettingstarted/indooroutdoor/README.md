@@ -17,7 +17,7 @@ Note: you are required to configure [Optional step 5: location and runtime permi
 
 1. Build a `LocationRequest` without indicating the `Building` id. The `LocationRequest` can be configured
 with many more options, but this is outside of the scope of this example. Check the
-[Javadoc](http://developers.situm.es/pages/android/api_documentation.html) for more information.
+[Javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest/overview-summary.html) for more information.
 2. Build a `LocationListener` in order to receive location updates.
 3. After the creation of the required objects, request location updates to the `LocationManager`.
 

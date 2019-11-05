@@ -99,10 +99,15 @@
 
         <activity android:name=".guideinstructions.GuideInstructionsActivity"
             android:label="Instructions while going to a POI"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".samplelist.SamplesActivity"/>
-
-        <activity android:name=".animateposition.SelectBuildingActivity"
+            android:parentActivityName=".samplelist.SamplesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".updatelocationparams.UpdateLocationParamsActivity"
+            android:label="Update location params on the fly"
+            android:parentActivityName=".samplelist.SamplesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".animateposition.SelectBuildingActivity"
             android:label="Select your building"
             android:screenOrientation="portrait"
             android:parentActivityName=".samplelist.SamplesActivity"/>

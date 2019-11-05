@@ -22,6 +22,7 @@ import es.situm.gettingstarted.poifiltering.ListBuildingsActivity;
 import es.situm.gettingstarted.pointinsidegeofence.PointInsideGeofenceActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
 import es.situm.gettingstarted.realtime.RealTimeActivity;
+import es.situm.gettingstarted.updatelocationparams.UpdateLocationParamsActivity;
 
 public class SamplesActivity
         extends AppCompatActivity
@@ -47,6 +48,7 @@ public class SamplesActivity
         items.add(new Sample("Animate the position while walking", new Intent(this, es.situm.gettingstarted.animateposition.SelectBuildingActivity.class)));
         items.add(new Sample("Show if user is inside an event", new Intent(this, es.situm.gettingstarted.userinsideevent.ListBuildingsActivity.class)));
         items.add(new Sample("Show if point is inside a geofence", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, PointInsideGeofenceActivity.class)));
+        items.add(new Sample("Update location parameters on the fly", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, UpdateLocationParamsActivity.class)));
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));

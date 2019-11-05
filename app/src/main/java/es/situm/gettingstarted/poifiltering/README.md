@@ -6,4 +6,4 @@ Like you did in the [draw pois](https://github.com/situmtech/situm-android-getti
 Now, with the `POI`s in an `ArrayList` you can make your own function to get the `POI`s filtered by the Key and Value you want.
 In the method `filter` of the class `FilteringActivity` you can see how to do this.
 
-If you want to know more about filtering `POI`s you can check the [SDK documentation](http://developers.situm.es/pages/android/api_documentation.html).
+If you want to know more about filtering `POI`s you can check the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/latest/overview-summary.html).

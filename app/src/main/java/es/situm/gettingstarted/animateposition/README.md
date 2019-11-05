@@ -12,4 +12,4 @@ For a better and more fluid results, you have to set the `useDeadReckoning` opti
 This option allows you to get fast position updates using only the inertial sensors (compass, gyro...) without a decrease in the battery duration.
 
 You can see how to animate the camera in the classes `AnimatePositionActivity` and `PositionAnimator`.
-If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/pages/android/api_documentation.html).
+If you want to know more about location you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/latest/overview-summary.html).
