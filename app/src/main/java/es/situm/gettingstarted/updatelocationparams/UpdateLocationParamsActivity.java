@@ -368,7 +368,7 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
                 .buildingIdentifier(building.getIdentifier())
                 .addRoutePoints(points)
                 .locationDelimitedByRoute(true)
-                .routeId(++routeId)
+                .routeId(++routeId) //Must be increased (different) every time the params are updated so that the routes can be differentiated
                 .build();
         locationManager.updateLocationParameters(locationParametersUpdate, new LocationParametersUpdateListener() {
             @Override

@@ -1,6 +1,6 @@
 ## <a name="updatelocationparams"></a> Update the parameters of the location on the fly
 
-When you are following the indications of a route to get to a spot, the locations update indicator might zig zag and not be shown right over the path. Updating parameters of the location on the fly fixes this behaviour. Keep in mind that you can set the limit when location update is considered out of the route with the method `NavigationRequest.Builder().outsideRouteThreshold`.
+When you are following the indications of a route to get to a spot, the locations update indicator might zig zag and not be shown right over the path. When the `LocationRequest` receives the route updated, this behaviour can be fixed. Keep in mind that you can set the limit when location update is considered out of the route with the method `NavigationRequest.Builder().outsideRouteThreshold`.
 
 **This example only allows navigation on the floor where you are positioned.**
 
