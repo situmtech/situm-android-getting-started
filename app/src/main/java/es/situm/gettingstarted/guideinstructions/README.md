@@ -7,4 +7,4 @@ In the method `startNavigation` of the class `GuideInstructionsActivity` you can
 
 And don't forget to update the location to your NavigationManager calling the method `SitumSdk.navigationManager().updateWithLocation(currentLocation)` every time the SDK returns a location.
 
-If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/latest/overview-summary.html).
+If you want to know more about the indications, you can check the [SDK Documentation](http://developers.situm.es/sdk_documentation/android/javadoc/latest).

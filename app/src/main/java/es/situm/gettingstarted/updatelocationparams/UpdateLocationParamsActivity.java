@@ -61,9 +61,6 @@ import es.situm.sdk.navigation.NavigationListener;
 import es.situm.sdk.navigation.NavigationRequest;
 import es.situm.sdk.utils.Handler;
 
-/**
- * Created by alejandro.trigo on 19/01/18.
- */
 
 public class UpdateLocationParamsActivity extends SampleActivity implements OnMapReadyCallback {
 
@@ -82,7 +79,7 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
     private Building building;
     private ProgressBar progressBar;
 
-    private Circle prev;
+    private Circle locationPin;
     private Marker markerDestination;
 
     private boolean navigation = false;
@@ -94,14 +91,14 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
     private LocationRequest locationRequest;
     private int routeId = 0;
 
-    private interface UpdateCallback {
+    private interface RouteCallback {
         void onSuccess(Route route);
         void onFailure(Error error);
     }
+
     /**
      *
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,10 +154,10 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                if (prev != null) prev.remove();
+                if (locationPin != null) locationPin.remove();
                 LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
                         location.getCoordinate().getLongitude());
-                prev = googleMap.addCircle(new CircleOptions()
+                locationPin = googleMap.addCircle(new CircleOptions()
                         .center(latLng)
                         .radius(1.2d)
                         .strokeWidth(0f)
@@ -193,8 +190,6 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
         };
         locationRequest = new LocationRequest.Builder()
                 .buildingIdentifier(building.getIdentifier())
-                .useWifi(true)
-                .useBle(true)
                 .useForegroundService(true)
                 .build();
         SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
@@ -207,18 +202,12 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
         locationManager.removeUpdates(locationListener);
         current = null;
         stopNavigation();
-        if (prev != null)
-            prev.remove();
+        if (locationPin != null)
+            locationPin.remove();
 
         removePolylines();
     }
 
-    private void removePolylines() {
-        for (Polyline polyline : polylines) {
-            polyline.remove();
-        }
-        polylines.clear();
-    }
     /**
      *  END LOCATION
      */
@@ -234,38 +223,6 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.setOnMapClickListener(latLng -> {
             showNavigation(googleMap, latLng);
-        });
-    }
-
-    private void showNavigation(GoogleMap googleMap, LatLng latLng) {
-        removePolylines();
-        if (markerDestination != null) {
-            markerDestination.remove();
-        }
-        to = createPoint(latLng);
-        if (current == null || to == null) {
-            return;
-        }
-        navigation = true;
-        startNavigation();
-        markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
-    }
-
-
-    void drawMap() {
-
-        fetchCurrentFloorImage(building, new UpdateLocationParamsActivity.Callback() {
-            @Override
-            public void onSuccess(Bitmap floorImage) {
-
-                drawBuilding(floorImage);
-                progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onError(Error error) {
-                Toast.makeText(UpdateLocationParamsActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-            }
         });
     }
 
@@ -322,6 +279,24 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
     /**
      * DRAWING
      */
+
+    void drawMap() {
+
+        fetchCurrentFloorImage(building, new UpdateLocationParamsActivity.Callback() {
+            @Override
+            public void onSuccess(Bitmap floorImage) {
+
+                drawBuilding(floorImage);
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(Error error) {
+                Toast.makeText(UpdateLocationParamsActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     void drawBuilding(Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
@@ -337,6 +312,42 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
                 .zIndex(1));
 
         this.googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+    }
+
+    private void drawRoute(Route route) {
+        for (RouteSegment segment : route.getSegments()) {
+            //For each segment you must draw a polyline
+            //Add an if to filter and draw only the current selected floor
+            List<LatLng> latLngs = new ArrayList<>();
+            for (Point point : segment.getPoints()) {
+                latLngs.add(new LatLng(point.getCoordinate().getLatitude(), point.getCoordinate().getLongitude()));
+            }
+
+            PolylineOptions polyLineOptions = new PolylineOptions()
+                    .color(Color.GREEN)
+                    .width(18f)
+                    .zIndex(3)
+                    .addAll(latLngs);
+            Polyline polyline = googleMap.addPolyline(polyLineOptions);
+            polylines.add(polyline);
+        }
+    }
+
+    private void centerCamera(Route route) {
+        Coordinate from = route.getFrom().getCoordinate();
+        Coordinate to = route.getTo().getCoordinate();
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder()
+                .include(new LatLng(from.getLatitude(), from.getLongitude()))
+                .include(new LatLng(to.getLatitude(), to.getLongitude()));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+    }
+
+    private void removePolylines() {
+        for (Polyline polyline : polylines) {
+            polyline.remove();
+        }
+        polylines.clear();
     }
 
     /**
@@ -393,7 +404,7 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
         });
     }
 
-    void calculateRoute(UpdateCallback callback) {
+    void calculateRoute(RouteCallback callback) {
         DirectionsRequest directionsRequest = new DirectionsRequest.Builder()
                 .from(current.getPosition(), null)
                 .to(to)
@@ -410,57 +421,6 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
             public void onFailure(Error error) {
                 stopUpdateParams();
                 callback.onFailure(error);
-            }
-        });
-    }
-
-    private void drawRoute(Route route) {
-        for (RouteSegment segment : route.getSegments()) {
-            //For each segment you must draw a polyline
-            //Add an if to filter and draw only the current selected floor
-            List<LatLng> latLngs = new ArrayList<>();
-            for (Point point : segment.getPoints()) {
-                latLngs.add(new LatLng(point.getCoordinate().getLatitude(), point.getCoordinate().getLongitude()));
-            }
-
-            PolylineOptions polyLineOptions = new PolylineOptions()
-                    .color(Color.GREEN)
-                    .width(18f)
-                    .zIndex(3)
-                    .addAll(latLngs);
-            Polyline polyline = googleMap.addPolyline(polyLineOptions);
-            polylines.add(polyline);
-        }
-    }
-
-    private void centerCamera(Route route) {
-        Coordinate from = route.getFrom().getCoordinate();
-        Coordinate to = route.getTo().getCoordinate();
-
-        LatLngBounds.Builder builder = new LatLngBounds.Builder()
-                .include(new LatLng(from.getLatitude(), from.getLongitude()))
-                .include(new LatLng(to.getLatitude(), to.getLongitude()));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
-    }
-
-    private void startNavigation() {
-        calculateRoute(new UpdateCallback() {
-            @Override
-            public void onSuccess(Route route) {
-                removePolylines();
-                drawRoute(route);
-                centerCamera(route);
-                navigationRequest = new NavigationRequest.Builder()
-                        .route(route)
-                        .distanceToGoalThreshold(3d)
-                        .outsideRouteThreshold(2d)
-                        .build();
-                setUpNavigation();
-            }
-
-            @Override
-            public void onFailure(Error error) {
-                Log.d(TAG, "Error starting navigation: " + error);
             }
         });
     }
@@ -493,12 +453,52 @@ public class UpdateLocationParamsActivity extends SampleActivity implements OnMa
         });
     }
 
+    private void startNavigation() {
+        calculateRoute(new RouteCallback() {
+            @Override
+            public void onSuccess(Route route) {
+                removePolylines();
+                drawRoute(route);
+                centerCamera(route);
+                navigationRequest = new NavigationRequest.Builder()
+                        .route(route)
+                        .distanceToGoalThreshold(3d)
+                        .outsideRouteThreshold(2d)
+                        .build();
+                setUpNavigation();
+            }
+
+            @Override
+            public void onFailure(Error error) {
+                Log.d(TAG, "Error starting navigation: " + error);
+            }
+        });
+    }
+
+    private void showNavigation(GoogleMap googleMap, LatLng latLng) {
+        removePolylines();
+        if (markerDestination != null) {
+            markerDestination.remove();
+        }
+        to = createPoint(latLng);
+        if (current == null || to == null) {
+            return;
+        }
+        navigation = true;
+        startNavigation();
+        markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
+    }
+
     void stopNavigation() {
         removePolylines();
         to = null;
         navigationRequest = null;
         navigation = false;
     }
+
+    /**
+     * PERMISSIONS
+     */
 
     /**
      * Getting the permisions we need about localization.so the locations update indicator will always be shown
