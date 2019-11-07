@@ -7,4 +7,4 @@ If you want to show the `Event` data, you will have to use the `SitumEvent` vari
 
 You can see how to get the events and show them in a list in the classes `GetBuildingEvents` and `EventAdapter`.
 
-You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/pages/android/api_documentation.html).
+You can get more information about `Event` in the [SDK documentation](http://developers.situm.es/sdk_documentation/android/javadoc/latest).

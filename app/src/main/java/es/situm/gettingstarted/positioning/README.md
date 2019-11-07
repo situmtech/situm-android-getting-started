@@ -27,11 +27,11 @@ accuracy, among other location information of the smartphone where the app is ru
 
 In `onStatusChanged(int)` the app will receive changes in the status of the system: `STARTING`, `CALCULATING`,
 `USER_NOT_IN_BUILDING`, etc.  Please refer to
-[javadoc](http://developers.situm.es/pages/android/api_documentation.html) for a full explanation of
+[javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of
 these states.
 
 In `onError(Error)` you will receive updates only if an error has occurred. In this case, the positioning will stop.
-Please refer to [javadoc](http://developers.situm.es/pages/android/api_documentation.html) for a full explanation of these errors.
+Please refer to [javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of these errors.
 
 From API 23 you need to ask your user for the location permissions at runtime. If the location permission is not
 granted, an error with code `LocationErrorConstant.Code.MISSING_LOCATION_PERMISSION` will be received.
