@@ -46,7 +46,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
-    implementation ('es.situm:situm-sdk:2.42.0@aar') {
+    implementation ('es.situm:situm-sdk:2.46.2@aar') {
         transitive = true
     }
 }
