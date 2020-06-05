@@ -326,7 +326,7 @@ public class GuideInstructionsActivity extends SampleActivity implements OnMapRe
     }
 
     void fetchCurrentFloorImage(Building building, GuideInstructionsActivity.Callback callback) {
-        SitumSdk.communicationManager().fetchFloorsFromBuilding(building, new Handler<Collection<Floor>>() {
+        SitumSdk.communicationManager().fetchFloorsFromBuilding(building.getIdentifier(), new Handler<Collection<Floor>>() {
             @Override
             public void onSuccess(Collection<Floor> floorsCollection) {
                 List<Floor> floors = new ArrayList<>(floorsCollection);

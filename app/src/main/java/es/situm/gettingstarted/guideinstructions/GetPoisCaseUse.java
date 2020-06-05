@@ -31,7 +31,7 @@ public class GetPoisCaseUse {
             return;
         }
         this.callback = callback;
-        SitumSdk.communicationManager().fetchIndoorPOIsFromBuilding(building, new Handler<Collection<Poi>>() {
+        SitumSdk.communicationManager().fetchIndoorPOIsFromBuilding(building.getIdentifier(), new Handler<Collection<Poi>>() {
             @Override
             public void onSuccess(Collection<Poi> pois) {
 

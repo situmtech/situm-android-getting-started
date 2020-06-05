@@ -20,7 +20,7 @@ public class GetPoiCategoryIconUseCase {
     }
 
     public void getUnselectedIcon(Poi poi, final Callback callback) {
-        SitumSdk.communicationManager().fetchPoiCategoryIconNormal(poi.getCategory(), new Handler<Bitmap>() {
+        SitumSdk.communicationManager().fetchPoiCategoryIcon(poi.getCategory(),false, new Handler<Bitmap>() {
             @Override
             public void onSuccess(Bitmap bitmap) {
                 callback.onSuccess(bitmap);

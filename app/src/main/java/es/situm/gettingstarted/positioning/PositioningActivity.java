@@ -144,7 +144,7 @@ public class PositioningActivity extends SampleActivity {
      */
     private void displayFloorImage() {
         //Get all the building floors
-        SitumSdk.communicationManager().fetchFloorsFromBuilding(selectedBuilding, new Handler<Collection<Floor>>() {
+        SitumSdk.communicationManager().fetchFloorsFromBuilding(selectedBuilding.getIdentifier(), new Handler<Collection<Floor>>() {
             @Override
             public void onSuccess(Collection<Floor> floors) {
                 Log.i(TAG, "onSuccess: received levels: " + floors.size());

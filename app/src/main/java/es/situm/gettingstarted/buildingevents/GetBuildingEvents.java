@@ -102,7 +102,7 @@ public class GetBuildingEvents extends AppCompatActivity implements EventAdapter
                     }
                 }
 
-                SitumSdk.communicationManager().fetchEventsFromBuilding(building, new Handler<Collection<SitumEvent>>(){
+                SitumSdk.communicationManager().fetchEventsFromBuilding(building.getIdentifier(), new Handler<Collection<SitumEvent>>(){
 
                     @Override
                     public void onSuccess(Collection<SitumEvent> situmEvents) {

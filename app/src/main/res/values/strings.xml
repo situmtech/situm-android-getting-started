@@ -8,4 +8,9 @@
     <string name="no_events_in_building">There are not events in the building. You can create them in the Dashboard</string>
     <string name="retry">Retry</string>
     <string name="tv_select_points">Select two points in the map</string>
+
+    <plurals name="success_result">
+        <item quantity="one">%s success: %d result</item>
+        <item quantity="other">%s success: %d results</item>
+    </plurals>
 </resources>

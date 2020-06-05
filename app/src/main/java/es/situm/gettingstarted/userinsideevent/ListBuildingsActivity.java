@@ -99,7 +99,7 @@ public class ListBuildingsActivity extends AppCompatActivity implements ListBuil
         startActivity(intent);
     }
     private void getBuildingInfo(Building building){
-        SitumSdk.communicationManager().fetchBuildingInfo(building, new Handler<BuildingInfo>() {
+        SitumSdk.communicationManager().fetchBuildingInfo(building.getIdentifier(), new Handler<BuildingInfo>() {
             @Override
             public void onSuccess(BuildingInfo buildingInfo) {
                 mProgressBar.setVisibility(View.INVISIBLE);
