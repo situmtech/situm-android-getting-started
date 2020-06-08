@@ -40,6 +40,8 @@ Animate the position and the camera.
 Draw geofences and calculate if a point is inside them.
 14. [Update location parameters](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/updatelocationparams):
 Update the parameters of the location on the fly.
+15. [Fetch resources](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/fetchresources):
+Download resources like building info, images, POIs, etc.
 
 #### [More information](#moreinfo)
 #### [Support information](#supportinfo)
