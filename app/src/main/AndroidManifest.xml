@@ -150,12 +150,18 @@
             android:value="@integer/google_play_services_version" />
 
         <!-- Situm SDK credentials -->
-        <meta-data android:name="es.situm.sdk.API_USER" />
+        <meta-data
+            android:name="es.situm.sdk.API_USER"
+            android:value="@string/api_user"/>
 
-        <meta-data android:name="es.situm.sdk.API_KEY" />
+        <meta-data
+            android:name="es.situm.sdk.API_KEY"
+            android:value="@string/api_key"/>
 
         <!-- GMaps api key -->
-        <meta-data android:name="com.google.android.geo.API_KEY" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
     </application>
 
 </manifest>
