@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_fetch_resources.*
 class FetchResourcesActivity : SampleActivity() {
 
     private val cacheStrategies = NetworkOptions.CacheStrategy.values().also { it.sortBy { item -> item.toString() } }
-    var selectedCacheStrategy: NetworkOptions.CacheStrategy? = NetworkOptions.CacheStrategy.TIMED_CACHE
+    var selectedCacheStrategy: NetworkOptions.CacheStrategy = NetworkOptions.CacheStrategy.TIMED_CACHE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
