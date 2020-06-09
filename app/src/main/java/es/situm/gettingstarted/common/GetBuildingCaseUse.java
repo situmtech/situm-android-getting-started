@@ -56,7 +56,7 @@ public class GetBuildingCaseUse {
                         }
                     }
 
-                    SitumSdk.communicationManager().fetchFloorsFromBuilding(currBuilding, new Handler<Collection<Floor>>() {
+                    SitumSdk.communicationManager().fetchFloorsFromBuilding(currBuilding.getIdentifier(), new Handler<Collection<Floor>>() {
                         @Override
                         public void onSuccess(Collection<Floor> floors) {
                             if(!floors.isEmpty()){
@@ -106,7 +106,7 @@ public class GetBuildingCaseUse {
     }
 
     public void getGeofences(Building building, GeofencesCallback geofencesCallback) {
-        SitumSdk.communicationManager().fetchFloorsFromBuilding(building, new Handler<Collection<Floor>>() {
+        SitumSdk.communicationManager().fetchFloorsFromBuilding(building.getIdentifier(), new Handler<Collection<Floor>>() {
             @Override
             public void onSuccess(Collection<Floor> floors) {
                 if(!floors.isEmpty()){

@@ -16,6 +16,7 @@ import es.situm.gettingstarted.drawbuilding.DrawBuildingActivity;
 import es.situm.gettingstarted.drawpois.DrawPoisActivity;
 import es.situm.gettingstarted.drawposition.DrawPositionActivity;
 import es.situm.gettingstarted.drawroute.DrawRouteActivity;
+import es.situm.gettingstarted.fetchresources.FetchResourcesActivity;
 import es.situm.gettingstarted.guideinstructions.GuideInstructionsActivity;
 import es.situm.gettingstarted.indooroutdoor.IndoorOutdoorActivity;
 import es.situm.gettingstarted.poifiltering.ListBuildingsActivity;
@@ -49,6 +50,7 @@ public class SamplesActivity
         items.add(new Sample("Show if user is inside an event", new Intent(this, es.situm.gettingstarted.userinsideevent.ListBuildingsActivity.class)));
         items.add(new Sample("Show if point is inside a geofence", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, PointInsideGeofenceActivity.class)));
         items.add(new Sample("Update location parameters on the fly", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, UpdateLocationParamsActivity.class)));
+        items.add(new Sample("Fetch Resources using CommunicationManager", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, FetchResourcesActivity.class)));
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));

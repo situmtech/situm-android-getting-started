@@ -33,7 +33,7 @@ public class GetPoisUseCase {
             public void onSuccess(Collection<Building> buildings) {
                 if (!buildings.isEmpty()) {
                     final Building building = buildings.iterator().next();
-                    SitumSdk.communicationManager().fetchIndoorPOIsFromBuilding(building, new Handler<Collection<Poi>>() {
+                    SitumSdk.communicationManager().fetchIndoorPOIsFromBuilding(building.getIdentifier(), new Handler<Collection<Poi>>() {
                         @Override
                         public void onSuccess(Collection<Poi> pois) {
                             if (hasCallback()) {
