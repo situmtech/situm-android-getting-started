@@ -73,7 +73,7 @@ Perfect! You can now test all the examples in this apps.
 ---
 ## Versioning
 
-Please refer to [CHANGELOG.md](https://github.com/situmtech/situm-android-getting-started/blob/master/CHANGELOG.md) for a list of notables changes for each version of the plugin.
+Please refer to [CHANGELOG.md](./CHANGELOG.md) for a list of notables changes for each version of the plugin.
 
 You can also see the [tags on this repository](https://github.com/situmtech/situm-android-getting-started/tags).
 
@@ -85,7 +85,7 @@ You will need to sign a Contributor License Agreement (CLA) before making a subm
 
 ---
 ## License
-This project is licensed under the MIT - see the LICENSE.txt file for further details.
+This project is licensed under the MIT - see the [LICENSE](./LICENSE) file for further details.
 
 ---
 
