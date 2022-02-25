@@ -1,7 +1,7 @@
 <div style="text-align:center">
 
 # Situm Android SDK Sample app
-[![License: MIT](https://img.shields.io/github/license/situmtech/situm-android-getting-started?color=blue&label=License)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 </div>
 <div style="float:right; margin-left: 1rem;">
