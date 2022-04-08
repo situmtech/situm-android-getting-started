@@ -2,6 +2,13 @@ package es.situm.gettingstarted.drawbuilding;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,7 +22,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.common.SampleActivity;
@@ -34,6 +44,12 @@ public class DrawBuildingActivity
 
     private GoogleMap map;
     private Building building;
+    private Map<String, Floor> buildingFloors;
+    private RecyclerView selector;
+    private ImageView selectorMarkTop;
+    private ImageView selectorMarkBottom;
+
+    private FloorAdapter floorAdapter;
 
 
     @Override
@@ -49,10 +65,10 @@ public class DrawBuildingActivity
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
 
-        fetchFirstFloorImage(building, new Callback() {
+        fetchFloorsImages(building, new Callback() {
             @Override
             public void onSuccess(Bitmap floorImage) {
                 drawBuilding(floorImage);
@@ -64,6 +80,15 @@ public class DrawBuildingActivity
                         .show();
             }
         });
+
+        // Declaration of the visual components of the selector
+
+        selectorMarkTop = findViewById(R.id.situm_floor_selector_mark_top);
+        selectorMarkBottom = findViewById(R.id.situm_floor_selector_mark_bottom);
+
+        floorAdapter = new FloorAdapter(Collections.<Floor>emptyList(), floor -> {/* do nothing */});
+        selector = findViewById(R.id.recycler_level_list);
+        selector.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
 
     }
 
@@ -83,16 +108,60 @@ public class DrawBuildingActivity
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 
-    void fetchFirstFloorImage(Building building, Callback callback) {
+    void fetchFloorsImages(Building building, Callback callback) {
         SitumSdk.communicationManager().fetchFloorsFromBuilding(building.getIdentifier(), new Handler<Collection<Floor>>() {
             @Override
             public void onSuccess(Collection<Floor> floorsCollection) {
                 List<Floor> floors = new ArrayList<>(floorsCollection);
-                Floor firstFloor = floors.get(0);
-                SitumSdk.communicationManager().fetchMapFromFloor(firstFloor, new Handler<Bitmap>() {
+
+                // First instance a new LinkedHashMap to store all the floors in the same order they came [FIFO]
+                buildingFloors = new LinkedHashMap<>();
+                for(int i=floors.size()-1;i>=0;i--){
+                    Floor floor = floors.get(i);
+                    buildingFloors.put(floor.getIdentifier(), floor);
+                }
+
+                // Secondly, if the building has more than 3 floors, display the scroll marks to indicate it
+                if(buildingFloors.size() > 3){
+                    selectorMarkTop.setVisibility(View.VISIBLE);
+                    selectorMarkBottom.setVisibility(View.VISIBLE);
+                }
+
+                // Secondly instance the adapter of the selector
+                floorAdapter = new FloorAdapter(new ArrayList<>(buildingFloors.values()), floor -> {
+
+                    SitumSdk.communicationManager().fetchMapFromFloor(floor, new Handler<Bitmap>() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            callback.onSuccess(bitmap);
+                            floorAdapter.select(floor);
+                            int selectedFloorIndex = floorAdapter.getSelectedFloorIndex();
+                            //When the selected item naturally occupies one of the recycler's hidden positions, it
+                            //needs to be moved (scrolled) to make it visible
+                            LinearLayoutManager llm = (LinearLayoutManager) selector.getLayoutManager();
+                            if (selectedFloorIndex < llm.findFirstCompletelyVisibleItemPosition() &&
+                                    selectedFloorIndex > llm.findLastCompletelyVisibleItemPosition()) {
+                                selector.scrollToPosition(selectedFloorIndex);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Error error) {
+                            callback.onError(error);
+                        }
+                    });
+
+                });
+
+                Floor defaultFloor = floors.get(0);
+
+                // The next method selects by default the first item of the List<>
+                SitumSdk.communicationManager().fetchMapFromFloor(defaultFloor, new Handler<Bitmap>() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         callback.onSuccess(bitmap);
+                        floorAdapter.select(defaultFloor);
+                        selector.scrollToPosition(floorAdapter.getItemCount()-1);
                     }
 
                     @Override
@@ -100,6 +169,10 @@ public class DrawBuildingActivity
                         callback.onError(error);
                     }
                 });
+
+                // Finally we set the adapter to the RecyclerView
+                selector.setAdapter(floorAdapter);
+
             }
 
             @Override

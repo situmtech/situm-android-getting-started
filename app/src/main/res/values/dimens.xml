@@ -2,4 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="situm_markers_topBottom_height">14dp</dimen>
+    <dimen name="situm_floor_selector_max_height">154dp</dimen>
+    <dimen name="situm_level_list_margin_bottom_in_calibration">50dp</dimen>
 </resources>
