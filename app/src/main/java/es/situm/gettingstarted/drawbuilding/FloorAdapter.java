@@ -1,6 +1,5 @@
 package es.situm.gettingstarted.drawbuilding;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -16,27 +14,22 @@ import java.util.List;
 import es.situm.gettingstarted.R;
 import es.situm.sdk.model.cartography.Floor;
 
-/**
- * Created by adriannieto on 5/10/17.
- */
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> {
 
     private final OnItemClickListener onItemClickListener;
+
     @Nullable
-    private Floor selected = null;
+    private Floor selected;
     private List<Floor> floors;
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     FloorAdapter(List<Floor> floors, OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
         setFloors(floors);
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     void setFloors(List<Floor> floors) {
         this.floors = floors;
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, getItemCount());
     }
 
     @NonNull
@@ -58,12 +51,18 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         return floors.size();
     }
 
-    public void select(Floor floor) {
-        selected = floor;
-        notifyDataSetChanged();
+    @Nullable
+    public Floor getSelected() {
+        return selected;
     }
 
-    public int getSelectedFloorIndex() { return floors.indexOf(selected);}
+    public void select(Floor floor) {
+        int indexPrevSelected = floors.indexOf(selected);
+        int indexNewSelected = floors.indexOf(floor);
+        selected = floor;
+        notifyItemChanged(indexPrevSelected);
+        notifyItemChanged(indexNewSelected);
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvLevelNumber;
@@ -82,13 +81,8 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
                 itemView.setBackgroundResource(R.drawable.situm_item_level_background);
             }
 
-            itemView.setOnClickListener(v -> {
-                onItemClickListener.onItemClick(floor);
-                selected = floor;
-                notifyDataSetChanged();
-            });
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(floor));
         }
-
     }
 
     interface OnItemClickListener {
