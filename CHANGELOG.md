@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [0.0.2] - Unreleased
+
+### Added
+
+- Added floor selector in Draw building over map example
+
 ## [0.0.1] - 2022-02-24
 
 ### Improved
