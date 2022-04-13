@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.common.SampleActivity;
@@ -41,7 +43,7 @@ public class DrawBuildingActivity
     private GoogleMap map;
     private Building building;
     private FloorAdapter floorAdapter;
-    private ArrayList<Floor> reverseList;
+    private List<Floor> floorList;
 
     private RecyclerView selector;
     private ImageView selectorMarkTop;
@@ -57,8 +59,10 @@ public class DrawBuildingActivity
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        assert mapFragment != null;
-        mapFragment.getMapAsync(this);
+
+        if(mapFragment != null){
+            mapFragment.getMapAsync(this);
+        }
     }
 
     /**
@@ -90,12 +94,8 @@ public class DrawBuildingActivity
             public void onSuccess(Collection<Floor> floorsCollection) {
 
                 // First, store in the reverse order the collection
-                ArrayList<Floor> floors = new ArrayList<>(floorsCollection);
-                reverseList = new ArrayList<>();
-
-                for (int i = floors.size() - 1; i >= 0; i--) {
-                    reverseList.add(floors.get(i));
-                }
+                floorList = new ArrayList<>(floorsCollection);
+                Collections.reverse(floorList);
 
                 // Once we got the floors we prepare de selector
                 prepareSelector();
@@ -115,18 +115,18 @@ public class DrawBuildingActivity
      */
     void prepareSelector() {
         // Secondly, if the building has more than 3 floors, display the scroll marks to indicate it
-        if (reverseList.size() > 3) {
+        if (floorList.size() > 3) {
             selectorMarkTop.setVisibility(View.VISIBLE);
             selectorMarkBottom.setVisibility(View.VISIBLE);
         }
-        floorAdapter = new FloorAdapter(reverseList, this::onSelectFloor);
+        floorAdapter = new FloorAdapter(floorList, this::onSelectFloor);
 
         // Finally we set the adapter to the RecyclerView
         selector.setAdapter(floorAdapter);
-        selector.scrollToPosition(reverseList.size() - 1);
+        selector.scrollToPosition(floorList.size() - 1);
 
         // The next method selects by default the first item of the List<>
-        onSelectFloor(reverseList.get(reverseList.size() - 1));
+        onSelectFloor(floorList.get(floorList.size() - 1));
     }
 
     /**
