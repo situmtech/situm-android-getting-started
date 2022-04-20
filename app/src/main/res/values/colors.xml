@@ -5,4 +5,5 @@
     <color name="colorAccent">#b2b2b2</color>
     <color name="situm_light_gray">#b2b2b2</color>
     <color name="situm_secondary_color">#e6e8f5</color>
+    <color name="situm_primary_color">#283380</color>
 </resources>

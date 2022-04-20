@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <include layout="@layout/fragment_map"></include>
 
     <RelativeLayout
@@ -18,9 +19,9 @@
             android:id="@+id/tv_indication"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Navigation"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_marginLeft="10dp"
+            android:text="Navigation"
             android:textSize="20sp" />
 
 
@@ -28,7 +29,7 @@
             android:id="@+id/btn_start_navigation"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:text="Start" />
 
 
@@ -36,20 +37,35 @@
     </RelativeLayout>
 
     <ProgressBar
-        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="84dp"
 
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/situm_level_list_margin_bottom_in_calibration"
+        android:layout_marginStart="@dimen/situm_level_list_margin_start_in_animation">
+
+        <es.situm.gettingstarted.common.floorselector.FloorSelectorView
+            android:id="@+id/situm_floor_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+<!--        <include layout="@layout/situm_level_list"/>-->
+
+    </RelativeLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="10dp"
         app:backgroundTint="@color/colorPrimary"
         android:src="@drawable/positioning"/>

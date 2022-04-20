@@ -18,7 +18,11 @@
         android:layout_marginBottom="@dimen/situm_level_list_margin_bottom_in_calibration"
         android:layout_marginStart="5dp">
 
-        <include layout="@layout/situm_level_list"/>
+        <es.situm.gettingstarted.common.floorselector.FloorSelectorView
+            android:id="@+id/situm_floor_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+<!--        <include layout="@layout/situm_level_list"/>-->
 
     </RelativeLayout>
 

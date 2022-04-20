@@ -5,4 +5,7 @@
     <dimen name="situm_markers_topBottom_height">14dp</dimen>
     <dimen name="situm_floor_selector_max_height">154dp</dimen>
     <dimen name="situm_level_list_margin_bottom_in_calibration">50dp</dimen>
+    <dimen name="situm_level_list_margin_bottom_in_animation">50dp</dimen>
+    <dimen name="situm_level_list_margin_start_in_animation">5dp</dimen>
+    <dimen name="scroll_marks_spacing">100dp</dimen>
 </resources>
