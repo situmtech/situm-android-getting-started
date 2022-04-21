@@ -136,8 +136,8 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
     }
 
     private void setup(){
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.start_button);
+        progressBar = findViewById(R.id.progressBar);
+        FloatingActionButton button = findViewById(R.id.start_button);
 
         View.OnClickListener buttonListenerLocation = view -> {
             Log.d(AnimatePositionActivity.class.getSimpleName(), "button clicked");
@@ -149,6 +149,7 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
                 SitumSdk.locationManager().removeUpdates(locationListener);
             }else {
                 markerWithOrientation = false;
+                floorSelectorView.setFocusUserMarker(true);
                 progressBar.setVisibility(ProgressBar.VISIBLE);
                 startLocation();
             }
@@ -175,7 +176,7 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
                 }
 
                 // If we are not inside the floor selected, the marker and groundOverlay are hidden
-                if(!location.getFloorIdentifier().equals(floorSelectorView.getSelectedFloorId())) {
+                if(!floorSelectorView.focusUserMarker() && !currentFloorId.equals(floorSelectorView.getSelectedFloorId())) {
                     positionAnimator.clear();
                     if (groundOverlay != null) {
                         groundOverlay.remove();

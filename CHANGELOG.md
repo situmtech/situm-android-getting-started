@@ -7,9 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [0.0.2] - Unreleased
 
+### Modified
+
+- Abstraction of the floor selector & implementation of it in 'Animate position while walking' activity
+
 ### Added
 
-- Added floor selector in Draw building over map example
+- Added floor selector in 'Draw building over map' example
 
 ## [0.0.1] - 2022-02-24
 

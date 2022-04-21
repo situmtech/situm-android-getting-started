@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +47,7 @@ public class FloorSelectorView extends ConstraintLayout {
     private ImageView selectorMarkBottom;
 
     private boolean isFirstCameraAnimation = true;
+    private boolean focusUserMarker = true;
 
     public FloorSelectorView(Context context) {
         super(context);
@@ -64,7 +67,7 @@ public class FloorSelectorView extends ConstraintLayout {
     /**
      * Instances the FloorSelector components
      */
-    public void setup(){
+    void setup(){
         LayoutInflater.from(getContext()).inflate(R.layout.situm_level_list, this);
 
         selectorMarkTop = findViewById(R.id.situm_floor_selector_mark_top);
@@ -78,7 +81,7 @@ public class FloorSelectorView extends ConstraintLayout {
      *
      */
     public void reset(){
-        floorAdapter.positioningFloorChangedTo(null);
+        floorAdapter.positioningFloorChangedTo(null, false);
         fetchFloorsFromBuilding();
     }
     /**
@@ -136,12 +139,15 @@ public class FloorSelectorView extends ConstraintLayout {
 
         // The next method selects by default the first item of the List<>
         onSelectFloor(floorList.get(floorList.size() - 1));
+        focusUserMarker = true; // The user did not select any floor yet, so we will keep focusing the marker
     }
 
     /**
      * Listener of the RecyclerView, that draws the respective floor and indicates it on the selector.
      */
     void onSelectFloor(Floor newFloor) {
+
+        focusUserMarker = false;
 
         if (floorAdapter.getSelected() != null && floorAdapter.getSelected().equals(newFloor))
             return;
@@ -203,7 +209,10 @@ public class FloorSelectorView extends ConstraintLayout {
         SitumSdk.communicationManager().fetchMapFromFloor(newFloor, new Handler<Bitmap>() {
             @Override
             public void onSuccess(Bitmap bitmap) {
-                floorAdapter.positioningFloorChangedTo(newFloor);
+                if(focusUserMarker){
+                    drawFloor(bitmap);
+                }
+                floorAdapter.positioningFloorChangedTo(newFloor, focusUserMarker);
             }
 
             @Override
@@ -238,5 +247,13 @@ public class FloorSelectorView extends ConstraintLayout {
      */
     public String getSelectedFloorId() {
         return floorAdapter.getSelected() != null ? floorAdapter.getSelected().getIdentifier() : null;
+    }
+
+    public boolean focusUserMarker() {
+        return focusUserMarker;
+    }
+
+    public void setFocusUserMarker(boolean state) {
+        focusUserMarker = state;
     }
 }

@@ -78,9 +78,12 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
      *
      * @param newPositioningFloor Floor
      */
-    void positioningFloorChangedTo(Floor newPositioningFloor) {
+    void positioningFloorChangedTo(Floor newPositioningFloor, boolean userPickedFloor) {
         int indexPrevPositioned = floors.indexOf(positioningFloor);
         int indexNewPosition = floors.indexOf(newPositioningFloor);
+        if(userPickedFloor){
+            select(newPositioningFloor);
+        }
         positioningFloor = newPositioningFloor;
         notifyItemChanged(indexPrevPositioned);
         notifyItemChanged(indexNewPosition);
