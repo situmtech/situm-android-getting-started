@@ -28,7 +28,7 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import es.situm.gettingstarted.common.floorselector.FloorSelector;
+
 import es.situm.gettingstarted.common.floorselector.FloorSelectorView;
 import es.situm.gettingstarted.common.GetBuildingCaseUse;
 import es.situm.gettingstarted.common.SampleActivity;
@@ -52,7 +52,6 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
     private GoogleMap map;
     private Marker marker;
     private FloorSelectorView floorSelectorView;
-    private FloorSelector selector;
 
     private final GetBuildingCaseUse getBuildingCaseUse = new GetBuildingCaseUse();
 
@@ -120,10 +119,8 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
                 building = build;
 
                 // Once we got the building and the googleMap, instance a new FloorSelector
-                selector = new FloorSelector(building, map);
-
                 floorSelectorView = findViewById(R.id.situm_floor_selector);
-                floorSelectorView.loadSelector(selector);
+                floorSelectorView.setFloorSelector(building, map);
             }
 
             @Override
@@ -176,30 +173,7 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
                 }
 
                 // If we are not inside the floor selected, the marker and groundOverlay are hidden
-                if(!floorSelectorView.focusUserMarker() && !currentFloorId.equals(floorSelectorView.getSelectedFloorId())) {
-                    positionAnimator.clear();
-                    if (groundOverlay != null) {
-                        groundOverlay.remove();
-                        groundOverlay = null;
-                    }
-                    if(marker != null){
-                        marker.remove();
-                        marker = null;
-                    }
-                }else{
-                    LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
-                            location.getCoordinate().getLongitude());
-                    if (marker == null){
-                        initializeMarker(latLng);
-                    }
-                    if (groundOverlay == null) {
-                        initializeGroundOverlay();
-                    }
-
-                    updateMarkerIcon();
-                    positionAnimator.animate(marker, groundOverlay, location);
-                    centerInUser(location);
-                }
+                displayPositioning(location);
 
                 progressBar.setVisibility(ProgressBar.GONE);
             }
@@ -223,6 +197,39 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
 
         SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
 
+    }
+
+    /**
+     * Detects if the user is inside the selected floor or not, then show/hides the marker and ground overlay
+     *
+     * @param location Location
+     */
+    private void displayPositioning(Location location){
+        if(!floorSelectorView.focusUserMarker() &&
+                !location.getFloorIdentifier().equals(floorSelectorView.getSelectedFloorId())) {
+            positionAnimator.clear();
+            if (groundOverlay != null) {
+                groundOverlay.remove();
+                groundOverlay = null;
+            }
+            if(marker != null){
+                marker.remove();
+                marker = null;
+            }
+        }else{
+            LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                    location.getCoordinate().getLongitude());
+            if (marker == null){
+                initializeMarker(latLng);
+            }
+            if (groundOverlay == null) {
+                initializeGroundOverlay();
+            }
+
+            updateMarkerIcon();
+            positionAnimator.animate(marker, groundOverlay, location);
+            centerInUser(location);
+        }
     }
 
     private void initializeMarker(LatLng latLng) {

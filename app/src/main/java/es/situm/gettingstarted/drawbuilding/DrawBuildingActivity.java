@@ -6,7 +6,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import es.situm.gettingstarted.R;
-import es.situm.gettingstarted.common.floorselector.FloorSelector;
 import es.situm.gettingstarted.common.floorselector.FloorSelectorView;
 import es.situm.gettingstarted.common.SampleActivity;
 import es.situm.sdk.model.cartography.Building;
@@ -37,10 +36,8 @@ public class DrawBuildingActivity
      */
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        FloorSelector selector = new FloorSelector(building, googleMap);
-
         FloorSelectorView floorSelectorView = findViewById(R.id.situm_floor_selector);
-        floorSelectorView.loadSelector(selector);
+        floorSelectorView.setFloorSelector(building, googleMap);
     }
 
 }

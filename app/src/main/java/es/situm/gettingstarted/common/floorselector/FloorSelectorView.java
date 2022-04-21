@@ -59,15 +59,10 @@ public class FloorSelectorView extends ConstraintLayout {
         setup();
     }
 
-    public FloorSelectorView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setup();
-    }
-
     /**
      * Instances the FloorSelector components
      */
-    void setup(){
+    private void setup(){
         LayoutInflater.from(getContext()).inflate(R.layout.situm_level_list, this);
 
         selectorMarkTop = findViewById(R.id.situm_floor_selector_mark_top);
@@ -78,28 +73,25 @@ public class FloorSelectorView extends ConstraintLayout {
 
     /**
      * Reset the RecyclerView
-     *
      */
     public void reset(){
         floorAdapter.positioningFloorChangedTo(null, false);
         fetchFloorsFromBuilding();
     }
-    /**
-     * Gets the GoogleMap and Building from the FloorSelector
-     *
-     * @param selector FloorSelector
-     */
-    public void loadSelector(FloorSelector selector) {
-        this.building = selector.getBuilding();
-        this.map = selector.getGoogleMap();
 
+    /**
+     * Sets the GoogleMap and Building
+     */
+    public void setFloorSelector(Building building, GoogleMap map) {
+        this.building = building;
+        this.map = map;
         fetchFloorsFromBuilding();
     }
 
     /**
      * Iterates the collection building's floors with the method fetchFloorsFromBuilding() of SitumSdk, stores them in reverse order.
      */
-    void fetchFloorsFromBuilding() {
+    private void fetchFloorsFromBuilding() {
 
         SitumSdk.communicationManager().fetchFloorsFromBuilding(building.getIdentifier(), new Handler<Collection<Floor>>() {
             @Override
@@ -123,9 +115,9 @@ public class FloorSelectorView extends ConstraintLayout {
     }
 
     /**
-     * Prepares the FloorSelectorView.
+     * Prepares the FloorSelectorView with its adapter and selects by default the last floor.
      */
-    void prepareSelector() {
+    private void prepareSelector() {
         // Secondly, if the building has more than 3 floors, display the scroll marks to indicate it
         if (floorList.size() > 3) {
             selectorMarkTop.setVisibility(View.VISIBLE);
@@ -145,7 +137,7 @@ public class FloorSelectorView extends ConstraintLayout {
     /**
      * Listener of the RecyclerView, that draws the respective floor and indicates it on the selector.
      */
-    void onSelectFloor(Floor newFloor) {
+    private void onSelectFloor(Floor newFloor) {
 
         focusUserMarker = false;
 
@@ -170,7 +162,7 @@ public class FloorSelectorView extends ConstraintLayout {
     /**
      * Receives a floor plan to paint it inside the building bounds.
      */
-    void drawFloor(Bitmap bitmap) {
+    private void drawFloor(Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
         Coordinate coordinateSW = drawBounds.getSouthWest();
@@ -193,7 +185,7 @@ public class FloorSelectorView extends ConstraintLayout {
         }
     }
 
-    void onError(Error error) {
+    private void onError(Error error) {
         Log.e("onError()", error.getMessage());
         Snackbar.make(findViewById(R.id.container), error.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
     }
@@ -240,11 +232,6 @@ public class FloorSelectorView extends ConstraintLayout {
         return floorFound;
     }
 
-    /**
-     * Asks to FloorAdapter what is the floor selected
-     *
-     * @return String
-     */
     public String getSelectedFloorId() {
         return floorAdapter.getSelected() != null ? floorAdapter.getSelected().getIdentifier() : null;
     }
@@ -256,4 +243,5 @@ public class FloorSelectorView extends ConstraintLayout {
     public void setFocusUserMarker(boolean state) {
         focusUserMarker = state;
     }
+    
 }
