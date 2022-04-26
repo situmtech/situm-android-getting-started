@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [0.0.2] - Unreleased
 
+### Fixed
+
+- Fixed the strange behavior of the selector right after leaving positioning mode.
+
 ### Modified
 
 - Abstraction of the floor selector & implementation of it in 'Animate position while walking' activity
