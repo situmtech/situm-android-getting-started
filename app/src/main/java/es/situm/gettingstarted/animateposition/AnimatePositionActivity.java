@@ -135,20 +135,20 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
 
     private void setup(){
         progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.GONE);
         FloatingActionButton button = findViewById(R.id.start_button);
 
         View.OnClickListener buttonListenerLocation = view -> {
             Log.d(AnimatePositionActivity.class.getSimpleName(), "button clicked");
             if(locationManager.isRunning()){
+                progressBar.setVisibility(ProgressBar.GONE);
                 floorSelectorView.reset();
                 lastPositioningFloorId = null;
-                progressBar.setVisibility(ProgressBar.GONE);
                 stopLocation();
                 SitumSdk.locationManager().removeUpdates(locationListener);
             }else {
                 markerWithOrientation = false;
                 floorSelectorView.setFocusUserMarker(true);
-                progressBar.setVisibility(ProgressBar.VISIBLE);
                 startLocation();
             }
         };
@@ -160,6 +160,8 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
         if(locationManager.isRunning()){
             return;
         }
+
+        progressBar.setVisibility(ProgressBar.VISIBLE);
 
         locationListener = new LocationListener() {
             @Override
@@ -187,6 +189,8 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
             @Override
             public void onError(@NonNull Error error) {
                 Log.e(TAG, "onError(): " + error.getMessage());
+                progressBar.setVisibility(ProgressBar.GONE);
+                Toast.makeText(AnimatePositionActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
 
         };
@@ -327,7 +331,7 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
             ActivityCompat.requestPermissions(AnimatePositionActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN},
                     LOCATION_BLUETOOTH_REQUEST_CODE);
-        }else{
+        }else {
             ActivityCompat.requestPermissions(AnimatePositionActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     ACCESS_FINE_LOCATION_REQUEST_CODE);
@@ -340,25 +344,33 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
      *
      */
     private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            boolean hasBluetoothScanPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
 
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Need bluetooth permission to enable service",
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Open", view -> requestPermissions()).show();
-            } else {
-                requestPermissions();
+            if(!hasBluetoothScanPermission){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Need bluetooth permission to enable service",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Open", view -> requestPermissions()).show();
+                } else {
+                    requestPermissions();
+                }
             }
-        }else if(ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        }else {
+            boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Need location permission to enable service",
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Open", view -> requestPermissions()).show();
-            } else {
-                requestPermissions();
+            if(!hasFineLocationPermission){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Need location permission to enable service",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Open", view -> requestPermissions()).show();
+                } else {
+                    requestPermissions();
+                }
             }
         }
     }
