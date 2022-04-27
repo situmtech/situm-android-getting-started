@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [0.0.2] - Unreleased
 
+### Added
+
+- Added new permission on AndroidManifest.xml (BLUETOOTH_SCAN) for Android 12 devices that need to request this permission (Pixel 4a for example)
+
 ### Fixed
 
 - Fixed the strange behavior of the selector right after leaving positioning mode.
