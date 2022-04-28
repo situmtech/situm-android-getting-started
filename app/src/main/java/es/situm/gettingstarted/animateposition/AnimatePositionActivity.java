@@ -5,18 +5,17 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import es.situm.gettingstarted.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,11 +27,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
+import es.situm.gettingstarted.common.floorselector.FloorSelectorView;
 import es.situm.gettingstarted.common.GetBuildingCaseUse;
+import es.situm.gettingstarted.common.SampleActivity;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.error.Error;
 import es.situm.sdk.location.LocationListener;
@@ -41,17 +40,11 @@ import es.situm.sdk.location.LocationRequest;
 import es.situm.sdk.location.LocationStatus;
 import es.situm.sdk.model.cartography.Building;
 import es.situm.sdk.model.cartography.Floor;
-import es.situm.sdk.model.location.Bounds;
-import es.situm.sdk.model.location.Coordinate;
 import es.situm.sdk.model.location.Location;
 
-/**
- *
- * Created by alejandro.trigo on 31/01/18.
- */
-
-public class AnimatePositionActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class AnimatePositionActivity extends SampleActivity implements OnMapReadyCallback {
     private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 3096;
+    private static final int LOCATION_BLUETOOTH_REQUEST_CODE = 2209;
     private static final String TAG = "AnimatePositionActivity";
 
     private static final int UPDATE_LOCATION_ANIMATION_TIME = 600;
@@ -59,8 +52,9 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
 
     private GoogleMap map;
     private Marker marker;
+    private FloorSelectorView floorSelectorView;
 
-    private GetBuildingCaseUse getBuildingCaseUse = new GetBuildingCaseUse();
+    private final GetBuildingCaseUse getBuildingCaseUse = new GetBuildingCaseUse();
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -72,10 +66,10 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
     private boolean markerWithOrientation = false;
     private LatLng lastCameraLatLng;
     private float lastCameraBearing;
+    private String lastPositioningFloorId;
 
     PositionAnimator positionAnimator = new PositionAnimator();
 
-    private FloatingActionButton button;
     private ProgressBar progressBar;
 
     @Override
@@ -89,10 +83,13 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
             if (intent.hasExtra(Intent.EXTRA_TEXT))
                 buildingId = intent.getStringExtra(Intent.EXTRA_TEXT);
 
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
+        if(mapFragment != null){
+            mapFragment.getMapAsync(this);
+        }
 
         setup();
 
@@ -100,7 +97,7 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onResume(){
-        checkPermisions();
+        checkPermissions();
         super.onResume();
     }
 
@@ -113,14 +110,18 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
+
         getBuildingCaseUse.get(buildingId, new GetBuildingCaseUse.Callback() {
             @Override
             public void onSuccess(Building build, Floor floor, Bitmap bitmap) {
                 progressBar.setVisibility(View.GONE);
                 building = build;
-                drawBuilding(building, bitmap);
+
+                // Once we got the building and the googleMap, instance a new FloorSelector
+                floorSelectorView = findViewById(R.id.situm_floor_selector);
+                floorSelectorView.setFloorSelector(building, map);
             }
 
             @Override
@@ -129,43 +130,30 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
             }
 
         });
+
     }
 
     private void setup(){
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        button = (FloatingActionButton) findViewById(R.id.start_button);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.GONE);
+        FloatingActionButton button = findViewById(R.id.start_button);
 
-        View.OnClickListener buttonListenerLocation = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(AnimatePositionActivity.class.getSimpleName(), "button clicked");
-                if(locationManager.isRunning()){
-                    stopLocation();
-                    SitumSdk.locationManager().removeUpdates(locationListener);
-                }else {
-                    markerWithOrientation = false;
-                    startLocation();
-                }
+        View.OnClickListener buttonListenerLocation = view -> {
+            Log.d(AnimatePositionActivity.class.getSimpleName(), "button clicked");
+            if(locationManager.isRunning()){
+                progressBar.setVisibility(ProgressBar.GONE);
+                floorSelectorView.reset();
+                lastPositioningFloorId = null;
+                stopLocation();
+                SitumSdk.locationManager().removeUpdates(locationListener);
+            }else {
+                markerWithOrientation = false;
+                floorSelectorView.setFocusUserMarker(true);
+                startLocation();
             }
         };
+
         button.setOnClickListener(buttonListenerLocation);
-    }
-
-    private void drawBuilding(Building building, Bitmap bitmap){
-        Bounds drawBounds = building.getBounds();
-        Coordinate coordinateNE = drawBounds.getNorthEast();
-        Coordinate coordinateSW = drawBounds.getSouthWest();
-        LatLngBounds latLngBounds = new LatLngBounds(
-                new LatLng(coordinateSW.getLatitude(), coordinateSW.getLongitude()),
-                new LatLng(coordinateNE.getLatitude(), coordinateNE.getLongitude()));
-
-        map.addGroundOverlay(new GroundOverlayOptions()
-                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
-                .bearing((float) building.getRotation().degrees())
-                .positionFromBounds(latLngBounds)
-                .zIndex(1));
-
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 
     private void startLocation(){
@@ -173,34 +161,36 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
             return;
         }
 
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 current = location;
-                LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
-                        location.getCoordinate().getLongitude());
-                if (marker == null){
-                    initializeMarker(latLng);
+
+                // Save the first floor
+                String currentFloorId = location.getFloorIdentifier();
+                if(!currentFloorId.equals(lastPositioningFloorId)){
+                    lastPositioningFloorId = currentFloorId;
+                    floorSelectorView.updatePositioningFloor(currentFloorId);
                 }
-                if (groundOverlay == null) {
-                    initializeGroundOverlay();
-                }
-                updateMarkerIcon(location);
-                positionAnimator.animate(marker, groundOverlay, current);
 
-                centerInUser(location);
+                // If we are not inside the floor selected, the marker and groundOverlay are hidden
+                displayPositioning(location);
 
-
+                progressBar.setVisibility(ProgressBar.GONE);
             }
 
             @Override
             public void onStatusChanged(@NonNull LocationStatus locationStatus) {
-                Log.d(TAG, "onStatusChanged: " + locationStatus);
+                Log.d(TAG, "onStatusChanged(): " + locationStatus);
             }
 
             @Override
             public void onError(@NonNull Error error) {
-                Log.e(TAG, "onError: " + error.getMessage());
+                Log.e(TAG, "onError(): " + error.getMessage());
+                progressBar.setVisibility(ProgressBar.GONE);
+                Toast.makeText(AnimatePositionActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
 
         };
@@ -209,7 +199,42 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 .buildingIdentifier(buildingId)
                 .useDeadReckoning(true)
                 .build();
+
         SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
+
+    }
+
+    /**
+     * Detects if the user is inside the selected floor or not, then show/hides the marker and ground overlay
+     *
+     * @param location Location
+     */
+    private void displayPositioning(Location location){
+        if(!floorSelectorView.focusUserMarker() &&
+                !location.getFloorIdentifier().equals(floorSelectorView.getSelectedFloorId())) {
+            positionAnimator.clear();
+            if (groundOverlay != null) {
+                groundOverlay.remove();
+                groundOverlay = null;
+            }
+            if(marker != null){
+                marker.remove();
+                marker = null;
+            }
+        }else{
+            LatLng latLng = new LatLng(location.getCoordinate().getLatitude(),
+                    location.getCoordinate().getLongitude());
+            if (marker == null){
+                initializeMarker(latLng);
+            }
+            if (groundOverlay == null) {
+                initializeGroundOverlay();
+            }
+
+            updateMarkerIcon();
+            positionAnimator.animate(marker, groundOverlay, location);
+            centerInUser(location);
+        }
     }
 
     private void initializeMarker(LatLng latLng) {
@@ -233,7 +258,8 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
                 .anchor(0.5f, 0.5f)
                 .position(new LatLng(0, 0), 2)
                 .zIndex(2);
-        groundOverlay = map.addGroundOverlay(groundOverlayOptions);}
+        groundOverlay = map.addGroundOverlay(groundOverlayOptions);
+    }
 
     private void centerInUser(Location location) {
         float tilt = 40;
@@ -258,8 +284,8 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
 
     }
 
-    private void updateMarkerIcon(Location location) {
-        boolean newLocationHasOrientation = (location.hasBearing()) && location.isIndoor();
+    private void updateMarkerIcon() {
+        boolean newLocationHasOrientation = (current.hasBearing()) && current.isIndoor();
         if (markerWithOrientation == newLocationHasOrientation) {
             return;
         }
@@ -277,7 +303,6 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
         bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmapScaled);
         marker.setIcon(bitmapDescriptor);
     }
-
 
     private void stopLocation(){
         if (!locationManager.isRunning()){
@@ -297,34 +322,59 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
     }
 
     /**
-     * Getting the permisions we need about localization.
+     * Getting the permissions we need about localization.
      *
      */
-    private void requestPermisions(){
-        ActivityCompat.requestPermissions(AnimatePositionActivity.this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                ACCESS_FINE_LOCATION_REQUEST_CODE);
+    private void requestPermissions(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ActivityCompat.requestPermissions(AnimatePositionActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT},
+                    LOCATION_BLUETOOTH_REQUEST_CODE);
+        }else {
+            ActivityCompat.requestPermissions(AnimatePositionActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    ACCESS_FINE_LOCATION_REQUEST_CODE);
+        }
+
     }
 
     /**
      * Checking if we have the requested permissions
      *
      */
-    private void checkPermisions(){
-        if(ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)){
+    private void checkPermissions() {
+        boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Need location permission to enable sevice",
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Open", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                requestPermisions();
-                            }
-                        }).show();
-            }else{
-                requestPermisions();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            boolean hasBluetoothScanPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
+            boolean hasBluetoothConnectPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
+
+            if(!hasBluetoothConnectPermission || !hasBluetoothScanPermission || !hasFineLocationPermission){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_SCAN)
+                || ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_CONNECT)
+                || ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Need bluetooth or location permission to enable service",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Open", view -> requestPermissions()).show();
+                } else {
+                    requestPermissions();
+                }
+            }
+        }else {
+
+            if(!hasFineLocationPermission){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Need location permission to enable service",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Open", view -> requestPermissions()).show();
+                } else {
+                    requestPermissions();
+                }
             }
         }
     }
@@ -337,20 +387,26 @@ public class AnimatePositionActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults){
-        switch(requestCode) {
-            case ACCESS_FINE_LOCATION_REQUEST_CODE: {
-                if(!(grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    finishActivity(1);
-                }
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
+            if (!(grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                finishActivity(requestCode);
+            }
+        }else if(requestCode == LOCATION_BLUETOOTH_REQUEST_CODE){
+            if (!(grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                finishActivity(requestCode);
+            }
+            if (!(grantResults.length > 1
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+                finishActivity(requestCode);
             }
         }
+
     }
-
-    // END REQUEST PERMISIONS
-
-
 
 }

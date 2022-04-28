@@ -1,4 +1,4 @@
-package es.situm.gettingstarted.drawbuilding;
+package es.situm.gettingstarted.common.floorselector;
 
 import es.situm.sdk.model.cartography.Floor;
 
