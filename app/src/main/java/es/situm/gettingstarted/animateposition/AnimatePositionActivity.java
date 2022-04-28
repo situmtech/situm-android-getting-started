@@ -329,7 +329,7 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ActivityCompat.requestPermissions(AnimatePositionActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT},
                     LOCATION_BLUETOOTH_REQUEST_CODE);
         }else {
             ActivityCompat.requestPermissions(AnimatePositionActivity.this,
@@ -344,14 +344,19 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
      *
      */
     private void checkPermissions() {
+        boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             boolean hasBluetoothScanPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
+            boolean hasBluetoothConnectPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
 
-            if(!hasBluetoothScanPermission){
-                if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if(!hasBluetoothConnectPermission || !hasBluetoothScanPermission || !hasFineLocationPermission){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_SCAN)
+                || ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.BLUETOOTH_CONNECT)
+                || ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                     Snackbar.make(findViewById(android.R.id.content),
-                            "Need bluetooth permission to enable service",
+                            "Need bluetooth or location permission to enable service",
                             Snackbar.LENGTH_INDEFINITE)
                             .setAction("Open", view -> requestPermissions()).show();
                 } else {
@@ -359,7 +364,6 @@ public class AnimatePositionActivity extends SampleActivity implements OnMapRead
                 }
             }
         }else {
-            boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
             if(!hasFineLocationPermission){
                 if (ActivityCompat.shouldShowRequestPermissionRationale(AnimatePositionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
