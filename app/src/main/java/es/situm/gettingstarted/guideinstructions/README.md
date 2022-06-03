@@ -3,7 +3,9 @@ Situm SDK provides a way to show the indications while you are going from one po
 
 **This example only allows navigation on the floor where you are positioned.**
 
-![instructions](/img/instructions.gif)
+<p align="center">
+    <img src="/img/instructions.gif" />
+</p>
 
 In the method `startNavigation` of the class `GuideInstructionsActivity` you can se how to do it.
 
