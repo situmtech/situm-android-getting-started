@@ -3,6 +3,8 @@ Situm SDK provides a way to show the indications while you are going from one po
 
 **This example only allows navigation on the floor where you are positioned.**
 
+![instructions](/img/instructions.gif)
+
 In the method `startNavigation` of the class `GuideInstructionsActivity` you can se how to do it.
 
 And don't forget to update the location to your NavigationManager calling the method `SitumSdk.navigationManager().updateWithLocation(currentLocation)` every time the SDK returns a location.

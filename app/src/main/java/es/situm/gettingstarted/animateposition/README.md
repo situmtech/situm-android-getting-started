@@ -8,6 +8,8 @@ Once we have the animation for the position, we will see that it works much smoo
 
 Aside from animate the position it is also interesting to animate the camera so the user is always seeing where he is. To do this you just need to animate the camera when the SDK returns a location.
 
+![animate-position](/img/animate-position.gif)
+
 For a better and more fluid results, you have to set the `useDeadReckoning` option to true when starting the positioning.
 This option allows you to get fast position updates using only the inertial sensors (compass, gyro...) without a decrease in the battery duration.
 

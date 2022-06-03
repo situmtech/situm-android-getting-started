@@ -4,6 +4,8 @@ Now that you have correctly configured your Android project, you can start writi
 In this sample project, all the code has been included in the file
 [PositioningActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/positioning/PositioningActivity.java).
 
+![indoor](/img/indoor.gif)
+
 In order to access the buildings info, first of all you need to get an instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
 This object allows you to fetch your buildings data (list of buildings, floorplans, points of interest, etc.):
 
