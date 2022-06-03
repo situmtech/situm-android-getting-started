@@ -4,6 +4,8 @@ Now that you have correctly configured your Android project, you can start writi
 In this sample project, all the code has been included in the file
 [PositioningActivity.java](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/positioning/PositioningActivity.java).
 
+The following image shows the sample app on the left, with the user's position data on the screen. On the right, the Situm dashboard representing the information on the map.
+
 <p align="center">
     <img src="/img/indoor.gif" />
 </p>
