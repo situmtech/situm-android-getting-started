@@ -2,19 +2,17 @@ package es.situm.gettingstarted.positioning;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.ArrayList;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+
 import java.util.Collection;
 
 import es.situm.gettingstarted.R;
@@ -26,8 +24,8 @@ import es.situm.sdk.location.LocationManager;
 import es.situm.sdk.location.LocationRequest;
 import es.situm.sdk.location.LocationStatus;
 import es.situm.sdk.model.cartography.Building;
-import es.situm.sdk.model.cartography.Floor;
 import es.situm.sdk.model.location.CartesianCoordinate;
+import es.situm.sdk.model.location.Coordinate;
 import es.situm.sdk.model.location.Location;
 import es.situm.sdk.utils.Handler;
 
@@ -39,20 +37,22 @@ public class PositioningActivity extends SampleActivity {
     private ToggleButton toggleButtonStart;
     private TextView tvLocation;
     private TextView tvLocationStatus;
-    private ImageView imageViewLevel;
 
     private Building selectedBuilding;
 
-    private LocationListener locationListener = new LocationListener() {
+    private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             Log.i(TAG, "onLocationChanged() called with: location = [" + location + "]");
             CartesianCoordinate cartesianCoordinate = location.getCartesianCoordinate();
+            Coordinate coordinate = location.getCoordinate();
             String locationMessage =
                     "building: " + location.getBuildingIdentifier() + "\n" +
                             "floor: " + location.getFloorIdentifier() + "\n" +
                             "x: " + cartesianCoordinate.getX() + "\n" +
                             "y: " + cartesianCoordinate.getY() + "\n" +
+                            "lat: " + coordinate.getLatitude() + "\n" +
+                            "lng: " + coordinate.getLongitude() + "\n" +
                             "yaw: " + location.getCartesianBearing() + "\n" +
                             "accuracy: " + location.getAccuracy();
 
@@ -91,9 +91,8 @@ public class PositioningActivity extends SampleActivity {
         toggleButtonStart = (ToggleButton) findViewById(R.id.toggleButtonStart);
         tvLocation = (TextView) findViewById(R.id.location);
         tvLocationStatus = (TextView) findViewById(R.id.location_status);
-        imageViewLevel = (ImageView) findViewById(R.id.image_level);
 
-        //You can set the credentials in the AndroidManifest.xml or with:
+        // You can set the credentials in the AndroidManifest.xml or with:
 //        SitumSdk.configuration().setUserPass("USER_EMAIL", "PASSWORD");
 //        SitumSdk.configuration().setApiKey("USER_EMAIL", "API_KEY");
 
@@ -125,10 +124,7 @@ public class PositioningActivity extends SampleActivity {
 
                 if (buildings.isEmpty()) {
                     Log.e(TAG, "onSuccess: you have no buildings. Create one in the Dashboard");
-                    return;
                 }
-
-                displayFloorImage();
             }
 
             @Override
@@ -137,37 +133,6 @@ public class PositioningActivity extends SampleActivity {
             }
         });
 
-    }
-
-    /**
-     * Display the floor image
-     */
-    private void displayFloorImage() {
-        //Get all the building floors
-        SitumSdk.communicationManager().fetchFloorsFromBuilding(selectedBuilding.getIdentifier(), new Handler<Collection<Floor>>() {
-            @Override
-            public void onSuccess(Collection<Floor> floors) {
-                Log.i(TAG, "onSuccess: received levels: " + floors.size());
-                Floor floor = new ArrayList<>(floors).get(0);
-                //Get the floor image bitmap
-                SitumSdk.communicationManager().fetchMapFromFloor(floor, new Handler<Bitmap>() {
-                    @Override
-                    public void onSuccess(Bitmap bitmap) {
-                        imageViewLevel.setImageBitmap(bitmap);
-                    }
-
-                    @Override
-                    public void onFailure(Error error) {
-                        Log.e(TAG, "onFailure: fetching floor map: " + error);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Error error) {
-                Log.e(TAG, "onFailure: fetching floors: " + error);
-            }
-        });
     }
 
     /**

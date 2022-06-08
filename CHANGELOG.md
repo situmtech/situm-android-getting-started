@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## Unreleased
+
+### Added
+- Lat and Lng info in the Indoor positioning example.
+
+### Changed
+- Updated Situm SDK to version 2.76.1.
+- Changed arrow/dot icons.
+
+### Removed
+- Examples related to `Event` as it is deprecated.
+- Removed `ImageView` in the Indoor positioning example.
+
 ## [0.0.2] - Unreleased
 
 ### Added
