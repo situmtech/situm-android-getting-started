@@ -88,15 +88,9 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".buildingevents.BuildingListActivity"
-            android:label="Select your building"
+            android:name=".drawroutegeojson.DrawRouteGeojsonActivity"
+            android:label="Draw route as GeoJson"
             android:parentActivityName=".samplelist.SamplesActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".buildingevents.GetBuildingEvents"
-            android:label="Building Events"
-            android:parentActivityName=".buildingevents.BuildingListActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -121,18 +115,6 @@
             android:name=".animateposition.AnimatePositionActivity"
             android:label="Animate the position while walking"
             android:parentActivityName=".samplelist.SamplesActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".userinsideevent.ListBuildingsActivity"
-            android:label="Select your building"
-            android:parentActivityName=".samplelist.SamplesActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".userinsideevent.UserInsideEventActivity"
-            android:label="User inside an event"
-            android:parentActivityName=".userinsideevent.ListBuildingsActivity"
             android:screenOrientation="portrait" />
 
         <activity
