@@ -60,8 +60,8 @@ Perfect! You can now test all the examples in this apps.
 4. [Draw position](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawposition): Draw the position you obtain from the SDK in the map.
 5. [Animate position](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/animateposition): Animate the position and the camera.
 6. [Draw route](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroute): Draw a route between to points over the map.
-7. [Draw GeoJson route](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroutegeojson): Draw Route as GeoJson.
-8. [Guide instructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions): Give indications when you are going to a point.
+7. [Guide instructions](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/guideinstructions): Give indications when you are going to a point.
+8. [Draw GeoJson route](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawroutegeojson): Draw Route as GeoJson.
 9. [Draw pois](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/drawpois): Draw the pois of a building over the map
 10. [Point inside geofence](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/pointinsidegeofence): Draw geofences and calculate if a point is inside them.
 11. [Show realtime](https://github.com/situmtech/situm-android-getting-started/tree/master/app/src/main/java/es/situm/gettingstarted/realtime): Draw the users that are position inside a building over a map.
