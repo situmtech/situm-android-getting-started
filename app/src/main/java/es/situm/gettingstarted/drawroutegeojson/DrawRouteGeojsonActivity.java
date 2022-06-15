@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 
@@ -32,7 +34,6 @@ import java.util.List;
 
 import es.situm.gettingstarted.R;
 import es.situm.gettingstarted.common.SampleActivity;
-import es.situm.gettingstarted.drawpois.GetPoisUseCase;
 import es.situm.sdk.SitumSdk;
 import es.situm.sdk.directions.DirectionsRequest;
 import es.situm.sdk.error.Error;
@@ -52,15 +53,18 @@ public class DrawRouteGeojsonActivity
         implements OnMapReadyCallback {
 
     private final String TAG = getClass().getSimpleName();
-    private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
+
     private ProgressBar progressBar;
+    private FloatingActionButton fabDisplaySource;
     private GoogleMap googleMap;
     private Building building;
-    private Marker markerDestination, markerOrigin;
+    private Marker markerDestination;
+    private Marker markerOrigin;
     private String floorId;
     private Point pointOrigin;
     private CoordinateConverter coordinateConverter;
     private GeoJsonLayer routeLayer;
+    private JSONObject routeLayerSource;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,7 +80,6 @@ public class DrawRouteGeojsonActivity
 
     @Override
     protected void onDestroy() {
-        getPoisUseCase.cancel();
         SitumSdk.navigationManager().removeUpdates();
         super.onDestroy();
     }
@@ -107,6 +110,18 @@ public class DrawRouteGeojsonActivity
             } else {
                 markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
                 calculateRoute(latLng);
+            }
+        });
+
+        fabDisplaySource.setOnClickListener(view -> {
+            try {
+                new AlertDialog.Builder(this)
+                        .setTitle("GeoJson")
+                        .setMessage(routeLayerSource.toString(4))
+                        .create()
+                        .show();
+            } catch (JSONException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -154,10 +169,11 @@ public class DrawRouteGeojsonActivity
 
     private void drawRoute(Route route) {
         try {
-            JSONObject geoJsonRoute = Converter.geoJsonFromRoute(route);
-            Log.d(TAG, geoJsonRoute.toString());
-            routeLayer = new GeoJsonLayer(googleMap, geoJsonRoute);
+            routeLayerSource = Converter.geoJsonFromRoute(route);
+            Log.d(TAG, routeLayerSource.toString());
+            routeLayer = new GeoJsonLayer(googleMap, routeLayerSource);
             routeLayer.addLayerToMap();
+            fabDisplaySource.setVisibility(View.VISIBLE);
         } catch (JSONException e) {
             e.printStackTrace();
             Snackbar.make(findViewById(R.id.container), e.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
@@ -191,7 +207,8 @@ public class DrawRouteGeojsonActivity
     }
 
     private void setup() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
+        fabDisplaySource = findViewById(R.id.fabDisplaySource);
     }
 
     private void hideProgress() {

@@ -43,8 +43,8 @@ public class SamplesActivity
         items.add(new Sample("Draw position over the map", new Intent(this, DrawPositionActivity.class)));
         items.add(new Sample("Animate the position while walking", new Intent(this, es.situm.gettingstarted.animateposition.SelectBuildingActivity.class)));
         items.add(new Sample("Draw Route between two points over the map", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, DrawRouteActivity.class)));
-        items.add(new Sample("Draw Route as GeoJson", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, DrawRouteGeojsonActivity.class)));
         items.add(new Sample("Instructions while going to a destination", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, GuideInstructionsActivity.class)));
+        items.add(new Sample("Draw GeoJson route", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, DrawRouteGeojsonActivity.class)));
         items.add(new Sample("Draw POIs over the map", new Intent(this, DrawPoisActivity.class)));
         items.add(new Sample("Show if point is inside a geofence", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, PointInsideGeofenceActivity.class)));
         items.add(new Sample("Draw realtime devices over the map", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, RealTimeActivity.class)));

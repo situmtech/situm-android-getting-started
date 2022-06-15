@@ -52,7 +52,7 @@ public class DrawRouteActivity
         implements OnMapReadyCallback {
 
     private final String TAG = getClass().getSimpleName();
-    private GetPoisUseCase getPoisUseCase = new GetPoisUseCase();
+
     private ProgressBar progressBar;
     private GoogleMap googleMap;
     private Building building;
@@ -76,7 +76,6 @@ public class DrawRouteActivity
 
     @Override
     protected void onDestroy() {
-        getPoisUseCase.cancel();
         SitumSdk.navigationManager().removeUpdates();
         super.onDestroy();
     }
@@ -108,8 +107,6 @@ public class DrawRouteActivity
                 markerDestination = googleMap.addMarker(new MarkerOptions().position(latLng).title("destination"));
                 calculateRoute(latLng);
             }
-
-
         });
 
     }
@@ -143,6 +140,7 @@ public class DrawRouteActivity
         markerDestination.remove();
         removePolylines();
     }
+
     private Point createPoint(LatLng latLng) {
         Coordinate coordinate = new Coordinate(latLng.latitude, latLng.longitude);
         CartesianCoordinate cartesianCoordinate= coordinateConverter.toCartesianCoordinate(coordinate);
@@ -171,9 +169,9 @@ public class DrawRouteActivity
                     .width(4f)
                     .addAll(latLngs);
             polylines.add(googleMap.addPolyline(polyLineOptions));
-
         }
     }
+
     void drawBuilding(Bitmap bitmap) {
         Bounds drawBounds = building.getBounds();
         Coordinate coordinateNE = drawBounds.getNorthEast();
@@ -207,6 +205,7 @@ public class DrawRouteActivity
     private void hideProgress(){
         progressBar.setVisibility(View.GONE);
     }
+
     void fetchFirstFloorImage(Building building,Callback callback) {
         SitumSdk.communicationManager().fetchFloorsFromBuilding(building.getIdentifier(), new Handler<Collection<Floor>>() {
             @Override
