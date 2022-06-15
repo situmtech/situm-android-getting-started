@@ -144,6 +144,8 @@ public class DrawRouteGeojsonActivity
             @Override
             public void onFailure(Error error) {
                 hideProgress();
+                clearMap();
+                pointOrigin = null;
                 Toast.makeText(DrawRouteGeojsonActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
