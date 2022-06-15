@@ -16,8 +16,8 @@ Once you receive the `Route` object, you can use the `Converter` utility provide
 Finally you will be able to draw a `GeoJsonLayer` in the Google Map to represent the route, or use the map provider of your choice.
 
 <p align="center">
-    <img src="/img/geojson-route-map.png" />
-    <img src="/img/geojson-route-source.png" />
+    <img src="/img/geojson-route-map.png" width="300" />
+    <img src="/img/geojson-route-source.png" width="300" />
 </p>
 
 You can see how to do this in `DrawRouteGeoJsonActivity`
