@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'com.google.maps.android:android-maps-utils:2.3.0'
 
-    implementation ('es.situm:situm-sdk:2.77.0@aar') {
+    implementation ('es.situm:situm-sdk:2.78.1@aar') {
         transitive = true
     }
 }
