@@ -40,6 +40,7 @@ public class SamplesActivity
 
         items.add(new Sample("Indoor positioning", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, PositioningActivity.class)));
         items.add(new Sample("Indoor-Outdoor positioning", new Intent(this, IndoorOutdoorActivity.class)));
+        items.add(new Sample("Use Wayfinding", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, WayfindingActivity.class)));
         items.add(new Sample("Draw building over the map", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, DrawBuildingActivity.class)));
         items.add(new Sample("Draw position over the map", new Intent(this, DrawPositionActivity.class)));
         items.add(new Sample("Animate the position while walking", new Intent(this, es.situm.gettingstarted.animateposition.SelectBuildingActivity.class)));
@@ -52,7 +53,6 @@ public class SamplesActivity
         items.add(new Sample("Key-Value POIs Filtering", new Intent(this, ListBuildingsActivity.class)));
         items.add(new Sample("Update location parameters on the fly", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, UpdateLocationParamsActivity.class)));
         items.add(new Sample("Fetch Resources using CommunicationManager", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, FetchResourcesActivity.class)));
-        items.add(new Sample("Use Wayfinding", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, WayfindingActivity.class)));
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));
