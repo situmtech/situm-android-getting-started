@@ -25,6 +25,7 @@ import es.situm.gettingstarted.pointinsidegeofence.PointInsideGeofenceActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
 import es.situm.gettingstarted.realtime.RealTimeActivity;
 import es.situm.gettingstarted.updatelocationparams.UpdateLocationParamsActivity;
+import es.situm.gettingstarted.usewayfinding.WayfindingActivity;
 
 public class SamplesActivity
         extends AppCompatActivity
@@ -51,6 +52,7 @@ public class SamplesActivity
         items.add(new Sample("Key-Value POIs Filtering", new Intent(this, ListBuildingsActivity.class)));
         items.add(new Sample("Update location parameters on the fly", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, UpdateLocationParamsActivity.class)));
         items.add(new Sample("Fetch Resources using CommunicationManager", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, FetchResourcesActivity.class)));
+        items.add(new Sample("Use Wayfinding", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, WayfindingActivity.class)));
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(SamplesActivity.this));

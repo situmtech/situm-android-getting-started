@@ -14,8 +14,8 @@
         android:id="@+id/toggleButtonStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textOff="Location STOPPED"
-        android:textOn="Location STARTED" />
+        android:textOff="Start positioning"
+        android:textOn="Stop positioning" />
 
     <LinearLayout
         android:layout_width="match_parent"

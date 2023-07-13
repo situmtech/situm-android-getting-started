@@ -29,15 +29,15 @@ In order to get this examples working you must follow this steps:
 
 1. Create a Situm account, an Api key and a building. Just follow the steps in [this link](https://situm.com/docs/01-introduction/#3-toc-title)
 
-2. Set your credentials in the app. Go to the `AndroidManifest.xml` file and edit this two fields
+2. Set your credentials in the app. Go to the `AndroidManifest.xml` file and add your Situm credentials:
 
 ``` xml
 <meta-data
     android:name="es.situm.sdk.API_USER"
-    android:value="API_USER_EMAIL" />
+    android:value="@string/api_user"/>
 <meta-data
     android:name="es.situm.sdk.API_KEY"
-    android:value="API_KEY" />
+    android:value="@string/api_key"/>
 ```
 
 3. Set your [Google Maps api key](https://developers.google.com/maps/documentation/android-sdk/get-api-key) in order to run the examples that show a map. Go to the `AndroidManifest.xml` file and edit this field

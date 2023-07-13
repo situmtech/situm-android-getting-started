@@ -10,18 +10,13 @@ The following image shows the sample app on the left, with the user's position d
     <img src="/img/indoor.gif" />
 </p>
 
-In order to access the buildings info, first of all you need to get an instance of the `CommunicationManager` with `SitumSdk.communicationManager()`.
-This object allows you to fetch your buildings data (list of buildings, floorplans, points of interest, etc.):
-
-To get the buildings you need to call the method `fetchBuildings`
-
 ## <a name="positioning"></a> Start the positioning
 
-Then, in order to retrieve the location of the smartphone within a `Building`, you will need to create a `LocationRequest` indicating the `Building` where you want to start the positioning:
+In order to retrieve the location of the smartphone within a `Building`, you will need to create a `LocationRequest` indicating the `Building` where you want to start the positioning:
 
 ```java
 LocationRequest locationRequest = new LocationRequest.Builder()
-        .buildingIdentifier(selectedBuilding.getIdentifier())
+        .buildingIdentifier(selectedBuildingId)
         .build();
 ```
 
@@ -32,21 +27,18 @@ the building identifier, level identifier, cartesian coordinates, geographic coo
 accuracy, among other location information of the smartphone where the app is running.
 
 In `onStatusChanged(int)` the app will receive changes in the status of the system: `STARTING`, `CALCULATING`,
-`USER_NOT_IN_BUILDING`, etc.  Please refer to
-[javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of
-these states.
+`USER_NOT_IN_BUILDING`, etc.  Please refer to [javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of these states.
 
 In `onError(Error)` you will receive updates only if an error has occurred. In this case, the positioning will stop.
 Please refer to [javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of these errors.
 
-From API 23 you need to ask your user for the location permissions at runtime. If the location permission is not
-granted, an error with code `LocationErrorConstant.Code.MISSING_LOCATION_PERMISSION` will be received.
-Also, the location permission must be enabled in order to scan Wifi and BLE. In other case, an error with code `LocationErrorConstant.Code.LOCATION_DISABLED`
-will be received. In the code sample within this project you can see how to manage this errors.
+From API 23 you need to ask your user for the location permissions at runtime. The method `requestLocationPermissions()` is a basic example of how to handle this situation. 
+Check the official [Android documentation](https://developer.android.com/training/permissions/requesting) for more details on this topic.
 
 Finally, you can start the positioning with:
 
 ```java
 SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
 ```
+
 and start receiving location updates.
