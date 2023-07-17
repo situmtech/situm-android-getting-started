@@ -25,6 +25,7 @@ import es.situm.gettingstarted.pointinsidegeofence.PointInsideGeofenceActivity;
 import es.situm.gettingstarted.positioning.PositioningActivity;
 import es.situm.gettingstarted.realtime.RealTimeActivity;
 import es.situm.gettingstarted.updatelocationparams.UpdateLocationParamsActivity;
+import es.situm.gettingstarted.usewayfinding.WayfindingActivity;
 
 public class SamplesActivity
         extends AppCompatActivity
@@ -39,6 +40,7 @@ public class SamplesActivity
 
         items.add(new Sample("Indoor positioning", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, PositioningActivity.class)));
         items.add(new Sample("Indoor-Outdoor positioning", new Intent(this, IndoorOutdoorActivity.class)));
+        items.add(new Sample("Use Wayfinding", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, WayfindingActivity.class)));
         items.add(new Sample("Draw building over the map", es.situm.gettingstarted.common.selectbuilding.SelectBuildingActivity.createIntent(this, DrawBuildingActivity.class)));
         items.add(new Sample("Draw position over the map", new Intent(this, DrawPositionActivity.class)));
         items.add(new Sample("Animate the position while walking", new Intent(this, es.situm.gettingstarted.animateposition.SelectBuildingActivity.class)));

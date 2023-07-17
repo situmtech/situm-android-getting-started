@@ -10,9 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Indoor outdoor positioning"
-        android:textOn="Disable positioning"
-        android:textOff="Enable positioning"
-        android:enabled="false"/>
+        android:textOff="Start positioning"
+        android:textOn="Stop positioning" />
 
     <TextView
         android:id="@+id/status_tv"

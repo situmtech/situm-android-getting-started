@@ -129,6 +129,12 @@
             android:parentActivityName=".samplelist.SamplesActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".usewayfinding.WayfindingActivity"
+            android:label="Wayfinding"
+            android:parentActivityName=".samplelist.SamplesActivity"
+            android:screenOrientation="portrait" />
+
         <!-- Google play services version -->
         <meta-data
             android:name="com.google.android.gms.version"
