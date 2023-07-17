@@ -27,13 +27,10 @@ the building identifier, level identifier, cartesian coordinates, geographic coo
 accuracy, among other location information of the smartphone where the app is running.
 
 In `onStatusChanged(int)` the app will receive changes in the status of the system: `STARTING`, `CALCULATING`,
-`USER_NOT_IN_BUILDING`, etc.  Please refer to [javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of these states.
+`USER_NOT_IN_BUILDING`, etc. Please refer to [javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of these states.
 
 In `onError(Error)` you will receive updates only if an error has occurred. In this case, the positioning will stop.
 Please refer to [javadoc](http://developers.situm.es/sdk_documentation/android/javadoc/latest) for a full explanation of these errors.
-
-From API 23 you need to ask your user for the location permissions at runtime. The method `requestLocationPermissions()` is a basic example of how to handle this situation. 
-Check the official [Android documentation](https://developer.android.com/training/permissions/requesting) for more details on this topic.
 
 Finally, you can start the positioning with:
 
@@ -42,3 +39,5 @@ SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListe
 ```
 
 and start receiving location updates.
+
+Remember: location permissions are needed to run this example.

@@ -27,5 +27,4 @@ mapView.load(mapViewConfiguration, new MapView.MapViewCallback() {
 
 Once the positioning has been started, `MapView` will draw the user position automatically.
 
-Remember that, to start positioning, you need to ask your user for the location permissions at runtime. The method `requestLocationPermissions()` is a basic example of how to handle this situation.
-Check the official [Android documentation](https://developer.android.com/training/permissions/requesting) for more details on this topic.
+Remember: location permissions are needed to run this example.

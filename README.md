@@ -55,6 +55,9 @@ In order to get this examples working you must follow this steps:
 
 Perfect! You can now test all the examples in this apps.
 
+Remember that, to start positioning, you need to ask your user for the location permissions at runtime. The method [`LocationPermissions#request()`](https://github.com/situmtech/situm-android-getting-started/blob/master/app/src/main/java/es/situm/gettingstarted/common/LocationPermissions.java) is a basic example of how to handle this situation.
+Check the official [Android documentation](https://developer.android.com/training/permissions/requesting) for more details on this topic.
+
 ---
 
 ## Examples
